@@ -1,0 +1,1 @@
+- All budget/financial totals (TDC, contingencies, sources, funding gap, land equity) come from src/utils/calculations.ts (computeBudgetTotals / computeProjectFinancials); no local summation anywhere — divergent copies caused wrong TDC in per-SF mode. Parity test: src/utils/__tests__/perSqftParity.test.ts.
