@@ -242,9 +242,9 @@ Projects save automatically as users work. No manual save button needed. If a us
 
 ## ADDITIONAL BUGS DISCOVERED (Latest Scan - October 5, 2026)
 
-Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **17 additional bugs** affecting authentication, error handling, state management, and data persistence:
+Beyond the 17 documented bugs above, a comprehensive code analysis uncovered **17 additional bugs** affecting authentication, error handling, state management, and data persistence:
 
-### 14. Race Condition in Auth State Initialization (CRITICAL)
+### 18. Race Condition in Auth State Initialization (CRITICAL)
 **What's happening:** In `useAuth.tsx`, `getSession()` is called after the listener is set up, but both can fire simultaneously, causing redundant state updates or missed initial auth state.
 
 **Why it matters:** Users may see authentication errors or stuck loading states on initial page load.
@@ -255,7 +255,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 15. Unreliable Recovery Session Detection (HIGH)
+### 19. Unreliable Recovery Session Detection (HIGH)
 **What's happening:** `ResetPassword.tsx` checks `window.location.hash.includes("type=recovery")` which is unreliable; Supabase may not always set this hash value.
 
 **Why it matters:** Password reset flow may not work correctly.
@@ -266,7 +266,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 16. Missing useEffect Dependency in Dashboard (HIGH)
+### 20. Missing useEffect Dependency in Dashboard (HIGH)
 **What's happening:** Dashboard.tsx useEffect is missing `navigate` in its dependencies array, violating React rules and potentially causing stale closures.
 
 **Why it matters:** Navigation logic may not work correctly or may use outdated function references.
@@ -277,7 +277,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 17. Unsafe User Access Without Null Check (HIGH)
+### 21. Unsafe User Access Without Null Check (HIGH)
 **What's happening:** Dashboard.tsx uses `user!.id` without null checking; if user becomes null between checks, runtime error occurs.
 
 **Why it matters:** App can crash with "Cannot read property 'id' of null" error.
@@ -288,7 +288,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 18. Unrecoverable Error State in ErrorBoundary (CRITICAL)
+### 22. Unrecoverable Error State in ErrorBoundary (CRITICAL)
 **What's happening:** Once ErrorBoundary catches an error, there's no way to reset the error state; users are stuck on the error screen until page refresh.
 
 **Why it matters:** Users can't recover from any error without refreshing the page.
@@ -299,7 +299,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 19. Missing Error Handling in Navbar Supabase Query (HIGH)
+### 23. Missing Error Handling in Navbar Supabase Query (HIGH)
 **What's happening:** Navbar.tsx query to fetch profile photo doesn't check for `.error` property, silently fails if there's a database or permission issue.
 
 **Why it matters:** Profile photo may not load but user won't know why.
@@ -310,7 +310,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 20. Unsafe Array Indexing as React Key (MEDIUM)
+### 24. Unsafe Array Indexing as React Key (MEDIUM)
 **What's happening:** SitePhotoUpload.tsx and ConceptDrawingsUpload.tsx use array index as React key (`key={i}`), causing re-rendering bugs when array order changes or items are deleted.
 
 **Why it matters:** Deleting/reordering files causes UI glitches and wrong data associations.
@@ -321,7 +321,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 21. Fire-and-Forget Saves in useAutoSave (CRITICAL - DATA LOSS RISK)
+### 25. Fire-and-Forget Saves in useAutoSave (CRITICAL - DATA LOSS RISK)
 **What's happening:** useAutoSave.ts calls `onSaveRef.current()` without awaiting in beforeunload/unmount handlers; browser may close tab before save completes.
 
 **Why it matters:** User's recent changes could be lost if they close the tab during auto-save.
@@ -332,7 +332,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 22. Missing useEffect Dependency in ProjectBuilder (HIGH)
+### 26. Missing useEffect Dependency in ProjectBuilder (HIGH)
 **What's happening:** ProjectBuilder.tsx useEffect is missing `fetchProjectData` from dependencies, so changes to dependencies won't trigger refetch.
 
 **Why it matters:** Project data may not update when it should.
@@ -343,7 +343,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 23. Duplicate Project Type Queries (MEDIUM - Inefficiency)
+### 27. Duplicate Project Type Queries (MEDIUM - Inefficiency)
 **What's happening:** SectionIntroModal.tsx and useProjectType.ts both fetch project-scope section separately, creating wasteful duplicate calls and inconsistency if data changes between calls.
 
 **Why it matters:** Wasted network calls, potential data inconsistency.
@@ -354,7 +354,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 24. Logic Error in Narrative Rationale Generation (MEDIUM)
+### 28. Logic Error in Narrative Rationale Generation (MEDIUM)
 **What's happening:** fetchProjectData.ts lines 289-296 has faulty logic: `rationaleUsable ? storedRationale : storedRationale ? ...` checks `storedRationale` twice; second condition will never be true.
 
 **Why it matters:** Rationale text may not load correctly or may use stale data.
@@ -365,7 +365,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 25. Inadequate Currency Input Parsing (MEDIUM)
+### 29. Inadequate Currency Input Parsing (MEDIUM)
 **What's happening:** CurrencyInput.tsx removes all non-numeric characters including commas during input with `replace(/[^0-9.]/g, "")`, then calls `parseFloat()`. User typing "1,234,567" becomes "1.234567" after replace.
 
 **Why it matters:** Users entering large amounts (e.g., $1,000,000) will have numbers parsed incorrectly.
@@ -376,7 +376,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 26. Unhandled Promise Rejection in fetchProjectExportData (CRITICAL)
+### 30. Unhandled Promise Rejection in fetchProjectExportData (CRITICAL)
 **What's happening:** fetchProjectData.ts Promise.all() chain doesn't catch nested `.then()` callbacks; any error in profile fetch will crash without meaningful error message.
 
 **Why it matters:** PDF/Excel export can fail unexpectedly with cryptic error.
@@ -387,7 +387,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 27. Onboarding Step Restoration Race Condition (MEDIUM)
+### 31. Onboarding Step Restoration Race Condition (MEDIUM)
 **What's happening:** Onboarding.tsx reads and writes localStorage in separate useEffects; if user navigates away quickly, saved step may not reflect current step.
 
 **Why it matters:** User could get returned to wrong onboarding step.
@@ -398,7 +398,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 28. Missing Authorization Check Before Navigation (HIGH)
+### 32. Missing Authorization Check Before Navigation (HIGH)
 **What's happening:** Multiple pages redirect after auth but don't verify the redirect succeeded; user left in loading state if navigation is blocked.
 
 **Why it matters:** User could be stuck in loading state indefinitely.
@@ -409,7 +409,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 29. Potential Null Reference in AuthModal (MEDIUM)
+### 33. Potential Null Reference in AuthModal (MEDIUM)
 **What's happening:** AuthModal.tsx checks `if (user)` after `signIn()` but doesn't confirm user is defined before accessing `user.id` on line 66.
 
 **Why it matters:** Potential runtime error if user object is unexpectedly null.
@@ -420,7 +420,7 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-### 30. Missing Error Handling on Project Load (CRITICAL)
+### 34. Missing Error Handling on Project Load (CRITICAL)
 **What's happening:** Dashboard.tsx query `supabase.from("projects").select()` doesn't check `.error` property; query failures silently show empty project list.
 
 **Why it matters:** Users think they have no projects when really it's a database error.
@@ -431,9 +431,9 @@ Beyond the 13 documented bugs above, a comprehensive code analysis uncovered **1
 
 ---
 
-**Subtotal for bugs #14-30: 19.5 hours**
+**Subtotal for bugs #18-34: 19.5 hours**
 
-**Total time for ALL bug fixes (bugs #1-30): 41.5 hours**
+**Total time for ALL bug fixes (bugs #1-34): 41.5 hours**
 
 ---
 

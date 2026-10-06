@@ -352,7 +352,7 @@
     <h3>CATEGORY 1: Silent Failures - Data Loss Risk (4 bugs)</h3>
 
     <div class="bug-item critical">
-        <div class="bug-header">🔴 BUG #14: Project Loading Error Not Shown</div>
+        <div class="bug-header">🔴 BUG #18: Project Loading Error Not Shown</div>
         <div class="bug-detail">
             <div><span class="bug-label">Severity:</span> <span class="critical-severity">CRITICAL</span></div>
             <div><span class="bug-label">Effort:</span> <span class="effort-hours">1 hour</span></div>
@@ -363,7 +363,7 @@
     </div>
 
     <div class="bug-item critical">
-        <div class="bug-header">🔴 BUG #15: Section Save Error Not Shown ⚠️ HIGHEST PRIORITY</div>
+        <div class="bug-header">🔴 BUG #19: Section Save Error Not Shown ⚠️ HIGHEST PRIORITY</div>
         <div class="bug-detail">
             <div><span class="bug-label">Severity:</span> <span class="critical-severity">CRITICAL</span></div>
             <div><span class="bug-label">Effort:</span> <span class="effort-hours">1 hour</span></div>
@@ -374,7 +374,7 @@
     </div>
 
     <div class="bug-item critical">
-        <div class="bug-header">🔴 BUG #16: Dashboard Load Error Not Shown</div>
+        <div class="bug-header">🔴 BUG #20: Dashboard Load Error Not Shown</div>
         <div class="bug-detail">
             <div><span class="bug-label">Severity:</span> <span class="critical-severity">CRITICAL</span></div>
             <div><span class="bug-label">Effort:</span> <span class="effort-hours">1 hour</span></div>
@@ -385,7 +385,7 @@
     </div>
 
     <div class="bug-item critical">
-        <div class="bug-header">🔴 BUG #17: Onboarding Save Error Not Shown</div>
+        <div class="bug-header">🔴 BUG #21: Onboarding Save Error Not Shown</div>
         <div class="bug-detail">
             <div><span class="bug-label">Severity:</span> <span class="critical-severity">CRITICAL</span></div>
             <div><span class="bug-label">Effort:</span> <span class="effort-hours">1 hour</span></div>
@@ -438,7 +438,7 @@
     <h3>CATEGORY 3: Missing Error Feedback (5 bugs)</h3>
 
     <div class="bug-item critical">
-        <div class="bug-header">🔴 BUG #2: File Upload Errors Not Shown</div>
+        <div class="bug-header">🔴 BUG #2: File Upload Errors Not Shown (Original)</div>
         <div class="bug-detail">
             <div><span class="bug-label">Severity:</span> <span class="critical-severity">CRITICAL</span></div>
             <div><span class="bug-label">Effort:</span> <span class="effort-hours">2 hours</span></div>
@@ -544,109 +544,109 @@
         </thead>
         <tbody>
             <tr>
-                <td>14</td>
-                <td>Silent Fail</td>
-                <td>Project load error silent</td>
+                <td>18</td>
+                <td>Auth & Session</td>
+                <td>Auth race condition</td>
                 <td><span class="critical-severity">CRITICAL</span></td>
-                <td>1h</td>
+                <td>2h</td>
             </tr>
             <tr>
-                <td>15</td>
-                <td>Silent Fail</td>
-                <td>Section save error silent</td>
-                <td><span class="critical-severity">CRITICAL</span></td>
-                <td>1h</td>
+                <td>19</td>
+                <td>Auth & Session</td>
+                <td>Recovery detection unreliable</td>
+                <td><span class="high-severity">HIGH</span></td>
+                <td>1.5h</td>
             </tr>
             <tr>
-                <td>16</td>
-                <td>Silent Fail</td>
-                <td>Dashboard load error silent</td>
-                <td><span class="critical-severity">CRITICAL</span></td>
-                <td>1h</td>
+                <td>20</td>
+                <td>State Management</td>
+                <td>Missing useEffect dep (Dashboard)</td>
+                <td><span class="high-severity">HIGH</span></td>
+                <td>0.5h</td>
             </tr>
             <tr>
-                <td>17</td>
-                <td>Silent Fail</td>
-                <td>Onboarding save error silent</td>
-                <td><span class="critical-severity">CRITICAL</span></td>
-                <td>1h</td>
+                <td>21</td>
+                <td>State Management</td>
+                <td>Unsafe user access (null check)</td>
+                <td><span class="high-severity">HIGH</span></td>
+                <td>0.5h</td>
             </tr>
             <tr>
                 <td>1</td>
-                <td>Data</td>
+                <td>Data Integrity</td>
                 <td>Multi-property SQ footage</td>
                 <td><span class="critical-severity">CRITICAL</span></td>
                 <td>2h</td>
             </tr>
             <tr>
                 <td>3</td>
-                <td>Data</td>
+                <td>Data Integrity</td>
                 <td>Insurance sync mismatch</td>
                 <td><span class="critical-severity">CRITICAL</span></td>
                 <td>2h</td>
             </tr>
             <tr>
                 <td>4</td>
-                <td>Data</td>
+                <td>Financial Metrics</td>
                 <td>ROI = 0% with profit</td>
                 <td><span class="critical-severity">CRITICAL</span></td>
                 <td>2-3h</td>
             </tr>
             <tr>
                 <td>2</td>
-                <td>Feedback</td>
-                <td>File upload errors</td>
+                <td>Error Feedback</td>
+                <td>File upload errors not shown</td>
                 <td><span class="critical-severity">CRITICAL</span></td>
                 <td>2h</td>
             </tr>
             <tr>
                 <td>6</td>
-                <td>Feedback</td>
-                <td>Schedule validation</td>
+                <td>Validation</td>
+                <td>Schedule validation not shown</td>
                 <td><span class="high-severity">HIGH</span></td>
                 <td>2h</td>
             </tr>
             <tr>
                 <td>7</td>
-                <td>Validate</td>
-                <td>Budget balance</td>
+                <td>Validation</td>
+                <td>Budget balance not enforced</td>
                 <td><span class="high-severity">HIGH</span></td>
                 <td>3h</td>
             </tr>
             <tr>
-                <td>5</td>
-                <td>Debug</td>
-                <td>ExecutiveSummaryForm logs</td>
+                <td>22</td>
+                <td>Error Handling</td>
+                <td>ErrorBoundary unrecoverable</td>
+                <td><span class="critical-severity">CRITICAL</span></td>
+                <td>1h</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td>Error Handling</td>
+                <td>Navbar error not checked</td>
                 <td><span class="high-severity">HIGH</span></td>
                 <td>0.5h</td>
             </tr>
             <tr>
-                <td>8</td>
-                <td>Feedback</td>
-                <td>Profile fetch error</td>
+                <td>24</td>
+                <td>React Best Practices</td>
+                <td>Unsafe array keys</td>
                 <td><span class="medium-severity">MEDIUM</span></td>
                 <td>1h</td>
             </tr>
             <tr>
-                <td>13</td>
-                <td>Debug</td>
-                <td>ProjectScheduleForm logs</td>
-                <td><span class="medium-severity">MEDIUM</span></td>
-                <td>1h</td>
+                <td>25</td>
+                <td>Data Persistence</td>
+                <td>Fire-and-forget saves</td>
+                <td><span class="critical-severity">CRITICAL</span></td>
+                <td>2h</td>
             </tr>
             <tr>
-                <td>11</td>
-                <td>Debug</td>
-                <td>BudgetCapitalForm logs</td>
-                <td><span class="low-severity">LOW</span></td>
-                <td>0.25h</td>
-            </tr>
-            <tr>
-                <td>12</td>
-                <td>Debug</td>
-                <td>PackageReadinessChecklist logs</td>
-                <td><span class="low-severity">LOW</span></td>
-                <td>0.25h</td>
+                <td>34</td>
+                <td>Error Handling</td>
+                <td>Project load errors silent</td>
+                <td><span class="critical-severity">CRITICAL</span></td>
+                <td>0.5h</td>
             </tr>
         </tbody>
     </table>
