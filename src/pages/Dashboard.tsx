@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, MapPin, Calendar, Plus, User, LogOut, LayoutDashboard, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -69,25 +69,7 @@ const Dashboard = () => {
     }
   }, [user, authLoading, navigate]);
 
-  useEffect(() => {
-    if (user) {
-      // Check if developer profile exists; if not, send to onboarding
-      (async () => {
-        const { data } = await supabase
-          .from("developer_profiles" as any)
-          .select("id")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        if (!data) {
-          navigate("/onboarding");
-          return;
-        }
-        fetchData();
-      })();
-    }
-  }, [user]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       // Name comes from the developer profile first; legacy profile only if empty.
       const [devRes, profRes] = await Promise.all([
@@ -123,7 +105,25 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      // Check if developer profile exists; if not, send to onboarding
+      (async () => {
+        const { data } = await supabase
+          .from("developer_profiles" as any)
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (!data) {
+          navigate("/onboarding");
+          return;
+        }
+        fetchData();
+      })();
+    }
+  }, [user, fetchData, navigate]);
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
