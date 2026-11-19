@@ -17,6 +17,12 @@ export interface ValidationFinding {
 
 const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
+/** Message when sources exceed uses by at least $1 (gap = uses - sources), else null. */
+export const sourcesExceedUsesMessage = (gap: number): string | null =>
+  gap <= -1
+    ? `Sources exceed uses by ${fmt(-gap)}. Adjust sources or uses so the budget balances.`
+    : null;
+
 
 export const runValidation = async (projectId: string): Promise<ValidationFinding[]> => {
   const findings: ValidationFinding[] = [];
@@ -162,6 +168,12 @@ export const runValidation = async (projectId: string): Promise<ValidationFindin
       section: "Budget & Sources/Uses",
       message: `Funding gap of ${fmt(gap)} needs to be addressed before presenting.`,
     });
+  }
+
+  // i2) Sources exceed uses (negative gap): the budget does not balance.
+  const surplusMessage = sourcesExceedUsesMessage(gap);
+  if (surplusMessage) {
+    push({ severity: "critical", section: "Budget & Sources/Uses", message: surplusMessage });
   }
 
   // j) Developer name
