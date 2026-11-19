@@ -122,7 +122,7 @@ export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: Concept
       {drawings.length > 0 && (
         <div className="space-y-3">
           {drawings.map((drawing, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
+            <div key={drawing.url} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
               {drawing.fileType === "pdf" ? (
                 <div className="w-16 h-16 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
                   <FileText className="w-8 h-8 text-red-500" />

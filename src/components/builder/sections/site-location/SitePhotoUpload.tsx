@@ -131,7 +131,7 @@ export const SitePhotoUpload = ({ photos, onChange, projectId }: SitePhotoUpload
       {photos.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           {photos.map((photo, i) => (
-            <div key={i} className="relative group rounded-lg border border-border overflow-hidden bg-muted/30">
+            <div key={photo.url} className="relative group rounded-lg border border-border overflow-hidden bg-muted/30">
               <div className="aspect-video relative">
                 <img
                   src={photo.url}
