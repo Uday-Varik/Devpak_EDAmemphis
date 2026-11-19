@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Section } from "@/pages/ProjectBuilder";
 import {
   Dialog,
@@ -14,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Lightbulb } from "lucide-react";
 import { isTeachingModeEnabled } from "@/hooks/useTeachingMode";
+import { useProjectType } from "@/hooks/useProjectType";
 
 const SECTION_INTROS: Record<Section, { title: string; body: string }> = {
   "project-scope": {
@@ -96,25 +95,7 @@ interface SectionIntroModalProps {
 export const SectionIntroModal = ({ activeSection, isEmpty }: SectionIntroModalProps) => {
   const [open, setOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
-  const { id: projectId } = useParams<{ id: string }>();
-  const [projectType, setProjectType] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (!projectId) return;
-      const { data: details } = await supabase
-        .from("project_details")
-        .select("data")
-        .eq("project_id", projectId)
-        .eq("section", "project-scope")
-        .maybeSingle();
-      if (!cancelled && details?.data) {
-        setProjectType(((details.data as Record<string, any>).projectType) || null);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [projectId]);
+  const projectType = useProjectType();
 
   useEffect(() => {
     if (!isTeachingModeEnabled()) return;
