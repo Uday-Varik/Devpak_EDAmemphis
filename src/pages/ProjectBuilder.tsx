@@ -109,6 +109,8 @@ const ProjectBuilder = () => {
         .single();
 
       if (projectError || !projectData) {
+        console.error("Error fetching project:", projectError);
+        toast.error("We couldn't open that project. It may have been deleted or you may not have access.");
         navigate("/dashboard");
         return;
       }
@@ -145,6 +147,7 @@ const ProjectBuilder = () => {
       }
     } catch (error) {
       console.error("Error fetching project:", error);
+      toast.error("We couldn't open that project. Please try again.");
       navigate("/dashboard");
     } finally {
       setLoading(false);
