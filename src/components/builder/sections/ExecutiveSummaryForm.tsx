@@ -189,18 +189,15 @@ export const ExecutiveSummaryForm = ({
           .eq("user_id", uid)
           .maybeSingle();
         let name = ((dp as any)?.full_name || "").trim();
-        console.log("[PackageReadiness] developer_profiles.full_name =", (dp as any)?.full_name);
         if (!name) {
           const { data: pr } = await supabase
             .from("profiles")
             .select("full_name")
             .eq("user_id", uid)
             .maybeSingle();
-          console.log("[PackageReadiness] profiles.full_name =", (pr as any)?.full_name);
           name = ((pr as any)?.full_name || "").trim();
         }
         setDeveloperProfileName(name);
-        console.log("[PackageReadiness] resolved developerProfileName =", name);
       }
     };
     fetchData();
