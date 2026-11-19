@@ -19,9 +19,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set once the listener has delivered a session. A getSession() result that
+    // resolves later can be stale, so it must not overwrite the listener's state.
+    let listenerDelivered = false;
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        listenerDelivered = true;
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -29,11 +34,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (listenerDelivered) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error restoring session:", error);
+        if (!listenerDelivered) setLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
