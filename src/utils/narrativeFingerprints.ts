@@ -83,7 +83,7 @@ export const generateRationaleText = (
   if (v.includesSale) {
     parts.push(
       v.roi === null
-        ? `Return on cash not stated (${CASH_NOT_INVESTED.toLowerCase()}) on total development costs of ${money(v.tdc)}`
+        ? `${CASH_NOT_INVESTED}, with total development costs of ${money(v.tdc)}`
         : `Projected ROI of ${v.roi.toFixed(1)}% on total development costs of ${money(v.tdc)}`
     );
     parts.push(`net profit of ${money(v.netProfit)}`);

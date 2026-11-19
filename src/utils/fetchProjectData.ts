@@ -40,7 +40,7 @@ const generatePDFOverview = (d: {
   } else if (d.packagePurpose === "investor-pitch" && d.arv > 0) {
     parts.push(
       d.roi === null
-        ? "This project presents an investment opportunity. No developer cash is invested, so a return on cash is not stated."
+        ? "This project presents an investment opportunity. Cash not invested."
         : `This project presents an investment opportunity with projected returns of ${d.roi.toFixed(1)}% on invested equity.`
     );
   } else if (d.packagePurpose === "internal-planning") {
@@ -62,8 +62,8 @@ const generatePDFOverview = (d: {
   if (d.tdc > 0) {
     let financial = `Total development costs are projected at ${fmt(d.tdc)}`;
     if (d.arv > 0) {
-      const returnText = d.roi === null ? "no return on cash stated (cash not invested)" : `an ROI of ${d.roi.toFixed(1)}%`;
-      financial += ` with an after-repair value of ${fmt(d.arv)}, yielding an expected profit of ${fmt(d.netProfit)} and ${returnText}`;
+      financial += ` with an after-repair value of ${fmt(d.arv)}, yielding an expected profit of ${fmt(d.netProfit)}`;
+      financial += d.roi === null ? ". Cash not invested" : ` and an ROI of ${d.roi.toFixed(1)}%`;
     }
     financial += ".";
     parts.push(financial);
@@ -224,7 +224,7 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     const stress = computeSensitivityScenarios(fin).find((sc) => sc.label.startsWith("Stress"));
     riskItems.push(
       stress?.return == null
-        ? "Stress test scenario: return on cash not stated (cash not invested)"
+        ? "Stress test scenario: Cash not invested"
         : `Stress test scenario shows ${stress.return.toFixed(1)}% return`
     );
     if (marginOfSafety !== 0) {

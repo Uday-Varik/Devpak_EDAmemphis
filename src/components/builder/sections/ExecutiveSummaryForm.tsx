@@ -443,7 +443,7 @@ export const ExecutiveSummaryForm = ({
       pPurpose = `This project seeks ${formatCurrency(calcs.totalSubsidies)} in grant funding to address community housing needs and close the project's funding gap.`;
     } else if (purpose === "investor-pitch" && hasARV) {
       pPurpose = roi === null
-        ? "This project presents an investment opportunity. No developer cash is invested, so a return on cash is not stated."
+        ? "This project presents an investment opportunity. Cash not invested."
         : `This project presents an investment opportunity with projected returns of ${formatPercent(roi)} on invested equity.`;
     } else if (purpose === "internal-planning") {
       pPurpose = `This document captures the project's plan, budget, schedule, and risk profile for internal reference.`;
@@ -465,7 +465,7 @@ export const ExecutiveSummaryForm = ({
       p3 += `, with an after-repair value of ${formatCurrency(arv)}`;
       if (sqftPlanned > 0) p3 += ` (${formatCurrency(Math.round(salePerSF))} per square foot)`;
       p3 += roi === null
-        ? `, yielding an expected profit of ${formatCurrency(netProfit)} and no return on cash stated (cash not invested).`
+        ? `, yielding an expected profit of ${formatCurrency(netProfit)}. Cash not invested.`
         : `, yielding an expected profit of ${formatCurrency(netProfit)} and a ${formatPercent(roi)} return on invested equity.`;
     } else {
       p3 += ".";
@@ -628,7 +628,7 @@ export const ExecutiveSummaryForm = ({
     if (calcs.hasARV) {
       items.push(
         calcs.worstCaseRoi === null
-          ? "Stress test scenario: return on cash not stated (cash not invested)"
+          ? "Stress test scenario: Cash not invested"
           : `Stress test scenario shows ${formatPercent(calcs.worstCaseRoi)} return`
       );
       if (calcs.marginOfSafety !== 0) {
