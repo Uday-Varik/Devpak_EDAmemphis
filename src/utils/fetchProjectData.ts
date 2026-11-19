@@ -282,18 +282,21 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     cashOnCash,
     tdc,
   });
-  const rationaleUsable =
+  // Stored text that still matches the live figures is used as-is. Stale text is
+  // regenerated from the live figures. With no stored text there is nothing to show.
+  const storedIsCurrent =
     !!storedRationale &&
     !isNarrativeStale(storedRationale, decisionData.rationaleFingerprint, liveRationaleFingerprint);
-  const finalRationale = rationaleUsable
-    ? storedRationale
-    : storedRationale
-      ? generateRationaleText({
-          includesSale: exitStrategy !== "rent",
-          roi, tdc, netProfit, marginOfSafety, marginOfSafetyPercent,
-          noi, dscr, capRate, cashOnCash,
-        })
-      : "";
+  let finalRationale = "";
+  if (storedIsCurrent) {
+    finalRationale = storedRationale;
+  } else if (storedRationale) {
+    finalRationale = generateRationaleText({
+      includesSale: exitStrategy !== "rent",
+      roi, tdc, netProfit, marginOfSafety, marginOfSafetyPercent,
+      noi, dscr, capRate, cashOnCash,
+    });
+  }
 
   return {
     projectName: project.name,
