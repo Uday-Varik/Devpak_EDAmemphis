@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -90,18 +90,12 @@ const ProjectBuilder = () => {
     return () => window.removeEventListener("navigate-section", handler);
   }, []);
 
-  useEffect(() => {
-    if (user && id) {
-      fetchProjectData();
-    }
-  }, [user, id]);
-
   // Persist active section per project so users return to where they left off.
   useEffect(() => {
     if (id) localStorage.setItem(`devpack:lastSection:${id}`, activeSection);
   }, [activeSection, id]);
 
-  const fetchProjectData = async () => {
+  const fetchProjectData = useCallback(async () => {
     try {
       const { data: projectData, error: projectError } = await supabase
         .from("projects")
@@ -153,7 +147,13 @@ const ProjectBuilder = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    if (user && id) {
+      fetchProjectData();
+    }
+  }, [user, id, fetchProjectData]);
 
   const handleSaveSection = async (data: Record<string, any>, markComplete: boolean = false) => {
     if (!id) return;
