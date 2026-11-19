@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { markPageUnloading } from "@/utils/unloadSave";
 
 export type AutoSaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -73,12 +74,25 @@ export const useAutoSave = (
     };
   }, [data, delay]);
 
-  // beforeunload warning + best-effort save on tab close/refresh
+  // Fire-and-forget save for unload/unmount. The page cannot await it, so the
+  // rejection must be handled here, or it surfaces as an unhandled promise rejection.
+  const saveInBackground = () => {
+    try {
+      Promise.resolve(onSaveRef.current(latestDataRef.current)).catch((e) =>
+        console.error("Auto-save on leave failed:", e)
+      );
+    } catch (e) {
+      console.error("Auto-save on leave failed:", e);
+    }
+  };
+
+  // beforeunload warning + final save on tab close/refresh. The prompt shows while dirtyRef is
+  // set, which stays true until a save succeeds, so pending and failed saves both prompt.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (dirtyRef.current) {
-        // Fire-and-forget save (browser may cut it short, but we try)
-        try { onSaveRef.current(latestDataRef.current); } catch {}
+        markPageUnloading();
+        saveInBackground();
         e.preventDefault();
         e.returnValue = "";
         return "";
@@ -91,9 +105,7 @@ export const useAutoSave = (
   // Save on unmount (e.g., user navigates to another section)
   useEffect(() => {
     return () => {
-      if (dirtyRef.current) {
-        try { onSaveRef.current(latestDataRef.current); } catch (e) { console.error(e); }
-      }
+      if (dirtyRef.current) saveInBackground();
     };
   }, []);
 
