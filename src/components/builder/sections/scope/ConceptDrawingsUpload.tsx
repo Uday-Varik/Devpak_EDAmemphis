@@ -47,11 +47,13 @@ export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: Concept
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${projectId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
-      const { error } = await supabase.storage
-        .from("project-drawings")
-        .upload(path, file, { upsert: false });
-
-      if (error) {
+      // Network failures reject instead of returning `error`; handle both the same way.
+      try {
+        const { error } = await supabase.storage
+          .from("project-drawings")
+          .upload(path, file, { upsert: false });
+        if (error) throw error;
+      } catch (error) {
         toast.error(`Failed to upload ${file.name}`);
         console.error(error);
         continue;
