@@ -892,7 +892,7 @@ export const BudgetCapitalForm = ({
                     <p className="text-xs text-emerald-600 mt-1">From property ownership — counts toward developer equity</p>
                   </div>
                 )}
-                <div className="space-y-2">
+                <div className="space-y-2" id="developer-equity-field">
                   <Label>Developer Equity (Cash)</Label>
                   <CurrencyInput
                     value={formData.capitalStack.developerEquity}

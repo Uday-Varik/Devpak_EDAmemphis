@@ -7,12 +7,12 @@ import { buildOverviewFingerprint, buildRationaleFingerprint, generateRationaleT
 
 
 const generatePDFOverview = (d: {
-  projectName: string; address: string; tdc: number; arv: number; netProfit: number; roi: number;
+  projectName: string; address: string; tdc: number; arv: number; netProfit: number; roi: number | null;
   exitStrategy: string; scope: Record<string, any>; visionMarket: Record<string, any>;
   siteLocation: Record<string, any>; schedule: Record<string, any>; team: Record<string, any>;
   preparedBy: string; companyName: string; fundingGap: number; totalSources: number;
   equity: number; bankLoan: number; privateLender: number; grants: number; landEquity?: number;
-  packagePurpose?: string; cashOnCash?: number;
+  packagePurpose?: string; cashOnCash?: number | null;
 }): string => {
   const parts: string[] = [];
   const fmt = (v: number) => v.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -38,7 +38,11 @@ const generatePDFOverview = (d: {
   } else if (d.packagePurpose === "grant-application" && (d.grants || 0) > 0) {
     parts.push(`This project seeks ${fmt(d.grants)} in grant funding to address community housing needs and close the project's funding gap.`);
   } else if (d.packagePurpose === "investor-pitch" && d.arv > 0) {
-    parts.push(`This project presents an investment opportunity with projected returns of ${d.roi.toFixed(1)}% on invested equity.`);
+    parts.push(
+      d.roi === null
+        ? "This project presents an investment opportunity. No developer cash is invested, so a return on cash is not stated."
+        : `This project presents an investment opportunity with projected returns of ${d.roi.toFixed(1)}% on invested equity.`
+    );
   } else if (d.packagePurpose === "internal-planning") {
     parts.push(`This document captures the project's plan, budget, schedule, and risk profile for internal reference.`);
   }
@@ -57,7 +61,10 @@ const generatePDFOverview = (d: {
 
   if (d.tdc > 0) {
     let financial = `Total development costs are projected at ${fmt(d.tdc)}`;
-    if (d.arv > 0) financial += ` with an after-repair value of ${fmt(d.arv)}, yielding an expected profit of ${fmt(d.netProfit)} and ROI of ${d.roi.toFixed(1)}%`;
+    if (d.arv > 0) {
+      const returnText = d.roi === null ? "no return on cash stated (cash not invested)" : `an ROI of ${d.roi.toFixed(1)}%`;
+      financial += ` with an after-repair value of ${fmt(d.arv)}, yielding an expected profit of ${fmt(d.netProfit)} and ${returnText}`;
+    }
     financial += ".";
     parts.push(financial);
   }
@@ -127,7 +134,7 @@ export interface ProjectExportData extends PDFData {
   opex: number;
   annualDebtService: number;
   cashFlow: number;
-  cashOnCash: number;
+  cashOnCash: number | null;
   onePercentRule: number;
   budgetTotals: Omit<import("./calculations").BudgetTotals, "purchasePrice">;
   noi: number;
@@ -215,7 +222,11 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
   const riskItems: string[] = [];
   if (arv > 0) {
     const stress = computeSensitivityScenarios(fin).find((sc) => sc.label.startsWith("Stress"));
-    riskItems.push(`Stress test scenario shows ${(stress?.return ?? 0).toFixed(1)}% return`);
+    riskItems.push(
+      stress?.return == null
+        ? "Stress test scenario: return on cash not stated (cash not invested)"
+        : `Stress test scenario shows ${stress.return.toFixed(1)}% return`
+    );
     if (marginOfSafety !== 0) {
       riskItems.push(`Margin of Safety: $${Math.abs(marginOfSafety).toLocaleString()} buffer (${marginOfSafetyPercent.toFixed(1)}%)`);
     }

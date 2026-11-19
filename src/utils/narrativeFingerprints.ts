@@ -1,6 +1,7 @@
 // Shared fingerprint builders so the app forms and the PDF export agree on
 // whether a stored narrative still matches the live figures.
 import { buildFingerprint } from "./narrativeStaleness";
+import { CASH_NOT_INVESTED } from "./calculations";
 
 export interface OverviewFingerprintInput {
   address: string;
@@ -8,7 +9,7 @@ export interface OverviewFingerprintInput {
   tdc: number;
   arv: number;
   netProfit: number;
-  roi: number;
+  roi: number | null;
   noi: number;
   units: number;
   sqftPlanned: number;
@@ -24,7 +25,7 @@ export const buildOverviewFingerprint = (v: OverviewFingerprintInput): string =>
     tdc: v.tdc || 0,
     arv: v.arv || 0,
     netProfit: v.netProfit || 0,
-    roi: v.roi || 0,
+    roi: v.roi ?? null,
     noi: v.noi || 0,
     units: v.units || 0,
     sqftPlanned: v.sqftPlanned || 0,
@@ -35,11 +36,11 @@ export const buildOverviewFingerprint = (v: OverviewFingerprintInput): string =>
 
 export interface RationaleFingerprintInput {
   decision: string;
-  roi: number;
+  roi: number | null;
   netProfit: number;
   marginOfSafetyPercent: number;
   dscr: number;
-  cashOnCash: number;
+  cashOnCash: number | null;
   tdc: number;
 }
 
@@ -48,11 +49,11 @@ export interface RationaleFingerprintInput {
 export const buildRationaleFingerprint = (v: RationaleFingerprintInput): string =>
   buildFingerprint({
     decision: v.decision || "",
-    roi: v.roi || 0,
+    roi: v.roi ?? null,
     netProfit: v.netProfit || 0,
     marginOfSafetyPercent: v.marginOfSafetyPercent || 0,
     dscr: v.dscr || 0,
-    cashOnCash: v.cashOnCash || 0,
+    cashOnCash: v.cashOnCash ?? null,
     tdc: v.tdc || 0,
   });
 
@@ -64,7 +65,7 @@ const money = (n: number) =>
 export const generateRationaleText = (
   v: {
     includesSale: boolean;
-    roi: number;
+    roi: number | null;
     tdc: number;
     netProfit: number;
     marginOfSafety: number;
@@ -72,20 +73,26 @@ export const generateRationaleText = (
     noi: number;
     dscr: number;
     capRate: number;
-    cashOnCash: number;
+    cashOnCash: number | null;
   },
   criteria?: { passed: number; total: number }
 ): string => {
   const parts: string[] = [];
+  // No developer cash invested: a return cannot be stated, so say so instead of "0.0%".
+  const cocText = v.cashOnCash === null ? CASH_NOT_INVESTED : `${v.cashOnCash.toFixed(1)}%`;
   if (v.includesSale) {
-    parts.push(`Projected ROI of ${(v.roi || 0).toFixed(1)}% on total development costs of ${money(v.tdc)}`);
+    parts.push(
+      v.roi === null
+        ? `Return on cash not stated (${CASH_NOT_INVESTED.toLowerCase()}) on total development costs of ${money(v.tdc)}`
+        : `Projected ROI of ${v.roi.toFixed(1)}% on total development costs of ${money(v.tdc)}`
+    );
     parts.push(`net profit of ${money(v.netProfit)}`);
     if (v.marginOfSafety !== 0) {
       parts.push(`a ${(v.marginOfSafetyPercent || 0).toFixed(1)}% margin of safety`);
     }
   } else {
     parts.push(`Projected NOI of ${money(v.noi)} with a DSCR of ${(v.dscr || 0).toFixed(2)}`);
-    parts.push(`a ${(v.capRate || 0).toFixed(1)}% cap rate and ${(v.cashOnCash || 0).toFixed(1)}% cash-on-cash return`);
+    parts.push(`a ${(v.capRate || 0).toFixed(1)}% cap rate and ${cocText} cash-on-cash return`);
   }
   if (criteria) parts.push(`${criteria.passed} of ${criteria.total} feasibility criteria met`);
   return `${parts.join(", ")}.`;

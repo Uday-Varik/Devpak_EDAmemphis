@@ -56,8 +56,9 @@ export interface FeasibilityCalculations {
   netSaleProceeds: number;
   netProfit: number;
   profitMargin: number;
-  roi: number;
-  annualizedRoi: number;
+  /** Null when no developer cash is invested. */
+  roi: number | null;
+  annualizedRoi: number | null;
   allInBasis: number;
   seventyPercentMaxPurchase: number;
   seventyPercentPassed: boolean;
@@ -77,7 +78,8 @@ export interface FeasibilityCalculations {
   cashFlowBeforeTaxes: number;
   monthlyCashFlow: number;
   capRate: number;
-  cashOnCash: number;
+  /** Null when no developer cash is invested. */
+  cashOnCash: number | null;
   dscr: number;
   onePercentRule: number;
   onePercentPassed: boolean;

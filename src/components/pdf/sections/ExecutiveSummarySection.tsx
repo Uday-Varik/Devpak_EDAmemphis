@@ -1,6 +1,7 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency, formatPercent, formatCompact } from "../pdfUtils";
+import { CASH_NOT_INVESTED } from "@/utils/calculations";
 
 interface ExecutiveSummarySectionProps {
   projectName: string;
@@ -8,7 +9,8 @@ interface ExecutiveSummarySectionProps {
   tdc: number;
   arv: number;
   netProfit: number;
-  roi: number;
+  /** Null when no developer cash is invested. */
+  roi: number | null;
   profitMargin: number;
   exitStrategy: string;
   projectOverview: string;
@@ -92,7 +94,7 @@ export const ExecutiveSummarySection = (props: ExecutiveSummarySectionProps) => 
         { label: "Total Investment", value: tdc > 0 ? formatCompact(tdc) : "—" },
         { label: "After Repair Value", value: hasARV ? formatCompact(arv) : "—" },
         { label: "Net Profit", value: hasARV ? formatCompact(netProfit) : "—", highlight: hasARV && netProfit > 0 },
-        { label: "ROI", value: hasARV ? formatPercent(roi) : "—", highlight: hasARV && roi > 0 },
+        { label: "ROI", value: hasARV ? (roi === null ? CASH_NOT_INVESTED : formatPercent(roi)) : "—", highlight: hasARV && roi !== null && roi > 0 },
         { label: "Profit Margin", value: hasARV ? formatPercent(profitMargin) : "—" },
         { label: "Exit Strategy", value: EXIT_LABELS[exitStrategy] || "—" },
       ];

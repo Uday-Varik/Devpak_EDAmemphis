@@ -1,4 +1,4 @@
-import { allInBasisRule, seventyRule, ruleCheckLabel } from "@/utils/calculations";
+import { allInBasisRule, seventyRule, ruleCheckLabel, CASH_NOT_INVESTED } from "@/utils/calculations";
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 import type { ProjectExportData } from "@/utils/fetchProjectData";
 import { colors } from "./PDFStyles";
@@ -28,7 +28,8 @@ const s = StyleSheet.create({
 });
 
 const fmt = (v: number) => v.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
-const fmtPct = (v: number) => `${v.toFixed(1)}%`;
+/** Null means no developer cash is invested: shown as text, never as 0.0%. */
+const fmtPct = (v: number | null) => (v === null ? CASH_NOT_INVESTED : `${v.toFixed(1)}%`);
 const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent → Sell" };
 
 const Footer = ({ projectName }: { projectName: string }) => (

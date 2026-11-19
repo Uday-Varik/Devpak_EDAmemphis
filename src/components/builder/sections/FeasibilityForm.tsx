@@ -39,7 +39,8 @@ import {
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams, useNavigate } from "react-router-dom";
-import { computeBudgetTotals, computeProjectFinancials, computeSensitivityScenarios, NO_ARV_LABEL } from "@/utils/calculations";
+import { computeBudgetTotals, computeProjectFinancials, computeSensitivityScenarios, NO_ARV_LABEL, CASH_NOT_INVESTED, annualizeRoi } from "@/utils/calculations";
+import { CashNotInvestedNote } from "@/components/builder/CashNotInvested";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { AutoSaveIndicator } from "@/components/builder/AutoSaveIndicator";
 import { isNarrativeStale } from "@/utils/narrativeStaleness";
@@ -267,7 +268,7 @@ export const FeasibilityForm = ({
     const profitMargin = rentalFin.profitMargin;
     const roi = rentalFin.roi;
     const holdPeriod = formData.exitStrategy.holdPeriod || 12;
-    const annualizedRoi = holdPeriod > 12 ? (roi / holdPeriod) * 12 : roi;
+    const annualizedRoi = roi === null ? null : annualizeRoi(roi, holdPeriod);
     const allInBasis = rentalFin.allInBasis;
     const seventyPercentMaxPurchase = rentalFin.seventyMaxPurchase;
     // ARV-dependent checks from the engine; "na" (no ARV) is not a pass.
@@ -384,9 +385,10 @@ export const FeasibilityForm = ({
     const compsEntered = visionComps.length > 0;
     const budgetComplete = budgetTotals.totalDevelopmentCost > 0;
     const financingIdentified = developerEquity > 0 || (budgetData?.capitalStack?.bankLoan || 0) > 0;
+    // No developer cash invested means no return to test, so the pencil test does not pass.
     const pencilPassed = includesSale
-      ? calculations.roi >= 15
-      : calculations.cashOnCash >= 8;
+      ? calculations.roi !== null && calculations.roi >= 15
+      : calculations.cashOnCash !== null && calculations.cashOnCash >= 8;
     
     const worstCaseReturn = includesSale
       ? calculations.netProfit * 0.8
@@ -667,27 +669,24 @@ export const FeasibilityForm = ({
                     <div className="space-y-2">
                       <Label>ROI</Label>
                       <div className="flex items-center gap-2">
-                        <Input
-                          value={`${calculations.roi.toFixed(1)}%`}
-                          readOnly
-                          className="bg-gray-50 border-gray-200 text-gray-700"
-                        />
+                        <p className="flex-1 py-2 text-sm font-medium text-gray-700">
+                          {calculations.roi === null ? CASH_NOT_INVESTED : `${calculations.roi.toFixed(1)}%`}
+                        </p>
                         <span className={cn(
                           "text-xs px-2 py-1 rounded",
-                          calculations.roi >= 15 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                          calculations.roi !== null && calculations.roi >= 15 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
                         )}>
                           Target: &gt;15%
                         </span>
                       </div>
+                      {calculations.roi === null && <div className="pt-1"><CashNotInvestedNote /></div>}
                     </div>
                     {formData.exitStrategy.holdPeriod > 12 && (
                       <div className="space-y-2">
                         <Label>Annualized ROI</Label>
-                        <Input
-                          value={`${calculations.annualizedRoi.toFixed(1)}%`}
-                          readOnly
-                          className="bg-gray-50 border-gray-200 text-gray-700"
-                        />
+                        <p className="py-2 text-sm font-medium text-gray-700">
+                          {calculations.annualizedRoi === null ? CASH_NOT_INVESTED : `${calculations.annualizedRoi.toFixed(1)}%`}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -989,14 +988,12 @@ export const FeasibilityForm = ({
                     <div className="space-y-2">
                       <Label>Cash-on-Cash Return</Label>
                       <div className="flex items-center gap-2">
-                        <Input
-                          value={`${calculations.cashOnCash.toFixed(1)}%`}
-                          readOnly
-                          className="bg-gray-50 border-gray-200 text-gray-700"
-                        />
+                        <p className="flex-1 py-2 text-sm font-medium text-gray-700">
+                          {calculations.cashOnCash === null ? CASH_NOT_INVESTED : `${calculations.cashOnCash.toFixed(1)}%`}
+                        </p>
                         <span className={cn(
                           "text-xs px-2 py-1 rounded",
-                          calculations.cashOnCash >= 8 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                          calculations.cashOnCash !== null && calculations.cashOnCash >= 8 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
                         )}>
                           Target: &gt;8%
                         </span>
@@ -1291,9 +1288,9 @@ export const FeasibilityForm = ({
                             </td>
                             <td className={cn(
                               "text-right py-2 font-medium",
-                              scenario.return >= 15 ? "text-green-600" : scenario.return >= 0 ? "text-amber-600" : "text-red-600"
+                              scenario.return === null ? "text-gray-500" : scenario.return >= 15 ? "text-green-600" : scenario.return >= 0 ? "text-amber-600" : "text-red-600"
                             )}>
-                              {scenario.return.toFixed(1)}%
+                              {scenario.return === null ? CASH_NOT_INVESTED : `${scenario.return.toFixed(1)}%`}
                             </td>
                           </tr>
                         ))}

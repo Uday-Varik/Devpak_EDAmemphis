@@ -1,5 +1,6 @@
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 import type { ProjectExportData } from "@/utils/fetchProjectData";
+import { CASH_NOT_INVESTED } from "@/utils/calculations";
 import { colors } from "./PDFStyles";
 
 const s = StyleSheet.create({
@@ -22,7 +23,8 @@ const s = StyleSheet.create({
 });
 
 const fmt = (v: number) => v.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
-const fmtPct = (v: number) => `${v.toFixed(1)}%`;
+/** Null means no developer cash is invested: shown as text, never as 0.0%. */
+const fmtPct = (v: number | null) => (v === null ? CASH_NOT_INVESTED : `${v.toFixed(1)}%`);
 const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent → Sell" };
 
 const MetricRow = ({ label, value }: { label: string; value: string }) => (
@@ -110,7 +112,7 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
             <View style={{ marginTop: 4, borderTopWidth: 0.5, borderTopColor: colors.border, paddingTop: 4 }}>
               <Text style={[s.label, { marginBottom: 2 }]}>Sensitivity</Text>
               <MetricRow label="Best Case" value={`${fmtPct(bestRoi)} ROI`} />
-              <MetricRow label="Base Case" value={`${fmtPct(data.roi)} ROI`} />
+              <MetricRow label="Base Case" value={data.roi === null ? CASH_NOT_INVESTED : `${fmtPct(data.roi)} ROI`} />
               <MetricRow label="Worst Case" value={`${fmtPct(worstRoi)} ROI`} />
             </View>
             <MetricRow label="Resilience Score" value={`${resPct}%`} />

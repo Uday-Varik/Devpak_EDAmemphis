@@ -1,4 +1,4 @@
-import { allInBasisRule, seventyRule, ruleCheckLabel } from "@/utils/calculations";
+import { allInBasisRule, seventyRule, ruleCheckLabel, CASH_NOT_INVESTED } from "@/utils/calculations";
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency, formatPercent } from "../pdfUtils";
@@ -14,7 +14,8 @@ interface FeasibilitySectionProps {
     salesCosts: number;
     netSaleProceeds: number;
     netProfit: number;
-    roi: number;
+    /** Null when no developer cash is invested. */
+    roi: number | null;
     profitMargin: number;
     allInBasis: number;
     seventyMaxPurchase: number;
@@ -27,7 +28,7 @@ interface FeasibilitySectionProps {
     annualDebtService: number;
     cashFlow: number;
     capRate: number;
-    cashOnCash: number;
+    cashOnCash: number | null;
     dscr: number;
     exitStrategy: string;
     /** Precomputed on the netTdc basis by fetchProjectData. */
@@ -52,7 +53,10 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
 
   const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent → Sell" };
 
-  const getScenarioColor = (ret: number) => (ret >= 20 ? colors.green : ret >= 0 ? colors.gold : colors.red);
+  const getScenarioColor = (ret: number | null) =>
+    ret === null ? colors.gold : ret >= 20 ? colors.green : ret >= 0 ? colors.gold : colors.red;
+  // Cash-return values: never "0.0%" when no developer cash is invested.
+  const returnText = (v: number | null) => (v === null ? CASH_NOT_INVESTED : formatPercent(v));
 
   return (
     <View>
@@ -67,7 +71,7 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
       {!!includesSale && arv > 0 && (
         <View style={styles.keyReturnsRow}>
           {[
-            { label: "ROI", value: formatPercent(roi), pass: roi >= 15 },
+            { label: "ROI", value: returnText(roi), pass: roi !== null && roi >= 15 },
             { label: "Profit Margin", value: formatPercent(profitMargin), pass: profitMargin >= 10 },
             { label: "All-in Basis", value: formatPercent(allInBasis), pass: allInBasis <= 85 },
           ].map((m, i) => (
@@ -94,7 +98,7 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
               { label: "Net Sale Proceeds", value: formatCurrency(netSaleProceeds) },
               { label: "Total Development Cost", value: formatCurrency(tdc) },
               { label: "Net Profit", value: formatCurrency(netProfit) },
-              { label: "ROI (on Equity)", value: formatPercent(roi) },
+              { label: "ROI (on Equity)", value: returnText(roi) },
               { label: "Profit Margin", value: formatPercent(profitMargin) },
               { label: "All-in Basis", value: formatPercent(allInBasis) },
             ].map((row, i) => (
@@ -138,7 +142,7 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
               { label: "Annual Debt Service", value: formatCurrency(annualDS) },
               { label: "Cash Flow Before Taxes", value: formatCurrency(cashFlow) },
               { label: "Cap Rate", value: formatPercent(capRate) },
-              { label: "Cash-on-Cash Return", value: formatPercent(cashOnCash) },
+              { label: "Cash-on-Cash Return", value: returnText(cashOnCash) },
               { label: "DSCR", value: dscr.toFixed(2) },
             ].map((row, i) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
@@ -169,7 +173,7 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
                 </View>
                 <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatCurrency(s.arv)}</Text>
                 <Text style={[styles.tableCell, { flex: 1, textAlign: "right", color: s.profit >= 0 ? colors.green : colors.red }]}>{formatCurrency(s.profit)}</Text>
-                <Text style={[styles.tableCellBold, { flex: 1, textAlign: "right", color: getScenarioColor(s.return) }]}>{formatPercent(s.return)}</Text>
+                <Text style={[styles.tableCellBold, { flex: 1, textAlign: "right", color: getScenarioColor(s.return) }]}>{returnText(s.return)}</Text>
               </View>
             ))}
           </View>

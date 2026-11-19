@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { computeProjectFinancials, computeSensitivityScenarios, roundCurrency, indefiniteArticle } from "@/utils/calculations";
+import { computeProjectFinancials, computeSensitivityScenarios, roundCurrency, indefiniteArticle, CASH_NOT_INVESTED } from "@/utils/calculations";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { AutoSaveIndicator } from "@/components/builder/AutoSaveIndicator";
 import { Button } from "@/components/ui/button";
@@ -83,6 +83,8 @@ const formatCompact = (value: number): string => {
 };
 
 const formatPercent = (value: number): string => `${value.toFixed(1)}%`;
+/** Cash returns: null means no developer cash is invested, shown as text rather than 0.0%. */
+const returnText = (value: number | null): string => (value === null ? CASH_NOT_INVESTED : formatPercent(value));
 
 export const ExecutiveSummaryForm = ({
   data,
@@ -245,7 +247,7 @@ export const ExecutiveSummaryForm = ({
     const marginOfSafety = fin.marginOfSafety;
     const marginOfSafetyPct = fin.marginOfSafetyPercent;
     const worstCaseRoi =
-      computeSensitivityScenarios(fin).find((sc) => sc.label.startsWith("Stress"))?.return ?? 0;
+      computeSensitivityScenarios(fin).find((sc) => sc.label.startsWith("Stress"))?.return ?? null;
 
     const capParts: string[] = [];
     if (cashEquity > 0) capParts.push(`${formatCompact(cashEquity)} developer equity (cash)`);
@@ -444,7 +446,9 @@ export const ExecutiveSummaryForm = ({
     } else if (purpose === "grant-application" && (calcs.totalSubsidies || 0) > 0) {
       pPurpose = `This project seeks ${formatCurrency(calcs.totalSubsidies)} in grant funding to address community housing needs and close the project's funding gap.`;
     } else if (purpose === "investor-pitch" && hasARV) {
-      pPurpose = `This project presents an investment opportunity with projected returns of ${formatPercent(roi)} on invested equity.`;
+      pPurpose = roi === null
+        ? "This project presents an investment opportunity. No developer cash is invested, so a return on cash is not stated."
+        : `This project presents an investment opportunity with projected returns of ${formatPercent(roi)} on invested equity.`;
     } else if (purpose === "internal-planning") {
       pPurpose = `This document captures the project's plan, budget, schedule, and risk profile for internal reference.`;
     }
@@ -464,7 +468,9 @@ export const ExecutiveSummaryForm = ({
     if (hasARV) {
       p3 += `, with an after-repair value of ${formatCurrency(arv)}`;
       if (sqftPlanned > 0) p3 += ` (${formatCurrency(Math.round(salePerSF))} per square foot)`;
-      p3 += `, yielding an expected profit of ${formatCurrency(netProfit)} and a ${formatPercent(roi)} return on invested equity.`;
+      p3 += roi === null
+        ? `, yielding an expected profit of ${formatCurrency(netProfit)} and no return on cash stated (cash not invested).`
+        : `, yielding an expected profit of ${formatCurrency(netProfit)} and a ${formatPercent(roi)} return on invested equity.`;
     } else {
       p3 += ".";
     }
@@ -615,7 +621,7 @@ export const ExecutiveSummaryForm = ({
       items.push({ label: "Funding", value: calcs.capitalSummary });
     }
     if (calcs.hasARV) {
-      items.push({ label: "Key Returns", value: `ROI ${formatPercent(calcs.roi)}, Profit Margin ${formatPercent(calcs.profitMargin)}` });
+      items.push({ label: "Key Returns", value: `ROI ${returnText(calcs.roi)}, Profit Margin ${formatPercent(calcs.profitMargin)}` });
     }
     return items;
   }, [calcs]);
@@ -624,7 +630,11 @@ export const ExecutiveSummaryForm = ({
   const riskItems = useMemo(() => {
     const items: string[] = [];
     if (calcs.hasARV) {
-      items.push(`Stress test scenario shows ${formatPercent(calcs.worstCaseRoi)} return`);
+      items.push(
+        calcs.worstCaseRoi === null
+          ? "Stress test scenario: return on cash not stated (cash not invested)"
+          : `Stress test scenario shows ${formatPercent(calcs.worstCaseRoi)} return`
+      );
       if (calcs.marginOfSafety !== 0) {
         items.push(`Margin of Safety: ${formatCompact(calcs.marginOfSafety)} buffer (${formatPercent(calcs.marginOfSafetyPct)})`);
       }
@@ -766,7 +776,7 @@ export const ExecutiveSummaryForm = ({
                 <>
                   <SnapshotItem icon={TrendingUp} label="After Repair Value" value={calcs.hasARV ? formatCompact(calcs.arv) : "—"} highlight={calcs.hasARV} />
                   <SnapshotItem icon={DollarSign} label="Net Profit" value={calcs.hasARV ? formatCompact(calcs.netProfit) : "—"} highlight={calcs.hasARV && calcs.netProfit > 0} />
-                  <SnapshotItem icon={TrendingUp} label="ROI (Cash)" value={calcs.hasARV ? formatPercent(calcs.roi) : "—"} highlight={calcs.hasARV && calcs.roi > 15} />
+                  <SnapshotItem icon={TrendingUp} label="ROI (Cash)" value={calcs.hasARV ? returnText(calcs.roi) : "—"} highlight={calcs.hasARV && calcs.roi !== null && calcs.roi > 15} />
                 </>
               )}
               <SnapshotItem icon={Target} label="Exit Strategy" value={EXIT_LABELS[calcs.exitStrategy] || "—"} />
