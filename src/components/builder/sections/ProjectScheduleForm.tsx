@@ -17,6 +17,7 @@ import { GanttChart } from "./project-schedule/GanttChart";
 import { MilestoneEducation } from "./project-schedule/MilestoneEducation";
 import { cn } from "@/lib/utils";
 import { useProjectType } from "@/hooks/useProjectType";
+import { toast } from "sonner";
 
 interface Milestone {
   id: string;
@@ -305,7 +306,16 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
 
     if (shouldCascade) {
       console.log(`[updateMilestone] triggering cascade from index ${index} (${m.id})`);
+      const beforeCascade = updated;
       updated = cascadeFromIndex(updated, index);
+      const shifted = updated.filter(
+        (ms, i) =>
+          i !== index &&
+          (ms.startDate !== beforeCascade[i].startDate || ms.endDate !== beforeCascade[i].endDate)
+      ).length;
+      if (shifted > 0) {
+        toast.info(`Moved ${shifted} dependent milestone${shifted > 1 ? "s" : ""} to keep the schedule in order.`);
+      }
     }
 
     setMilestones(updated);
