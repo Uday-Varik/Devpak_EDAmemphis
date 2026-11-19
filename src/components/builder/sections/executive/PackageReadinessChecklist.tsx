@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { cleanAddressPart } from "@/utils/address";
 import { computeResilience } from "@/utils/resilience";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
+import { countObtainedInsurance } from "@/utils/riskInsurance";
 
 interface CheckItem {
   label: string;
@@ -110,30 +111,7 @@ export const PackageReadinessChecklist = ({
     },
     {
       label: "At least 1 insurance type obtained",
-      passed: (() => {
-        const insFields = [
-          "buildersRiskInsurance",
-          "generalLiabilityInsurance",
-          "titleInsurance",
-          "propertyInsurance",
-        ];
-        const nested = risk.insurance || {};
-        const nestedLegacy = ["buildersRisk", "generalLiability", "titleInsurance", "propertyInsurance"];
-        const values = insFields.map((f) => risk[f]);
-        const nestedValues = nestedLegacy.map((f) => nested[f]);
-        const passed =
-          values.some((v) => v === "Obtained") || nestedValues.some((v) => v === "Obtained");
-        console.log("[PackageReadiness] insurance check:", {
-          rawRiskKeys: Object.keys(risk),
-          flatFieldsChecked: insFields,
-          flatValues: Object.fromEntries(insFields.map((f) => [f, risk[f]])),
-          nestedFieldsChecked: nestedLegacy,
-          nestedValues: Object.fromEntries(nestedLegacy.map((f) => [f, nested[f]])),
-          comparison: '=== "Obtained"',
-          passed,
-        });
-        return passed;
-      })(),
+      passed: countObtainedInsurance(risk) > 0,
       section: "risk-assessment",
     },
     {

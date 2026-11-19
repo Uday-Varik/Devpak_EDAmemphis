@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ShieldAlert, Shield, FileCheck } from "lucide-react";
+import { countObtainedInsurance } from "@/utils/riskInsurance";
 
 interface RiskSummaryCardProps {
   formData: Record<string, any>;
@@ -15,13 +16,7 @@ export const RiskSummaryCard = ({ formData }: RiskSummaryCardProps) => {
     return { high, medium, low };
   }, [risks]);
 
-  const insuranceFields = [
-    formData.buildersRiskInsurance,
-    formData.generalLiabilityInsurance,
-    formData.titleInsurance,
-    formData.propertyInsurance,
-  ];
-  const obtainedCount = insuranceFields.filter((v) => v === "Obtained").length;
+  const obtainedCount = countObtainedInsurance(formData);
 
   const insuranceColor =
     obtainedCount === 4 ? "text-green-600" : obtainedCount > 0 ? "text-amber-600" : "text-red-500";

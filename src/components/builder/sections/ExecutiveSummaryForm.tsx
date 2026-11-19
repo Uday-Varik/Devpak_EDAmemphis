@@ -52,6 +52,7 @@ import { StaleNarrativeNotice } from "@/components/builder/StaleNarrativeNotice"
 import { buildOverviewFingerprint } from "@/utils/narrativeFingerprints";
 import { isNarrativeStale, PACKAGE_SECTIONS, countCompletedSections } from "@/utils/narrativeStaleness";
 import { composeAddress } from "@/utils/address";
+import { countObtainedInsurance } from "@/utils/riskInsurance";
 
 interface ExecutiveSummaryFormProps {
   data: Record<string, any>;
@@ -336,10 +337,8 @@ export const ExecutiveSummaryForm = ({
     const mediumRisks = risks.filter((r: any) => r.likelihood === "Medium").length;
     const lowRisks = risks.filter((r: any) => r.likelihood === "Low").length;
 
-    const insurance = risk.insurance || {};
-    const insuranceFields = ["buildersRisk", "generalLiability", "titleInsurance", "propertyInsurance"];
-    const insuranceObtained = insuranceFields.filter(f => insurance[f] === "Obtained").length;
-    const permitStatus = insurance.permitStatus || "";
+    const insuranceObtained = countObtainedInsurance(risk);
+    const permitStatus = risk.permitStatus || "";
 
     // Resilience — single shared source (keys + scoring) so the percentage
     // and the category breakdown can never disagree.
