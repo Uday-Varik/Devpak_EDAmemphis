@@ -90,10 +90,16 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       // Name comes from the developer profile first; legacy profile only if empty.
-      const [{ data: devProfile }, { data: profileData }] = await Promise.all([
+      const [devRes, profRes] = await Promise.all([
         supabase.from("developer_profiles" as any).select("full_name").eq("user_id", user!.id).maybeSingle(),
         supabase.from("profiles").select("full_name, photo_url").eq("user_id", user!.id).maybeSingle(),
       ]);
+      if (devRes.error || profRes.error) {
+        console.error("Error fetching profile:", devRes.error ?? profRes.error);
+        toast({ title: "Couldn't load your profile. Some details may be missing.", variant: "destructive" });
+      }
+      const devProfile = devRes.data;
+      const profileData = profRes.data;
       const devName = ((devProfile as any)?.full_name || "").trim();
       setProfile({
         ...(profileData || { photo_url: null }),
@@ -101,12 +107,16 @@ const Dashboard = () => {
       } as any);
 
       // Fetch projects
-      const { data: projectsData } = await supabase
+      const { data: projectsData, error: projectsError } = await supabase
         .from("projects")
         .select("*")
         .eq("user_id", user!.id)
         .order("updated_at", { ascending: false });
 
+      if (projectsError) {
+        console.error("Error fetching projects:", projectsError);
+        toast({ title: "Couldn't load your projects. Refresh the page to try again.", variant: "destructive" });
+      }
       setProjects(projectsData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
