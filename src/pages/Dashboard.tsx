@@ -111,11 +111,18 @@ const Dashboard = () => {
     if (user) {
       // Check if developer profile exists; if not, send to onboarding
       (async () => {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("developer_profiles" as any)
           .select("id")
           .eq("user_id", user.id)
           .maybeSingle();
+        if (error) {
+          // A failed check is not "no profile": stay here and let the user retry.
+          console.error("Error checking developer profile:", error);
+          toast({ title: "Couldn't load your dashboard. Refresh the page to try again.", variant: "destructive" });
+          setLoading(false);
+          return;
+        }
         if (!data) {
           navigate("/onboarding");
           return;
