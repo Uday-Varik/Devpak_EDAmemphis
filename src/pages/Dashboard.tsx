@@ -4,7 +4,6 @@ import { FileText, MapPin, Calendar, Plus, User, LogOut, LayoutDashboard, Trash2
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { geocodeToSiteFields } from "@/utils/geocodeAddress";
 import {
@@ -97,7 +96,7 @@ const Dashboard = () => {
       ]);
       if (devRes.error || profRes.error) {
         console.error("Error fetching profile:", devRes.error ?? profRes.error);
-        toast.error("Couldn't load your profile. Some details may be missing.");
+        toast({ title: "Couldn't load your profile. Some details may be missing.", variant: "destructive" });
       }
       const devProfile = devRes.data;
       const profileData = profRes.data;
@@ -116,7 +115,7 @@ const Dashboard = () => {
 
       if (projectsError) {
         console.error("Error fetching projects:", projectsError);
-        toast.error("Couldn't load your projects. Refresh the page to try again.");
+        toast({ title: "Couldn't load your projects. Refresh the page to try again.", variant: "destructive" });
       }
       setProjects(projectsData || []);
     } catch (error) {
