@@ -1,5 +1,5 @@
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { DeveloperProfile, EMPTY_DEVELOPER_PROFILE } from "@/types/developerProfile";
@@ -19,40 +19,46 @@ export const useDeveloperProfile = () => {
       return;
     }
     (async () => {
-      const { data, error } = await supabase
-        .from("developer_profiles" as any)
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (!active) return;
-      if (error) {
-        // Don't present a failed read as "no profile": saving now would overwrite the real one.
-        console.error("Error fetching developer profile:", error);
-        toast.error("Couldn't load your developer profile. Refresh the page before saving changes.");
+      try {
+        const { data, error } = await supabase
+          .from("developer_profiles" as any)
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (error) throw error;
+        if (!active) return;
+        if (data) {
+          const d = data as any;
+          setProfile({
+            id: d.id,
+            user_id: d.user_id,
+            full_name: d.full_name || "",
+            entity_name: d.entity_name || "",
+            professional_title: d.professional_title || "",
+            bio: d.bio || "",
+            phone: d.phone || "",
+            email: d.email || user.email || "",
+            licenses: Array.isArray(d.licenses) ? d.licenses : [],
+            certifications: Array.isArray(d.certifications) ? d.certifications : [],
+            years_experience: d.years_experience ?? null,
+            headshot_url: d.headshot_url || "",
+            portfolio: Array.isArray(d.portfolio) ? d.portfolio : [],
+          });
+          setExists(true);
+        } else {
+          setProfile({ ...EMPTY_DEVELOPER_PROFILE, email: user.email || "" });
+          setExists(false);
+        }
+      } catch (error) {
+        // A failed read is not "no profile": leave exists unknown so saving does not overwrite the real one.
+        console.error("Error loading developer profile:", error);
+        if (active) {
+          setProfile({ ...EMPTY_DEVELOPER_PROFILE, email: user.email || "" });
+          toast.error("Couldn't load your developer profile. Refresh the page before saving changes.");
+        }
+      } finally {
+        if (active) setLoading(false);
       }
-      if (data) {
-        const d = data as any;
-        setProfile({
-          id: d.id,
-          user_id: d.user_id,
-          full_name: d.full_name || "",
-          entity_name: d.entity_name || "",
-          professional_title: d.professional_title || "",
-          bio: d.bio || "",
-          phone: d.phone || "",
-          email: d.email || user.email || "",
-          licenses: Array.isArray(d.licenses) ? d.licenses : [],
-          certifications: Array.isArray(d.certifications) ? d.certifications : [],
-          years_experience: d.years_experience ?? null,
-          headshot_url: d.headshot_url || "",
-          portfolio: Array.isArray(d.portfolio) ? d.portfolio : [],
-        });
-        setExists(true);
-      } else {
-        setProfile({ ...EMPTY_DEVELOPER_PROFILE, email: user.email || "" });
-        setExists(false);
-      }
-      setLoading(false);
     })();
     return () => { active = false; };
   }, [user, authLoading]);
