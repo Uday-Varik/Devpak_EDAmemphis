@@ -1,5 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import {
+  DEVELOPER_EQUITY_FIELD_ID,
+  FOCUS_DEVELOPER_EQUITY_EVENT,
+  consumeDeveloperEquityFocus,
+} from "@/components/builder/CashNotInvested";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion,
@@ -120,6 +125,33 @@ export const BudgetCapitalForm = ({
     };
   });
   const [openSections, setOpenSections] = useState<string[]>(["acquisition"]);
+
+  // Opens Sources & Uses and focuses Developer Equity once the field has mounted.
+  // The field lives in a collapsed accordion, so it only exists after the section opens.
+  const focusDeveloperEquity = useCallback(() => {
+    setOpenSections((prev) => (prev.includes("capitalStack") ? prev : [...prev, "capitalStack"]));
+    let tries = 0;
+    const tryFocus = () => {
+      const input = document.getElementById(DEVELOPER_EQUITY_FIELD_ID)?.querySelector("input");
+      if (input) {
+        input.scrollIntoView({ block: "center" });
+        input.focus();
+        return;
+      }
+      if (++tries < 40) setTimeout(tryFocus, 50);
+    };
+    tryFocus();
+  }, []);
+
+  useEffect(() => {
+    if (consumeDeveloperEquityFocus()) focusDeveloperEquity();
+    const onRequest = () => {
+      consumeDeveloperEquityFocus();
+      focusDeveloperEquity();
+    };
+    window.addEventListener(FOCUS_DEVELOPER_EQUITY_EVENT, onRequest);
+    return () => window.removeEventListener(FOCUS_DEVELOPER_EQUITY_EVENT, onRequest);
+  }, [focusDeveloperEquity]);
 
   const { id: projectId } = useParams<{ id: string }>();
   const [siteSubsidyTotal, setSiteSubsidyTotal] = useState(0);
