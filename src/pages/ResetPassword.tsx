@@ -6,6 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
+// Supabase removes the recovery hash from the URL once it processes it, which can happen
+// before this component mounts. Read it at module load, while the URL still has it.
+const landedFromRecoveryLink =
+  typeof window !== "undefined" && window.location.hash.includes("type=recovery");
+
 const ResetPassword = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -15,14 +20,16 @@ const ResetPassword = () => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // The reset link signs the user in with a recovery session.
-    const isRecovery = window.location.hash.includes("type=recovery");
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" || (session && isRecovery)) setReady(true);
+    // Only a recovery session may set a new password. A normal signed-in session must not
+    // show the form, so getSession() counts only when this page was opened from a reset link.
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setReady(true);
     });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
-    });
+    if (landedFromRecoveryLink) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) setReady(true);
+      });
+    }
     return () => sub.subscription.unsubscribe();
   }, []);
 
