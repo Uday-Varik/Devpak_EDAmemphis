@@ -228,10 +228,8 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
       seen.add(i);
       const parent = out[i];
       if (!parent?.endDate) {
-        console.log("[cascade] parent has no endDate, skipping", parent?.id);
         continue;
       }
-      console.log(`[cascade] parent=${parent.id} endDate=${parent.endDate} — searching dependents`);
       for (let j = 0; j < out.length; j++) {
         if (j === i) continue;
         if (out[j].dependsOn === parent.id) {
@@ -243,15 +241,11 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
           }
           const weeks = Math.max(1, Number(child.durationWeeks) || 1);
           const newEnd = addWeeks(newStart, weeks);
-          const before = { start: child.startDate, end: child.endDate };
           out[j] = {
             ...child,
             startDate: format(newStart, "yyyy-MM-dd"),
             endDate: format(newEnd, "yyyy-MM-dd"),
           };
-          console.log(
-            `[cascade]   → child=${child.id} (${child.name}) dependsOn=${child.dependsOn} : ${before.start}→${before.end}  becomes  ${out[j].startDate}→${out[j].endDate}`
-          );
           queue.push(j);
         }
       }
@@ -265,7 +259,6 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
     const m = updated[index];
     let shouldCascade = false;
 
-    console.log(`[updateMilestone] id=${m.id} name=${m.name} field=${field} value=${value}`);
 
     // durationWeeks change: recompute end from existing start + new duration → cascade
     if (field === "durationWeeks" && m.startDate) {
@@ -273,7 +266,6 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
       if (weeks > 0) {
         const newEnd = addWeeks(parseISO(m.startDate), weeks);
         updated[index].endDate = format(newEnd, "yyyy-MM-dd");
-        console.log(`[updateMilestone] duration→ new endDate=${updated[index].endDate} (from start ${m.startDate} + ${weeks}w)`);
         shouldCascade = true;
       }
     } else if (field === "startDate" && value) {
@@ -283,7 +275,6 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
       if (isValid(start)) {
         const newEnd = addWeeks(start, weeks);
         updated[index].endDate = format(newEnd, "yyyy-MM-dd");
-        console.log(`[updateMilestone] startDate→ new endDate=${updated[index].endDate}`);
         shouldCascade = true;
       }
     } else if (field === "endDate" && value && m.startDate) {
@@ -293,7 +284,6 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
       if (isValid(start) && isValid(end)) {
         const weeks = differenceInWeeks(end, start);
         updated[index].durationWeeks = weeks < 1 ? 1 : weeks;
-        console.log(`[updateMilestone] endDate override→ duration=${updated[index].durationWeeks}w, cascading`);
         shouldCascade = true;
       }
     }
@@ -305,7 +295,6 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
     }
 
     if (shouldCascade) {
-      console.log(`[updateMilestone] triggering cascade from index ${index} (${m.id})`);
       const beforeCascade = updated;
       updated = cascadeFromIndex(updated, index);
       const shifted = updated.filter(
