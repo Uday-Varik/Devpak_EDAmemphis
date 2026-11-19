@@ -36,15 +36,20 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className="text-base leading-relaxed text-muted-foreground mb-6">
             Please refresh the page. Your data is saved.
           </p>
-          <Button
-            variant="accent"
-            size="lg"
-            onClick={() => window.location.reload()}
-            className="gap-2"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button variant="outline" size="lg" onClick={() => this.setState({ hasError: false })}>
+              Try again
+            </Button>
+            <Button
+              variant="accent"
+              size="lg"
+              onClick={() => window.location.reload()}
+              className="gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
     );
