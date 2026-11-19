@@ -37,7 +37,8 @@ export interface PDFData {
   tdc: number;
   arv: number;
   netProfit: number;
-  roi: number;
+  /** Null when no developer cash is invested. */
+  roi: number | null;
   profitMargin: number;
   exitStrategy: string;
   fundingGap: number;
@@ -68,7 +69,7 @@ export interface PDFData {
   opex?: number;
   annualDebtService?: number;
   cashFlow?: number;
-  cashOnCash?: number;
+  cashOnCash?: number | null;
   onePercentRule?: number;
   budgetTotals?: Omit<import("@/utils/calculations").BudgetTotals, "purchasePrice">;
   developerProfile?: any;
@@ -199,7 +200,7 @@ export const DevelopmentPackagePDF = ({ data }: { data: PDFData }) => {
           annualDebtService: data.annualDebtService ?? 0,
           cashFlow: data.cashFlow ?? 0,
           capRate: data.capRate ?? 0,
-          cashOnCash: data.cashOnCash ?? 0,
+          cashOnCash: data.cashOnCash ?? null,
           dscr: data.dscr ?? 0,
           exitStrategy: data.exitStrategy,
           sensitivityScenarios: data.sensitivityScenarios ?? [],

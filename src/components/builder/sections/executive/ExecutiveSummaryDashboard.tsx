@@ -1,6 +1,8 @@
 import { CheckCircle, AlertTriangle, XCircle, TrendingDown, Check, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
+import { CASH_NOT_INVESTED } from "@/utils/calculations";
+import { CashNotInvestedNote } from "@/components/builder/CashNotInvested";
 
 interface ExecutiveSummaryDashboardProps {
   calcs: {
@@ -8,7 +10,8 @@ interface ExecutiveSummaryDashboardProps {
     arv: number;
     hasARV: boolean;
     netProfit: number;
-    roi: number;
+    /** Null when no developer cash is invested. */
+    roi: number | null;
     profitMargin: number;
     equity: number;
     bankLoan: number;
@@ -27,7 +30,7 @@ interface ExecutiveSummaryDashboardProps {
     noi?: number;
     capRate?: number;
     dscr?: number;
-    cashOnCash?: number;
+    cashOnCash?: number | null;
     hasRentalData?: boolean;
     // Schedule
     totalDurationWeeks: number;
@@ -73,7 +76,8 @@ export const ExecutiveSummaryDashboard = ({
       if (cr >= 6 && ds >= 1.0) return "moderate";
       return "weak";
     }
-    if (!calcs.hasARV) return null;
+    // No ROI when no cash is invested, so there is no deal-strength grade to show.
+    if (!calcs.hasARV || calcs.roi === null) return null;
     if (calcs.roi > 20) return "strong";
     if (calcs.roi >= 10) return "moderate";
     return "weak";
@@ -189,9 +193,10 @@ export const ExecutiveSummaryDashboard = ({
               />
               <MetricRow
                 label="Cash-on-Cash"
-                value={calcs.hasRentalData ? formatPercent(calcs.cashOnCash || 0) : "—"}
-                highlight={calcs.hasRentalData ? ((calcs.cashOnCash || 0) >= 8 ? "green" : (calcs.cashOnCash || 0) >= 5 ? undefined : "red") : undefined}
+                value={calcs.hasRentalData ? (calcs.cashOnCash == null ? CASH_NOT_INVESTED : formatPercent(calcs.cashOnCash)) : "—"}
+                highlight={calcs.hasRentalData && calcs.cashOnCash != null ? (calcs.cashOnCash >= 8 ? "green" : calcs.cashOnCash >= 5 ? undefined : "red") : undefined}
               />
+              {calcs.hasRentalData && calcs.cashOnCash == null && <div className="px-1 pb-1"><CashNotInvestedNote /></div>}
             </>
           ) : (
             <>
@@ -203,9 +208,10 @@ export const ExecutiveSummaryDashboard = ({
               />
               <MetricRow
                 label="ROI"
-                value={calcs.hasARV ? formatPercent(calcs.roi) : "—"}
-                highlight={calcs.hasARV ? (calcs.roi >= 15 ? "green" : calcs.roi >= 10 ? undefined : "red") : undefined}
+                value={calcs.hasARV ? (calcs.roi === null ? CASH_NOT_INVESTED : formatPercent(calcs.roi)) : "—"}
+                highlight={calcs.hasARV && calcs.roi !== null ? (calcs.roi >= 15 ? "green" : calcs.roi >= 10 ? undefined : "red") : undefined}
               />
+              {calcs.hasARV && calcs.roi === null && <div className="px-1 pb-1"><CashNotInvestedNote /></div>}
               <MetricRow
                 label="Profit Margin"
                 value={calcs.hasARV ? formatPercent(calcs.profitMargin) : "—"}

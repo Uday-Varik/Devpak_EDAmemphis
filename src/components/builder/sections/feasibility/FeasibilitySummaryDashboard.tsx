@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { FeasibilityCalculations } from "./FeasibilityWarnings";
-import { computeSensitivityScenarios } from "@/utils/calculations";
+import { computeSensitivityScenarios, CASH_NOT_INVESTED } from "@/utils/calculations";
+import { CashNotInvestedNote } from "@/components/builder/CashNotInvested";
 
 interface FeasibilitySummaryDashboardProps {
   data: any;
@@ -41,7 +42,7 @@ export const FeasibilitySummaryDashboard = ({
   // Determine deal strength - returns null if no valid data
   const dealStrength: DealStrength | null = useMemo(() => {
     if (includesSale) {
-      if (!hasARV) return null; // No ARV entered
+      if (!hasARV || calculations.roi === null) return null; // No ARV, or no cash invested
       if (calculations.roi > 20) return "strong";
       if (calculations.roi >= 10) return "moderate";
       return "weak";
@@ -80,6 +81,8 @@ export const FeasibilitySummaryDashboard = ({
   const formatPercent = (value: number): string => {
     return `${value.toFixed(1)}%`;
   };
+  const returnLabel = (value: number | null): string =>
+    value === null ? CASH_NOT_INVESTED : formatPercent(value);
 
   const getDealHealthConfig = () => {
     if (dealStrength === null) {
@@ -183,16 +186,17 @@ export const FeasibilitySummaryDashboard = ({
 
   // Sensitivity visualization. For sale exits the worst case comes from the shared
   // engine's Stress Test scenario (netTdc basis, same as the headline ROI).
-  const baseReturn = includesSale ? calculations.roi : calculations.capRate;
-  const worstCaseReturn = includesSale
+  // Null when no developer cash is invested: shown as "Cash not invested", never 0.0%.
+  const baseReturn: number | null = includesSale ? calculations.roi : calculations.capRate;
+  const worstCaseReturn: number | null = includesSale
     ? computeSensitivityScenarios({
         arv,
         netTdc: calculations.netTdc,
         salesCostsPct: data.saleExit?.salesCostsPercent ?? 8,
         cashEquity: developerEquity,
-      }).find((sc) => sc.label.startsWith("Stress"))?.return ?? 0
-    : baseReturn * 0.8;
-  const maxBar = Math.max(baseReturn, 1);
+      }).find((sc) => sc.label.startsWith("Stress"))?.return ?? null
+    : baseReturn === null ? null : baseReturn * 0.8;
+  const maxBar = Math.max(baseReturn ?? 0, 1);
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sticky top-24 space-y-5">
@@ -234,9 +238,9 @@ export const FeasibilitySummaryDashboard = ({
               />
               <MetricCard
                 label="ROI"
-                value={hasARV ? formatPercent(calculations.roi) : "—"}
+                value={hasARV ? returnLabel(calculations.roi) : "—"}
                 target=">15%"
-                isGood={hasARV ? calculations.roi >= 15 : undefined}
+                isGood={hasARV && calculations.roi !== null ? calculations.roi >= 15 : undefined}
               />
               <MetricCard
                 label="Profit Margin"
@@ -272,9 +276,9 @@ export const FeasibilitySummaryDashboard = ({
               />
               <MetricCard
                 label="Cash-on-Cash"
-                value={formatPercent(calculations.cashOnCash)}
+                value={returnLabel(calculations.cashOnCash)}
                 target=">8%"
-                isGood={calculations.cashOnCash >= 8}
+                isGood={calculations.cashOnCash !== null ? calculations.cashOnCash >= 8 : undefined}
               />
               <MetricCard
                 label="DSCR"
@@ -307,20 +311,21 @@ export const FeasibilitySummaryDashboard = ({
       </div>
 
       {/* Sensitivity Mini-Visualization */}
-      {(calculations.roi > 0 || calculations.capRate > 0) && (
+      {((calculations.roi ?? 0) > 0 || calculations.capRate > 0) && (
         <div className="space-y-2">
           <p className="text-xs font-medium text-muted-foreground">Return Range</p>
+          {includesSale && calculations.roi === null && <CashNotInvestedNote />}
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-xs w-16">Base</span>
               <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#1B4F72] rounded-full transition-all duration-500"
-                  style={{ width: `${(baseReturn / maxBar) * 100}%` }}
+                  style={{ width: `${baseReturn === null ? 0 : (baseReturn / maxBar) * 100}%` }}
                 />
               </div>
-              <span className="text-xs font-medium w-12 text-right">
-                {formatPercent(baseReturn)}
+              <span className="text-xs font-medium text-right whitespace-nowrap">
+                {returnLabel(baseReturn)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -328,11 +333,11 @@ export const FeasibilitySummaryDashboard = ({
               <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#2E86AB] rounded-full transition-all duration-500"
-                  style={{ width: `${(worstCaseReturn / maxBar) * 100}%` }}
+                  style={{ width: `${worstCaseReturn === null ? 0 : (worstCaseReturn / maxBar) * 100}%` }}
                 />
               </div>
-              <span className="text-xs font-medium w-12 text-right">
-                {formatPercent(worstCaseReturn)}
+              <span className="text-xs font-medium text-right whitespace-nowrap">
+                {returnLabel(worstCaseReturn)}
               </span>
             </div>
           </div>

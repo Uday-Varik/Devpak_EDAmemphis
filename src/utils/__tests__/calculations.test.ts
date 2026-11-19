@@ -67,7 +67,7 @@ describe("Fixture 1 — itemized construction with grants", () => {
     near(r.salesCosts, 15000);          // 250,000 x 6%
     near(r.netSaleProceeds, 235000);
     near(r.netProfit, 72025);           // 235,000 - 162,975
-    near(r.roi, 180.0625);              // 72,025 / 40,000
+    near(r.roi as number, 180.0625);              // 72,025 / 40,000
     near(r.profitMargin, 28.81);        // 72,025 / 250,000
   });
 
@@ -116,7 +116,7 @@ describe("Fixture 3 — no grants", () => {
 
   it("computes profit off the ungranted basis", () => {
     near(r.netProfit, 57025);           // 235,000 - 177,975
-    near(r.roi, 142.5625);
+    near(r.roi as number, 142.5625);
   });
 });
 

@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { fetchProjectExportData } from "./fetchProjectData";
-import { computeProjectFinancials, computeRentalProjection, NO_ARV_LABEL, ruleCheckLabel, type RuleCheckStatus } from "./calculations";
+import { computeProjectFinancials, computeRentalProjection, NO_ARV_LABEL, CASH_NOT_INVESTED, ruleCheckLabel, type RuleCheckStatus } from "./calculations";
 
 /** Rows for the Excel "Pro Forma" sheet — exported for tests. */
 export const buildExcelRentalProjection = (data: { scope: any; budget: any; feasibility: any }) =>
@@ -11,6 +11,8 @@ export const buildExcelRentalProjection = (data: { scope: any; budget: any; feas
 const curr = (v: number) => ({ v: Math.sign(v || 0) * Math.round(Math.abs(v || 0)), t: "n" as const, z: "$#,##0" });
 const pct = (v: number) => ({ v: v / 100, t: "n" as const, z: "0.0%" });
 const pctRaw = (v: number) => ({ v, t: "n" as const, z: "0.0%" });
+/** Cash return as a percent cell; null (no developer cash invested) is a text cell, never 0.0%. */
+const cashPct = (v: number | null) => (v === null ? { v: CASH_NOT_INVESTED, t: "s" as const } : pctRaw(v / 100));
 const bold = (v: string) => ({ v, t: "s" as const });
 const num = (v: number) => ({ v, t: "n" as const, z: "#,##0" });
 const numDec = (v: number) => ({ v, t: "n" as const, z: "#,##0.0" });
@@ -344,7 +346,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       row++; // blank
       row++; // KEY METRICS header
       setCell(ws, row++, col, pctRaw(y.capRate / 100));
-      setCell(ws, row++, col, pctRaw(y.cashOnCash / 100));
+      setCell(ws, row++, col, cashPct(y.cashOnCash));
       setCell(ws, row++, col, numDec(y.dscr));
       setCell(ws, row++, col, numDec(y.grm));
     });
@@ -381,7 +383,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         ["Net Sale Proceeds", curr(data.netSaleProceeds)],
         ["Total Development Cost", curr(tdc)],
         ["Net Profit", curr(data.netProfit)],
-        ["ROI (Cash Equity)", pctRaw(data.roi / 100)],
+        ["ROI (Cash Equity)", cashPct(data.roi)],
         ["ROI (Total Equity)", pctRaw(data.roiOnTotalEquity / 100)],
         ["Profit Margin", pctRaw(data.profitMargin / 100)],
         ["All-in Basis (TDC/ARV)", hasArv ? pctRaw(data.allInBasis / 100) : na],
@@ -399,7 +401,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         ["Annual Debt Service", curr(rentalFin.annualDebtService)],
         ["Annual Cash Flow", curr(rentalFin.cashFlow)],
         ["Cap Rate", pctRaw(rentalFin.capRate / 100)],
-        ["Cash-on-Cash Return", pctRaw(rentalFin.cashOnCash / 100)],
+        ["Cash-on-Cash Return", cashPct(rentalFin.cashOnCash)],
         ["DSCR", { v: Number(rentalFin.dscr.toFixed(2)), t: "n" as const, z: "0.00\"x\"" }],
       ]);
       r++;
@@ -432,7 +434,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         setCell(ws, r, 1, curr(sc.arv));
         setCell(ws, r, 2, curr(sc.cost));
         setCell(ws, r, 3, curr(sc.profit));
-        setCell(ws, r, 4, pctRaw(sc.return / 100));
+        setCell(ws, r, 4, cashPct(sc.return));
         r++;
       });
     }

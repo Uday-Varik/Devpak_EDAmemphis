@@ -57,7 +57,8 @@ export interface ProjectFinancials extends BudgetTotals {
   netSaleProceeds: number;
   netTdc: number;
   netProfit: number;
-  roi: number;
+  /** Null when no developer cash is invested (cash return is undefined, not 0%). */
+  roi: number | null;
   roiOnTotalEquity: number;
   profitMargin: number;
   allInBasis: number;
@@ -78,7 +79,8 @@ export interface ProjectFinancials extends BudgetTotals {
   dscr: number;
   capRate: number;
   cashFlow: number;
-  cashOnCash: number;
+  /** Null when no developer cash is invested. */
+  cashOnCash: number | null;
   onePercentRule: number;
   units: number;
   monthlyRentTotal: number;
@@ -197,6 +199,17 @@ export interface FinancialsInput {
   feasibility?: Record<string, any>;
 }
 
+/** Label shown in place of ROI / cash-on-cash when no developer cash is invested. */
+export const CASH_NOT_INVESTED = "Cash not invested";
+
+/** Annualize a return over the hold period (holds longer than 12 months are spread per year). */
+export const annualizeRoi = (roi: number, holdPeriodMonths: number): number =>
+  holdPeriodMonths > 12 ? (roi / holdPeriodMonths) * 12 : roi;
+
+/** Return on cash in percent, or null when no cash is invested (0 or blank). Negative profit gives a negative return. */
+export const returnOnCash = (profit: number, cash: number): number | null =>
+  cash > 0 ? (profit / cash) * 100 : null;
+
 export const computeProjectFinancials = ({ scope, budget, feasibility }: FinancialsInput): ProjectFinancials => {
   const s = scope || {};
   const b = budget || {};
@@ -236,7 +249,7 @@ export const computeProjectFinancials = ({ scope, budget, feasibility }: Financi
   const netSaleProceeds = arv - salesCosts;
   const netTdc = Math.max(0, tdc - grants);
   const netProfit = netSaleProceeds - netTdc;
-  const roi = cashEquity > 0 ? (netProfit / cashEquity) * 100 : 0;
+  const roi = returnOnCash(netProfit, cashEquity);
   const roiOnTotalEquity = totalEquity > 0 ? (netProfit / totalEquity) * 100 : 0;
   const profitMargin = arv > 0 ? (netProfit / arv) * 100 : 0;
   const allInBasis = arv > 0 ? (tdc / arv) * 100 : 0;
@@ -274,7 +287,7 @@ export const computeProjectFinancials = ({ scope, budget, feasibility }: Financi
   const capRate = tdc > 0 ? (noi / tdc) * 100 : 0;
   const dscr = annualDebtService > 0 ? noi / annualDebtService : 0;
   const cashFlow = noi - annualDebtService;
-  const cashOnCash = cashEquity > 0 ? (cashFlow / cashEquity) * 100 : 0;
+  const cashOnCash = returnOnCash(cashFlow, cashEquity);
   const onePercentRule = tdc > 0 ? (monthlyRentTotal / tdc) * 100 : 0;
   const grm = grossRent > 0 ? totals.purchasePrice / grossRent : 0;
 
@@ -307,7 +320,8 @@ export interface SensitivityScenario {
   arv: number;
   cost: number;
   profit: number;
-  return: number;
+  /** Null when no developer cash is invested. */
+  return: number | null;
 }
 
 export const DEFAULT_SENSITIVITY_MODS: { label: string; arvMod: number; costMod: number }[] = [
@@ -335,7 +349,7 @@ export const computeSensitivityScenarios = (
       arv: adjArv,
       cost: adjCost,
       profit,
-      return: fin.cashEquity > 0 ? (profit / fin.cashEquity) * 100 : 0,
+      return: returnOnCash(profit, fin.cashEquity),
     };
   });
 
@@ -351,7 +365,7 @@ export interface RentalProjectionYear {
   maintenanceExpense: number; reservesExpense: number; otherExpense: number;
   opex: number; opexRatio: number; noi: number;
   annualDebtService: number; cashFlow: number; monthlyCashFlow: number;
-  capRate: number; cashOnCash: number; dscr: number; grm: number;
+  capRate: number; cashOnCash: number | null; dscr: number; grm: number;
 }
 
 /**
@@ -385,7 +399,7 @@ export const computeRentalProjection = (
       opex, opexRatio: egi > 0 ? (opex / egi) * 100 : 0, noi,
       annualDebtService: fin.annualDebtService, cashFlow, monthlyCashFlow: cashFlow / 12,
       capRate: i === 0 ? fin.capRate : fin.tdc > 0 ? (noi / fin.tdc) * 100 : 0,
-      cashOnCash: i === 0 ? fin.cashOnCash : fin.cashEquity > 0 ? (cashFlow / fin.cashEquity) * 100 : 0,
+      cashOnCash: i === 0 ? fin.cashOnCash : returnOnCash(cashFlow, fin.cashEquity),
       dscr: i === 0 ? fin.dscr : fin.annualDebtService > 0 ? noi / fin.annualDebtService : 0,
       grm: i === 0 ? fin.grm : grossRent > 0 ? fin.purchasePrice / grossRent : 0,
     };
