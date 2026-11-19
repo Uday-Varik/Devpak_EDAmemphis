@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,12 +19,17 @@ export const useDeveloperProfile = () => {
       return;
     }
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("developer_profiles" as any)
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
       if (!active) return;
+      if (error) {
+        // Don't present a failed read as "no profile": saving now would overwrite the real one.
+        console.error("Error fetching developer profile:", error);
+        toast.error("Couldn't load your developer profile. Refresh the page before saving changes.");
+      }
       if (data) {
         const d = data as any;
         setProfile({

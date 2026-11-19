@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -121,7 +122,7 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
 
   const fetchProfile = async () => {
     try {
-      const [{ data: devProfile }, { data: legacy }] = await Promise.all([
+      const [devRes, legacyRes] = await Promise.all([
         supabase
           .from("developer_profiles" as any)
           .select("full_name, professional_title, entity_name, phone, headshot_url, years_experience")
@@ -133,8 +134,12 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
           .eq("user_id", user!.id)
           .maybeSingle(),
       ]);
-      const dp: any = devProfile || {};
-      const lp: any = legacy || {};
+      if (devRes.error || legacyRes.error) {
+        console.error("Error fetching profile:", devRes.error ?? legacyRes.error);
+        toast.error("Couldn't load your developer profile. You can still enter team details manually.");
+      }
+      const dp: any = devRes.data || {};
+      const lp: any = legacyRes.data || {};
       // Merge — developer_profiles wins, profiles fills gaps
       const merged: ProfileData = {
         full_name: dp.full_name || lp.full_name || null,
@@ -149,6 +154,7 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
       setProfile(merged);
     } catch (e) {
       console.error("Error fetching profile:", e);
+      toast.error("Couldn't load your developer profile. You can still enter team details manually.");
     } finally {
       setProfileLoading(false);
     }
