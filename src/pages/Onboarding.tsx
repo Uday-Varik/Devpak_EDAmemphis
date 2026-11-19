@@ -63,7 +63,16 @@ const Onboarding = () => {
   const silentSave = async () => {
     if (!user) return;
     if (!formRef.current.full_name?.trim() || !formRef.current.email?.trim()) return;
-    try { await save(formRef.current); } catch (e) { console.error("Onboarding auto-save failed", e); }
+    try {
+      await save(formRef.current);
+    } catch (e) {
+      console.error("Onboarding auto-save failed", e);
+      toast({
+        title: "Couldn't save your profile",
+        description: "Your latest changes may not be saved. Try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Warn on tab close if any data was entered.
