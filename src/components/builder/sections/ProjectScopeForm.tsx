@@ -199,21 +199,21 @@ export const ProjectScopeForm = ({ data, onSave, saving }: ProjectScopeFormProps
 
         {showPlanned && (
           <div className="space-y-2">
-            <Label htmlFor="sqftPlanned">
-              Square Footage — {isNewConstruction ? "Planned" : "Planned (After Construction)"}
-            </Label>
+            <Label htmlFor="sqftPlanned">Total Square Footage (all units)</Label>
             <Input
               id="sqftPlanned"
               type="number"
               min="0"
-              placeholder="Total square footage after construction/renovation"
+              placeholder="e.g. 4 units × 1,200 SF = 4,800"
               value={formData.sqftPlanned}
               onChange={(e) => handleChange("sqftPlanned", positiveOrEmpty(e.target.value))}
             />
             <p className="text-xs text-muted-foreground">
-              {isNewConstruction
-                ? "Total planned square footage"
-                : "Include any additions or expansions"}
+              {Number(formData.sqftPlanned) > 0 && Number(formData.numberOfUnits) > 0
+                ? `≈ ${Math.round(Number(formData.sqftPlanned) / Number(formData.numberOfUnits)).toLocaleString()} SF per unit across ${formData.numberOfUnits} units.`
+                : Number(formData.sqftPlanned) > 0
+                  ? "Enter the total for the whole building, not one unit."
+                  : "Total for all units. Example: 2 units × 900 SF = 1,800."}
             </p>
           </div>
         )}
