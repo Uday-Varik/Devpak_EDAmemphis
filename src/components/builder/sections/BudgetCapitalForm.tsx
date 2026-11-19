@@ -173,7 +173,6 @@ export const BudgetCapitalForm = ({
   // Debug: track project type / land equity gating
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log("[BudgetCapitalForm] projectType:", projectType, "showLandEquity:", showLandEquity);
   }, [projectType, showLandEquity]);
 
   const handleAutoSave = useCallback(async (data: any) => {
