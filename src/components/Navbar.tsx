@@ -23,16 +23,21 @@ const Navbar = ({ onLoginClick, onSignupClick }: NavbarProps) => {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      supabase
+    if (!user) return;
+    const loadPhoto = async () => {
+      // maybeSingle: a user without a profile row is normal, not an error.
+      const { data, error } = await supabase
         .from("profiles")
         .select("photo_url")
         .eq("user_id", user.id)
-        .single()
-        .then(({ data }) => {
-          setPhotoUrl((data as any)?.photo_url || null);
-        });
-    }
+        .maybeSingle();
+      if (error) {
+        console.error("Error loading profile photo:", error);
+        return;
+      }
+      setPhotoUrl((data as any)?.photo_url || null);
+    };
+    loadPhoto().catch((error) => console.error("Error loading profile photo:", error));
   }, [user]);
 
   return (
