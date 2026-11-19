@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BuilderSidebar, BuilderSidebarContent } from "@/components/builder/BuilderSidebar";
 import { BuilderContent } from "@/components/builder/BuilderContent";
@@ -191,6 +192,9 @@ const ProjectBuilder = () => {
       }
     } catch (error) {
       console.error("Error saving section:", error);
+      toast.error("Couldn't save this section. Your latest changes may not be stored. Try again.");
+      // Rethrow so useAutoSave marks the indicator as failed and callers don't advance.
+      throw error;
     } finally {
       setSaving(false);
     }

@@ -1,11 +1,21 @@
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, AlertCircle } from "lucide-react";
+import type { AutoSaveStatus } from "@/hooks/useAutoSave";
 
 interface AutoSaveIndicatorProps {
-  saveStatus: "idle" | "saving" | "saved";
+  saveStatus: AutoSaveStatus;
   lastSaved: Date | null;
 }
 
 export const AutoSaveIndicator = ({ saveStatus, lastSaved }: AutoSaveIndicatorProps) => {
+  if (saveStatus === "error") {
+    return (
+      <span role="alert" className="text-sm text-destructive flex items-center gap-1">
+        <AlertCircle className="h-3 w-3" />
+        Save failed. Try again.
+      </span>
+    );
+  }
+
   if (saveStatus === "saving") {
     return (
       <span className="text-sm text-muted-foreground flex items-center gap-1">

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
+export type AutoSaveStatus = "idle" | "saving" | "saved" | "error";
+
 export const useAutoSave = (
   data: any,
   onSave: (data: any) => Promise<void>,
   delay: number = 1500
 ) => {
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [saveStatus, setSaveStatus] = useState<AutoSaveStatus>("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousDataRef = useRef<string>("");
@@ -62,7 +64,7 @@ export const useAutoSave = (
         setTimeout(() => setSaveStatus("idle"), 2000);
       } catch (error) {
         console.error("Auto-save failed:", error);
-        setSaveStatus("idle");
+        setSaveStatus("error");
       }
     }, delay);
 
