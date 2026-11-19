@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { markPageUnloading } from "@/utils/unloadSave";
 
 export const useAutoSave = (
   data: any,
@@ -83,10 +84,12 @@ export const useAutoSave = (
     }
   };
 
-  // beforeunload warning + best-effort save on tab close/refresh
+  // beforeunload warning + final save on tab close/refresh. The prompt shows while dirtyRef is
+  // set, which stays true until a save succeeds, so pending and failed saves both prompt.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (dirtyRef.current) {
+        markPageUnloading();
         saveInBackground();
         e.preventDefault();
         e.returnValue = "";

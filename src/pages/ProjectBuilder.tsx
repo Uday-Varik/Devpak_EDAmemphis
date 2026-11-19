@@ -11,6 +11,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useTeachingMode } from "@/hooks/useTeachingMode";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
+import { isPageUnloading, keepaliveSectionSave } from "@/utils/unloadSave";
 
 export type Section =
   | "project-scope"
@@ -57,7 +58,7 @@ const DEFAULT_SECTION_DATA: Record<Section, SectionData> = Object.fromEntries(
 const ProjectBuilder = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
 
   const [project, setProject] = useState<Project | null>(null);
   const [sectionData, setSectionData] = useState<Record<Section, SectionData>>({
@@ -152,6 +153,16 @@ const ProjectBuilder = () => {
 
   const handleSaveSection = async (data: Record<string, any>, markComplete: boolean = false) => {
     if (!id) return;
+
+    // Tab is closing: send the final save with keepalive so the browser finishes it.
+    // Runs synchronously, before the first await, so the request starts before unload.
+    if (isPageUnloading() && session) {
+      const completedMap = Object.fromEntries(
+        SECTIONS.map((s) => [s, s === activeSection ? markComplete : sectionData[s].completed])
+      ) as Record<string, boolean>;
+      const progress = Math.round((countCompletedSections(completedMap) / PACKAGE_SECTIONS.length) * 100);
+      if (keepaliveSectionSave(session.access_token, id, activeSection, data, markComplete, progress)) return;
+    }
 
     setSaving(true);
     try {
