@@ -1,0 +1,42 @@
+name: Deploy
+
+# Manual only. Nothing deploys until the placeholder step below is replaced.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # PLACEHOLDER: no deploy target is configured yet. This step fails on purpose.
+      # When configuring a host (see docs/deployment.md), replace this step with the real deploy
+      # command and pass credentials from GitHub environment secrets, for example:
+      #   env:
+      #     DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      - name: Deploy (not configured)
+        run: |
+          echo "Configure deploy target: see docs/deployment.md"
+          exit 1
