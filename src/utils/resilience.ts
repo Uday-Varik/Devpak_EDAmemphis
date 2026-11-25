@@ -52,8 +52,8 @@ export interface ResilienceScores {
   label: "Strong" | "Moderate" | "Needs Attention";
 }
 
-export const normalizeResilience = (raw: Record<string, any> | null | undefined) => {
-  const data: Record<string, any> = { ...(raw || {}) };
+export const normalizeResilience = (raw: Record<string, unknown> | null | undefined) => {
+  const data: Record<string, unknown> = { ...(raw || {}) };
   Object.entries(LEGACY_ALIASES).forEach(([legacy, canonical]) => {
     if (data[canonical] === undefined && data[legacy] !== undefined) {
       data[canonical] = data[legacy];
@@ -63,7 +63,7 @@ export const normalizeResilience = (raw: Record<string, any> | null | undefined)
 };
 
 export const computeResilience = (
-  raw: Record<string, any> | null | undefined
+  raw: Record<string, unknown> | null | undefined
 ): ResilienceScores => {
   const data = normalizeResilience(raw);
   const count = (factors: readonly { key: string }[]) =>

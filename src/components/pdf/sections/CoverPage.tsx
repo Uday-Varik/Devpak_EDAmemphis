@@ -37,7 +37,7 @@ export const CoverPage = ({
         <View style={{ marginTop: 16, marginBottom: 8, alignItems: "center" as const }}>
           <Image
             src={featuredPhotoUrl}
-            style={{ width: 360, height: 220, objectFit: "cover" as any, borderRadius: 6 }}
+            style={{ width: 360, height: 220, objectFit: "cover", borderRadius: 6 }}
           />
         </View>
       )}

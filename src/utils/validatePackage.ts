@@ -1,6 +1,7 @@
 import { fetchProjectSections, type ProjectSections } from "./autoAssess";
 import { supabase } from "@/integrations/supabase/client";
 import { computeProjectFinancials } from "./calculations";
+import type { ComparableSale, ExecutiveData, ResilienceData, ScheduleMilestone } from "@/types/sectionData";
 
 /** Funding gap for validation — straight from the shared engine. */
 export const computeFundingGap = (sections: ProjectSections): number =>
@@ -31,18 +32,18 @@ export const runValidation = async (projectId: string): Promise<ValidationFindin
 
   const sections = await fetchProjectSections(projectId);
   const { scope, visionMarket, siteLocation, schedule, budget, team, feasibility, riskAssessment } = sections;
-  const exec = (await supabase
+  const exec: ExecutiveData = ((await supabase
     .from("project_details")
     .select("data")
     .eq("project_id", projectId)
     .eq("section", "executive-summary")
-    .maybeSingle()).data?.data as any || {};
-  const resilience = (await supabase
+    .maybeSingle()).data?.data as ExecutiveData | undefined) || {};
+  const resilience: ResilienceData = ((await supabase
     .from("project_details")
     .select("data")
     .eq("project_id", projectId)
     .eq("section", "resilience-factors")
-    .maybeSingle()).data?.data as any || {};
+    .maybeSingle()).data?.data as ResilienceData | undefined) || {};
 
   // a) Address consistency
   const scopeAddr = (scope?.address || "").trim().toLowerCase();
@@ -99,7 +100,7 @@ export const runValidation = async (projectId: string): Promise<ValidationFindin
 
   // e) Comp count
   const comps = visionMarket?.comparables || visionMarket?.comps || [];
-  const completeComps = comps.filter((c: any) => (c.salePrice || c.price) && c.sqft);
+  const completeComps = comps.filter((c: ComparableSale) => (c.salePrice || c.price) && c.sqft);
   if (completeComps.length < 3) {
     push({
       severity: "warning",
@@ -109,9 +110,9 @@ export const runValidation = async (projectId: string): Promise<ValidationFindin
   }
 
   // f) Timeline continuity
-  const milestones = (schedule?.milestones || []).filter((m: any) => m.startDate && m.endDate);
+  const milestones = (schedule?.milestones || []).filter((m: ScheduleMilestone) => m.startDate && m.endDate);
   const sorted = [...milestones].sort(
-    (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+   (a: ScheduleMilestone, b: ScheduleMilestone) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
   );
   for (let i = 0; i < sorted.length - 1; i++) {
     const gapDays =
@@ -180,11 +181,11 @@ export const runValidation = async (projectId: string): Promise<ValidationFindin
   const { data: userData } = await supabase.auth.getUser();
   if (userData?.user) {
     const { data: dp } = await supabase
-      .from("developer_profiles" as any)
+      .from("developer_profiles")
       .select("full_name")
       .eq("user_id", userData.user.id)
       .maybeSingle();
-    const fullName = ((dp as any)?.full_name || "").trim();
+    const fullName = (dp?.full_name || "").trim();
     if (!fullName) {
       push({
         severity: "critical",

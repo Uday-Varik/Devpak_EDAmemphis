@@ -1,8 +1,9 @@
 import { cleanAddressPart } from "@/utils/address";
 import { MapPin, Ruler, Scale, Droplets, DollarSign, AlertTriangle, Plug } from "lucide-react";
+import type { SiteData } from "@/types/sectionData";
 
 interface SiteLocationSummaryProps {
-  formData: Record<string, any>;
+  formData: SiteData;
   totalSubsidyValue: number;
 }
 

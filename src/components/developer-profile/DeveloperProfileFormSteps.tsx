@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/errorMessage";
 import { useState } from "react";
 import { Plus, Trash2, Upload, Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,8 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from("developer-headshots").getPublicUrl(path);
       update("headshot_url", publicUrl);
-    } catch (e: any) {
-      toast({ title: "Upload failed", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Upload failed", description: errorMessage(e), variant: "destructive" });
     } finally {
       setUploading(false);
     }

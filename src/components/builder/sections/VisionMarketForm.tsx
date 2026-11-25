@@ -22,10 +22,11 @@ import { MultiSelectCheckbox, toArrayValue } from "@/components/ui/multi-select-
 import { formatCurrency } from "@/components/pdf/pdfUtils";
 import { roundCurrency } from "@/utils/calculations";
 import { composeAddress } from "@/utils/address";
+import type { ComparableSale, ScopeData, SiteData, VisionData } from "@/types/sectionData";
 
 interface VisionMarketFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -42,7 +43,7 @@ const DEFAULT_DATA = {
   averageRent: 0,
   vacancyRate: 0,
   marketTrend: "",
-  comparables: [] as any[],
+  comparables: [] as unknown[],
   projectedSalePriceOrRent: 0,
   daysOnMarketEstimate: "",
   censusPopulatedFields: [] as string[],
@@ -88,13 +89,16 @@ const FieldHelp = ({ text }: { text: string }) => (
 
 export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps) => {
   const { id: projectId } = useParams<{ id: string }>();
-  const [formData, setFormData] = useState(() => ({
-    ...DEFAULT_DATA,
-    ...data,
-    neighborhoodName: (data.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "").trim(),
-    targetMarket: toArrayValue(data.targetMarket),
-    targetIncomeLevel: normalizeIncomeArray(data.targetIncomeLevel),
-  }));
+  const [formData, setFormData] = useState<VisionData>(() => {
+    const saved = data as VisionData;
+    return {
+      ...DEFAULT_DATA,
+      ...saved,
+      neighborhoodName: (saved.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "").trim(),
+      targetMarket: toArrayValue(saved.targetMarket),
+      targetIncomeLevel: normalizeIncomeArray(saved.targetIncomeLevel),
+    };
+  });
   const [openSections, setOpenSections] = useState<string[]>(["vision"]);
 
   // Comp search state
@@ -132,7 +136,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
         .eq("section", "site-location")
         .maybeSingle();
       if (siteData?.data) {
-        const d = siteData.data as Record<string, any>;
+        const d = siteData.data as SiteData;
         const cleanStreet = (d.streetAddress || "").replace(/^Street Address:\s*/i, "").trim();
         if (cleanStreet) {
           setSiteAddress({
@@ -182,8 +186,8 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
       }
       setCensusData(result);
       const populated = new Set<string>();
-      setFormData((prev: any) => {
-        const updates: Record<string, any> = {};
+      setFormData((prev: VisionData) => {
+        const updates: Partial<VisionData> = {};
         if (result.medianHouseholdIncome > 0) { updates.medianHouseholdIncome = result.medianHouseholdIncome; populated.add("medianHouseholdIncome"); }
         if (result.medianHomeValue > 0) { updates.medianHomePrice = result.medianHomeValue; populated.add("medianHomePrice"); }
         if (result.medianGrossRent > 0) { updates.averageRent = result.medianGrossRent; populated.add("averageRent"); }
@@ -229,7 +233,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
       if (projectId) {
         const { data: scope } = await supabase
           .from("project_details").select("data").eq("project_id", projectId).eq("section", "project-scope").maybeSingle();
-        const sd = (scope?.data || {}) as Record<string, any>;
+        const sd = (scope?.data || {}) as ScopeData;
         subjectSqft = Number(sd.sqftPlanned) || Number(sd.sqftExisting) || 0;
       }
 
@@ -276,7 +280,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
         found: result.sales.length > 0, compsReturned: result.sales.length, compsAfterFiltering: result.sales.length,
       });
       setSearchDone(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setSearchError("Could not load comparable sales. Use the manual research links below.");
       setSearchDone(true);
     } finally {
@@ -288,10 +292,10 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
   // the search later never changes a saved package.
   const addFromSearch = (sale: PropertySale) => {
     if (formData.comparables.length >= 5) return;
-    setFormData((prev: any) => ({
+    setFormData((prev: VisionData) => ({
       ...prev,
       comparables: [
-        ...prev.comparables,
+        ...(prev.comparables || []),
         {
           address: sale.address,
           salePrice: sale.salePrice,
@@ -309,12 +313,12 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
   };
 
   const isAlreadyAdded = (sale: PropertySale) =>
-    formData.comparables.some((c: any) =>
+    formData.comparables.some((c: ComparableSale) =>
       c.address && sale.address && c.address.toLowerCase() === sale.address.toLowerCase()
     );
 
   const handleAutoSave = useCallback(
-    async (d: any) => {
+    async (d: Record<string, unknown>) => {
       await onSave(d, false);
       window.dispatchEvent(new CustomEvent("section-data-updated", { detail: { section: "vision-market" } }));
     },
@@ -322,41 +326,41 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
   );
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
-  const update = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const update = <K extends keyof VisionData>(field: K, value: VisionData[K]) => {
+    setFormData((prev: VisionData) => ({ ...prev, [field]: value }));
   };
 
 
   const addComparable = () => {
     if (formData.comparables.length >= 5) return;
-    setFormData((prev: any) => ({
+    setFormData((prev: VisionData) => ({
       ...prev,
       comparables: [
-        ...prev.comparables,
+        ...(prev.comparables || []),
         { address: "", salePrice: 0, sqft: 0, bedrooms: 0, bathrooms: 0, condition: "", saleDate: "", notes: "" },
       ],
     }));
   };
 
-  const updateComparable = (index: number, field: string, value: any) => {
-    setFormData((prev: any) => {
-      const comps = [...prev.comparables];
+  const updateComparable = (index: number, field: string, value: unknown) => {
+    setFormData((prev: VisionData) => {
+      const comps = [...(prev.comparables || [])];
       comps[index] = { ...comps[index], [field]: value };
       return { ...prev, comparables: comps };
     });
   };
 
   const removeComparable = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev: VisionData) => ({
       ...prev,
-      comparables: prev.comparables.filter((_: any, i: number) => i !== index),
+      comparables: (prev.comparables || []).filter((_: ComparableSale, i: number) => i !== index),
     }));
   };
 
   const avgPricePerSqFt = useMemo(() => {
-    const valid = formData.comparables.filter((c: any) => c.salePrice > 0 && c.sqft > 0);
+    const valid = formData.comparables.filter((c: ComparableSale) => c.salePrice > 0 && c.sqft > 0);
     if (valid.length === 0) return 0;
-    const total = valid.reduce((sum: number, c: any) => sum + c.salePrice / c.sqft, 0);
+    const total = valid.reduce((sum: number, c: ComparableSale) => sum + (c.salePrice || 0) / (c.sqft || 1), 0);
     return total / valid.length;
   }, [formData.comparables]);
 
@@ -857,7 +861,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
                   </div>
                 </div>
 
-                {formData.comparables.map((comp: any, index: number) => (
+                {formData.comparables.map((comp: ComparableSale, index: number) => (
                   <div key={index} className="border border-border rounded-lg p-4 bg-muted/20 space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-sm text-foreground">Comp #{index + 1}</span>

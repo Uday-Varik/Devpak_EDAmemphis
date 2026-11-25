@@ -103,8 +103,8 @@ export async function fetchCensusData(zipCode: string): Promise<CensusFetchResul
       },
       error: null,
     };
-  } catch (err: any) {
-    if (err?.name === "AbortError") {
+  } catch (err: unknown) {
+    if (err instanceof Error && err.name === "AbortError") {
       console.warn("Census API request timed out");
       return { data: null, error: "Census API timed out. Please try again." };
     }

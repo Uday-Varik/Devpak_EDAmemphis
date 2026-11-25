@@ -35,7 +35,7 @@ export const AIGenerateButton = ({
         ? `${prompt}\n\nThe developer has provided this draft:\n"""\n${existing}\n"""\nIncorporate their points and enhance the language into professional lender-ready prose while preserving their key ideas and intent. Do not discard their input.`
         : prompt;
 
-      const { data, error } = await supabase.functions.invoke("ai-generate", {
+      const { data, error } = await supabase.functions.invoke<{ text?: string }>("ai-generate", {
         body: {
           prompt: finalPrompt,
           context: { ...context, existingDraft: existing || undefined },
@@ -44,7 +44,7 @@ export const AIGenerateButton = ({
         },
       });
       if (error) throw error;
-      const text: string = (data as any)?.text || "";
+      const text: string = data?.text || "";
       if (!text) throw new Error("empty");
       onInsert(text);
       toast.success(existing ? "Your draft was enhanced. Review and edit as needed." : "Text generated. Review and edit as needed.");

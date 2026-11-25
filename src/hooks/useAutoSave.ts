@@ -3,9 +3,9 @@ import { markPageUnloading } from "@/utils/unloadSave";
 
 export type AutoSaveStatus = "idle" | "saving" | "saved" | "error";
 
-export const useAutoSave = (
-  data: any,
-  onSave: (data: any) => Promise<void>,
+export const useAutoSave = <T>(
+  data: T,
+  onSave: (data: T) => Promise<void>,
   delay: number = 1500
 ) => {
   const [saveStatus, setSaveStatus] = useState<AutoSaveStatus>("idle");
@@ -13,7 +13,7 @@ export const useAutoSave = (
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousDataRef = useRef<string>("");
   const initializedRef = useRef(false);
-  const latestDataRef = useRef<any>(data);
+  const latestDataRef = useRef<T>(data);
   const onSaveRef = useRef(onSave);
   const dirtyRef = useRef(false);
 

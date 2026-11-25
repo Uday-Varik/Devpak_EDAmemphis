@@ -2,9 +2,10 @@ import { composeAddress } from "@/utils/address";
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { SiteData, SitePhoto, SubsidyProgram } from "@/types/sectionData";
 
 interface SiteLocationSectionProps {
-  siteLocation: Record<string, any>;
+  siteLocation: SiteData;
 }
 
 export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) => {
@@ -15,11 +16,11 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
     siteLocation.zipCode
   );
 
-  const subsidies: any[] = siteLocation.subsidyPrograms || [];
-  const totalSubsidy = subsidies.reduce((s: number, p: any) => s + (p.estimatedValue || 0), 0);
+  const subsidies: SubsidyProgram[] = siteLocation.subsidyPrograms || [];
+  const totalSubsidy = subsidies.reduce((s: number, p: SubsidyProgram) => s + (p.estimatedValue || 0), 0);
   const envConcerns: string[] = siteLocation.environmentalConcerns || [];
   const utilities: string[] = siteLocation.utilitiesAvailable || siteLocation.utilities || [];
-  const photos: any[] = siteLocation.photos || [];
+  const photos: SitePhoto[] = siteLocation.photos || [];
 
   return (
     <View>
@@ -59,11 +60,11 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
         <View style={{ marginBottom: 12 }}>
           <Text style={styles.subTitle}>Site Photos</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {photos.map((photo: any, i: number) => (
+            {photos.map((photo: SitePhoto, i: number) => (
               <View key={i} style={{ width: "48%", marginBottom: 8 }}>
                 <Image
                   src={photo.url}
-                  style={{ width: "100%", height: 140, objectFit: "cover" as any, borderRadius: 4 }}
+                  style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 4 }}
                 />
                 {!!photo.caption && (
                   <Text style={{ fontSize: 8, color: colors.muted, marginTop: 2 }}>{photo.caption}</Text>
@@ -132,7 +133,7 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
               <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
               <Text style={[styles.tableHeaderText, { flex: 0.8, textAlign: "right" }]}>Status</Text>
             </View>
-            {subsidies.map((s: any, i: number) => (
+            {subsidies.map((s: SubsidyProgram, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
                 <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "—"}</Text>
                 <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "—"}</Text>

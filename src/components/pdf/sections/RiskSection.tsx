@@ -1,15 +1,16 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
+import type { RiskData, RiskEntry } from "@/types/sectionData";
 
 interface RiskSectionProps {
-  riskAssessment: Record<string, any>;
+  riskAssessment: RiskData;
 }
 
 const getLikelihoodColor = (l: string) =>
   l === "High" ? colors.red : l === "Medium" ? colors.gold : colors.green;
 
 export const RiskSection = ({ riskAssessment }: RiskSectionProps) => {
-  const risks: any[] = riskAssessment.risks || [];
+  const risks: RiskEntry[] = riskAssessment.risks || [];
 
   const insuranceFields = [
     { label: "Builder's Risk Insurance", key: "buildersRiskInsurance", fallback: "buildersRisk" },
@@ -37,7 +38,7 @@ export const RiskSection = ({ riskAssessment }: RiskSectionProps) => {
               <Text style={[styles.tableHeaderText, { flex: 0.7, textAlign: "center" }]}>Impact</Text>
               <Text style={[styles.tableHeaderText, { flex: 0.7, textAlign: "center" }]}>Status</Text>
             </View>
-            {risks.map((r: any, i: number) => (
+            {risks.map((r: RiskEntry, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}, { minHeight: 28 }]}>
                 <Text style={[styles.tableCellBold, { flex: 1 }]}>{r.category || "—"}</Text>
                 <Text style={[styles.tableCell, { flex: 2 }]}>{r.description || "—"}</Text>
@@ -53,10 +54,10 @@ export const RiskSection = ({ riskAssessment }: RiskSectionProps) => {
           </View>
 
           {/* Mitigation Strategies */}
-          {risks.some((r: any) => r.mitigationStrategy) && (
+          {risks.some((r: RiskEntry) => r.mitigationStrategy) && (
             <View style={{ marginTop: 8 }}>
               <Text style={styles.subTitle}>Mitigation Strategies</Text>
-              {risks.filter((r: any) => r.mitigationStrategy).map((r: any, i: number) => (
+              {risks.filter((r: RiskEntry) => r.mitigationStrategy).map((r: RiskEntry, i: number) => (
                 <View key={i} style={styles.bulletItem}>
                   <View style={[styles.bullet, { backgroundColor: getLikelihoodColor(r.likelihood) }]} />
                   <Text style={styles.bulletText}>

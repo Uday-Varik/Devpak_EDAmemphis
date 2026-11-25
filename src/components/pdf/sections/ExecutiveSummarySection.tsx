@@ -106,9 +106,9 @@ export const ExecutiveSummarySection = (props: ExecutiveSummarySectionProps) => 
       {/* Deal Snapshot Grid */}
       <View style={styles.metricGrid}>
         {metrics.map((m, i) => (
-          <View key={i} style={[styles.metricBox, (m as any).highlight ? { borderLeftColor: colors.green } : {}]}>
+          <View key={i} style={[styles.metricBox, m.highlight ? { borderLeftColor: colors.green } : {}]}>
             <Text style={styles.metricLabel}>{m.label}</Text>
-            <Text style={[styles.metricValue, { fontSize: 11 }, (m as any).highlight ? { color: colors.green, fontSize: 13 } : {}]}>
+            <Text style={[styles.metricValue, { fontSize: 11 }, m.highlight ? { color: colors.green, fontSize: 13 } : {}]}>
               {m.value}
             </Text>
           </View>

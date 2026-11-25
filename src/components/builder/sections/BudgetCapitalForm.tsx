@@ -29,10 +29,28 @@ import { BudgetWarnings, calculateWarnings } from "./budget/BudgetWarnings";
 import { cn } from "@/lib/utils";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { AutoSaveIndicator } from "@/components/builder/AutoSaveIndicator";
+import type {
+  AcquisitionData, BudgetData, CapitalStackData, HardCostsData, HoldingCostsData, ScopeData, SiteData, SoftCostsData, SubsidyProgram,
+} from "@/types/sectionData";
+
+type CustomSection = "hardCosts" | "softCosts" | "holdingCosts";
+
+/** Form state: every section is always present, even when a saved row lacks it. */
+type BudgetFormState = {
+  acquisition: AcquisitionData;
+  hardCosts: HardCostsData;
+  softCosts: SoftCostsData;
+  holdingCosts: HoldingCostsData;
+  operatingReserves: number;
+  capitalStack: CapitalStackData;
+};
+
+/** Saved payload; `contingency` is a legacy location for operatingReserves. */
+type BudgetSaved = BudgetData & { contingency?: { operatingReserves?: number } };
 
 interface BudgetCapitalFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -112,16 +130,17 @@ export const BudgetCapitalForm = ({
   onSave,
   saving,
 }: BudgetCapitalFormProps) => {
-  const [formData, setFormData] = useState(() => {
+  const [formData, setFormData] = useState<BudgetFormState>(() => {
+    const saved = data as BudgetSaved;
     // Strip legacy softCosts.propertyTaxes (moved to holdingCosts only)
-    const { propertyTaxes: _legacyPropTax, ...softCostsClean } = data.softCosts || {};
+    const { propertyTaxes: _legacyPropTax, ...softCostsClean } = (saved.softCosts || {}) as SoftCostsData & { propertyTaxes?: number };
     return {
-      acquisition: { ...DEFAULT_DATA.acquisition, ...data.acquisition },
-      hardCosts: { ...DEFAULT_DATA.hardCosts, ...data.hardCosts },
+      acquisition: { ...DEFAULT_DATA.acquisition, ...saved.acquisition },
+      hardCosts: { ...DEFAULT_DATA.hardCosts, ...saved.hardCosts },
       softCosts: { ...DEFAULT_DATA.softCosts, ...softCostsClean },
-      holdingCosts: { ...DEFAULT_DATA.holdingCosts, ...data.holdingCosts },
-      operatingReserves: data.operatingReserves ?? (data.contingency?.operatingReserves ?? DEFAULT_DATA.operatingReserves),
-      capitalStack: { ...DEFAULT_DATA.capitalStack, ...data.capitalStack },
+      holdingCosts: { ...DEFAULT_DATA.holdingCosts, ...saved.holdingCosts },
+      operatingReserves: saved.operatingReserves ?? (saved.contingency?.operatingReserves ?? DEFAULT_DATA.operatingReserves),
+      capitalStack: { ...DEFAULT_DATA.capitalStack, ...saved.capitalStack },
     };
   });
   const [openSections, setOpenSections] = useState<string[]>(["acquisition"]);
@@ -156,7 +175,7 @@ export const BudgetCapitalForm = ({
   const { id: projectId } = useParams<{ id: string }>();
   const [siteSubsidyTotal, setSiteSubsidyTotal] = useState(0);
   const [projectType, setProjectType] = useState<string | null>(null);
-  const [scopeData, setScopeData] = useState<Record<string, any> | null>(null);
+  const [scopeData, setScopeData] = useState<ScopeData | null>(null);
 
   useEffect(() => {
     const fetchSiteSubsidies = async () => {
@@ -168,8 +187,8 @@ export const BudgetCapitalForm = ({
         .eq("section", "site-location")
         .single();
       if (details?.data) {
-        const d = details.data as Record<string, any>;
-        const total = (d.subsidyPrograms || []).reduce((sum: number, p: any) => sum + (Number(p.estimatedValue) || 0), 0);
+        const d = details.data as SiteData;
+        const total = (d.subsidyPrograms || []).reduce((sum: number, p: SubsidyProgram) => sum + (Number(p.estimatedValue) || 0), 0);
         setSiteSubsidyTotal(total);
       }
     };
@@ -182,7 +201,7 @@ export const BudgetCapitalForm = ({
         .eq("section", "project-scope")
         .maybeSingle();
       if (details?.data) {
-        const d = details.data as Record<string, any>;
+        const d = details.data as ScopeData;
         setScopeData(d);
         setProjectType(d.projectType || null);
       }
@@ -207,7 +226,7 @@ export const BudgetCapitalForm = ({
     // eslint-disable-next-line no-console
   }, [projectType, showLandEquity]);
 
-  const handleAutoSave = useCallback(async (data: any) => {
+  const handleAutoSave = useCallback(async (data: Record<string, unknown>) => {
     await onSave(data, false);
     window.dispatchEvent(new CustomEvent("section-data-updated", { detail: { section: "budget-capital" } }));
   }, [onSave]);
@@ -248,47 +267,47 @@ export const BudgetCapitalForm = ({
   );
 
   // Update nested state helper
-  const updateSection = <T extends keyof typeof formData>(
+  const updateSection = <T extends keyof BudgetFormState>(
     section: T,
     field: string,
-    value: any
+    value: unknown
   ) => {
     setFormData((prev) => ({
       ...prev,
-      [section]: typeof prev[section] === "object" ? {
-        ...(prev[section] as any),
+      [section]: {
+        ...(prev[section] as object),
         [field]: value,
-      } : value,
+      },
     }));
   };
 
-  const addCustomItem = (section: "hardCosts" | "softCosts" | "holdingCosts") => {
+  const addCustomItem = (section: CustomSection) => {
     setFormData((prev) => {
-      const current = (prev[section] as any).customItems || [];
+      const current = prev[section].customItems || [];
       if (current.length >= 10) return prev;
       return {
         ...prev,
         [section]: {
-          ...(prev[section] as any),
+          ...prev[section],
           customItems: [...current, { label: "", amount: 0 }],
         },
       };
     });
   };
 
-  const updateCustomItem = (section: "hardCosts" | "softCosts" | "holdingCosts", index: number, field: "label" | "amount", value: any) => {
+  const updateCustomItem = (section: CustomSection, index: number, field: "label" | "amount", value: unknown) => {
     setFormData((prev) => {
-      const items = [...((prev[section] as any).customItems || [])];
+      const items = [...(prev[section].customItems || [])];
       items[index] = { ...items[index], [field]: value };
-      return { ...prev, [section]: { ...(prev[section] as any), customItems: items } };
+      return { ...prev, [section]: { ...prev[section], customItems: items } };
     });
   };
 
-  const removeCustomItem = (section: "hardCosts" | "softCosts" | "holdingCosts", index: number) => {
+  const removeCustomItem = (section: CustomSection, index: number) => {
     setFormData((prev) => {
-      const items = [...((prev[section] as any).customItems || [])];
+      const items = [...(prev[section].customItems || [])];
       items.splice(index, 1);
-      return { ...prev, [section]: { ...(prev[section] as any), customItems: items } };
+      return { ...prev, [section]: { ...prev[section], customItems: items } };
     });
   };
 

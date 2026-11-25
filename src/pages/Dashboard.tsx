@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/errorMessage";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, MapPin, Calendar, Plus, User, LogOut, LayoutDashboard, Trash2 } from "lucide-react";
@@ -73,7 +74,7 @@ const Dashboard = () => {
     try {
       // Name comes from the developer profile first; legacy profile only if empty.
       const [devRes, profRes] = await Promise.all([
-        supabase.from("developer_profiles" as any).select("full_name").eq("user_id", user!.id).maybeSingle(),
+        supabase.from("developer_profiles").select("full_name").eq("user_id", user!.id).maybeSingle(),
         supabase.from("profiles").select("full_name, photo_url").eq("user_id", user!.id).maybeSingle(),
       ]);
       if (devRes.error || profRes.error) {
@@ -82,11 +83,11 @@ const Dashboard = () => {
       }
       const devProfile = devRes.data;
       const profileData = profRes.data;
-      const devName = ((devProfile as any)?.full_name || "").trim();
+      const devName = (devProfile?.full_name || "").trim();
       setProfile({
         ...(profileData || { photo_url: null }),
         full_name: devName || profileData?.full_name || null,
-      } as any);
+      });
 
       // Fetch projects
       const { data: projectsData, error: projectsError } = await supabase
@@ -112,7 +113,7 @@ const Dashboard = () => {
       // Check if developer profile exists; if not, send to onboarding
       (async () => {
         const { data, error } = await supabase
-          .from("developer_profiles" as any)
+          .from("developer_profiles")
           .select("id")
           .eq("user_id", user.id)
           .maybeSingle();
@@ -166,10 +167,10 @@ const Dashboard = () => {
       setNewProjectName("");
       setNewProjectAddress("");
       navigate(`/project/${created.id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage(error),
         variant: "destructive",
       });
     } finally {
@@ -188,8 +189,8 @@ const Dashboard = () => {
       toast({ title: "Project deleted", description: `"${deleteTarget.name}" has been permanently deleted.` });
       setDeleteTarget(null);
       fetchData();
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: errorMessage(error), variant: "destructive" });
     } finally {
       setDeleting(false);
     }
@@ -230,8 +231,8 @@ const Dashboard = () => {
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-primary/20 transition-all duration-300 focus:outline-none">
-                {(profile as any)?.photo_url ? (
-                  <img src={(profile as any).photo_url} alt="Profile" className="w-9 h-9 rounded-full object-cover border-2 border-gray-200" />
+                {profile?.photo_url ? (
+                  <img src={profile.photo_url} alt="Profile" className="w-9 h-9 rounded-full object-cover border-2 border-gray-200" />
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
                     <User className="w-4 h-4 text-muted-foreground" />

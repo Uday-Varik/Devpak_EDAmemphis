@@ -1,6 +1,7 @@
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { ConceptDrawing, ScopeData, SiteData, SitePhoto, SubsidyProgram } from "@/types/sectionData";
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
   "new-construction": "New Construction",
@@ -18,8 +19,8 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 interface Props {
-  scope: Record<string, any>;
-  siteLocation: Record<string, any>;
+  scope: ScopeData;
+  siteLocation: SiteData;
   address: string;
 }
 
@@ -31,13 +32,13 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props) => {
-  const drawings: any[] = scope.conceptDrawings || [];
-  const photos: any[] = siteLocation.photos || [];
+  const drawings: ConceptDrawing[] = scope.conceptDrawings || [];
+  const photos: SitePhoto[] = siteLocation.photos || [];
   const isNewConstruction = scope.projectType === "new-construction";
   const sqftExisting = scope.sqftExisting ? `${Number(scope.sqftExisting).toLocaleString()} sq ft` : null;
   const sqftPlanned = scope.sqftPlanned ? `${Number(scope.sqftPlanned).toLocaleString()} sq ft` : null;
-  const subsidies: any[] = siteLocation.subsidyPrograms || [];
-  const totalSubsidy = subsidies.reduce((s: number, p: any) => s + (p.estimatedValue || 0), 0);
+  const subsidies: SubsidyProgram[] = siteLocation.subsidyPrograms || [];
+  const totalSubsidy = subsidies.reduce((s: number, p: SubsidyProgram) => s + (p.estimatedValue || 0), 0);
   const envConcerns: string[] = siteLocation.environmentalConcerns || [];
 
   return (
@@ -48,13 +49,13 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
       <Row label="Address" value={address} />
       <Row label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "—"} />
       <Row label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "—"} />
-      <Row label="Number of Units" value={scope.numberOfUnits || "—"} />
+      <Row label="Number of Units" value={String(scope.numberOfUnits || "—")} />
       {!isNewConstruction && !!sqftExisting && <Row label="Existing Sq Ft" value={sqftExisting} />}
       {!!sqftPlanned && (
         <Row label={isNewConstruction ? "Planned Sq Ft" : "Planned Sq Ft (After Construction)"} value={sqftPlanned} />
       )}
-      <Row label="Bedrooms / Unit" value={scope.bedroomsPerUnit || "—"} />
-      <Row label="Bathrooms / Unit" value={scope.bathroomsPerUnit || "—"} />
+      <Row label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "—")} />
+      <Row label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "—")} />
 
       {(scope.scopeOfWork || scope.projectDescription) && (
         <View>
@@ -89,9 +90,9 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
         <View style={{ marginBottom: 10 }} break>
           <Text style={styles.subTitle}>Site Photos</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {photos.map((photo: any, i: number) => (
+            {photos.map((photo: SitePhoto, i: number) => (
               <View key={i} style={{ width: "48%", marginBottom: 8 }}>
-                <Image src={photo.url} style={{ width: "100%", height: 140, objectFit: "cover" as any, borderRadius: 4 }} />
+                <Image src={photo.url} style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 4 }} />
                 {!!photo.caption && <Text style={{ fontSize: 8, color: colors.muted, marginTop: 2 }}>{photo.caption}</Text>}
               </View>
             ))}
@@ -103,10 +104,10 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
         <View style={{ marginTop: 8 }}>
           <Text style={styles.subTitle}>Concept Drawings & Plans</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {drawings.map((drawing: any, i: number) => (
+            {drawings.map((drawing: ConceptDrawing, i: number) => (
               <View key={i} style={{ width: "48%", marginBottom: 8 }}>
                 {drawing.fileType === "image" ? (
-                  <Image src={drawing.url} style={{ width: "100%", height: 160, objectFit: "contain" as any, borderRadius: 4, backgroundColor: "#F7F8FA" }} />
+                  <Image src={drawing.url} style={{ width: "100%", height: 160, objectFit: "contain", borderRadius: 4, backgroundColor: "#F7F8FA" }} />
                 ) : (
                   <View style={{ width: "100%", height: 60, backgroundColor: "#FEF2F2", borderRadius: 4, justifyContent: "center", alignItems: "center" }}>
                     <Text style={{ fontSize: 10, color: colors.red }}>PDF Attachment</Text>
@@ -141,7 +142,7 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
               <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
               <Text style={[styles.tableHeaderText, { flex: 0.8, textAlign: "right" }]}>Status</Text>
             </View>
-            {subsidies.map((s: any, i: number) => (
+            {subsidies.map((s: SubsidyProgram, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
                 <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "—"}</Text>
                 <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "—"}</Text>

@@ -2,7 +2,7 @@ import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 
 interface ResilienceSectionProps {
-  resilience: Record<string, any>;
+  resilience: ResilienceData;
 }
 
 import {
@@ -12,6 +12,7 @@ import {
   computeResilience,
   normalizeResilience,
 } from "@/utils/resilience";
+import type { ResilienceData } from "@/types/sectionData";
 
 
 const CheckItem = ({ checked, label }: { checked: boolean; label: string }) => (

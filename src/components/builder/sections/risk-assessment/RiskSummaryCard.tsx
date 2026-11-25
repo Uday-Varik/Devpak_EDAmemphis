@@ -1,18 +1,19 @@
 import { useMemo } from "react";
 import { ShieldAlert, Shield, FileCheck } from "lucide-react";
 import { countObtainedInsurance } from "@/utils/riskInsurance";
+import type { RiskData, RiskEntry } from "@/types/sectionData";
 
 interface RiskSummaryCardProps {
-  formData: Record<string, any>;
+  formData: RiskData;
 }
 
 export const RiskSummaryCard = ({ formData }: RiskSummaryCardProps) => {
   const risks = formData.risks || [];
 
   const riskBreakdown = useMemo(() => {
-    const high = risks.filter((r: any) => r.likelihood === "High").length;
-    const medium = risks.filter((r: any) => r.likelihood === "Medium").length;
-    const low = risks.filter((r: any) => r.likelihood === "Low").length;
+    const high = risks.filter((r: RiskEntry) => r.likelihood === "High").length;
+    const medium = risks.filter((r: RiskEntry) => r.likelihood === "Medium").length;
+    const low = risks.filter((r: RiskEntry) => r.likelihood === "Low").length;
     return { high, medium, low };
   }, [risks]);
 

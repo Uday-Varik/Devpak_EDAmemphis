@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
-import { DeveloperProfile, EMPTY_DEVELOPER_PROFILE } from "@/types/developerProfile";
+import {
+  DeveloperLicense, DeveloperProfile, EMPTY_DEVELOPER_PROFILE, PortfolioProject,
+} from "@/types/developerProfile";
 
 export const useDeveloperProfile = () => {
   const { user, loading: authLoading } = useAuth();
@@ -21,14 +24,14 @@ export const useDeveloperProfile = () => {
     (async () => {
       try {
         const { data, error } = await supabase
-          .from("developer_profiles" as any)
+          .from("developer_profiles")
           .select("*")
           .eq("user_id", user.id)
           .maybeSingle();
         if (error) throw error;
         if (!active) return;
         if (data) {
-          const d = data as any;
+          const d = data;
           setProfile({
             id: d.id,
             user_id: d.user_id,
@@ -38,11 +41,11 @@ export const useDeveloperProfile = () => {
             bio: d.bio || "",
             phone: d.phone || "",
             email: d.email || user.email || "",
-            licenses: Array.isArray(d.licenses) ? d.licenses : [],
+            licenses: Array.isArray(d.licenses) ? (d.licenses as unknown as DeveloperLicense[]) : [],
             certifications: Array.isArray(d.certifications) ? d.certifications : [],
             years_experience: d.years_experience ?? null,
             headshot_url: d.headshot_url || "",
-            portfolio: Array.isArray(d.portfolio) ? d.portfolio : [],
+            portfolio: Array.isArray(d.portfolio) ? (d.portfolio as unknown as PortfolioProject[]) : [],
           });
           setExists(true);
         } else {
@@ -65,7 +68,7 @@ export const useDeveloperProfile = () => {
 
   const save = async (data: DeveloperProfile) => {
     if (!user) throw new Error("Not authenticated");
-    const payload: any = {
+    const payload = {
       user_id: user.id,
       full_name: data.full_name || null,
       entity_name: data.entity_name || null,
@@ -73,14 +76,14 @@ export const useDeveloperProfile = () => {
       bio: data.bio || null,
       phone: data.phone || null,
       email: data.email || user.email || null,
-      licenses: data.licenses || [],
+      licenses: (data.licenses || []) as unknown as Json,
       certifications: data.certifications || [],
       years_experience: data.years_experience,
       headshot_url: data.headshot_url || null,
-      portfolio: data.portfolio || [],
+      portfolio: (data.portfolio || []) as unknown as Json,
     };
     const { error } = await supabase
-      .from("developer_profiles" as any)
+      .from("developer_profiles")
       .upsert(payload, { onConflict: "user_id" });
     if (error) throw error;
     setProfile(data);

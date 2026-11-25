@@ -53,10 +53,14 @@ import { buildOverviewFingerprint } from "@/utils/narrativeFingerprints";
 import { isNarrativeStale, PACKAGE_SECTIONS, countCompletedSections } from "@/utils/narrativeStaleness";
 import { composeAddress } from "@/utils/address";
 import { countObtainedInsurance } from "@/utils/riskInsurance";
+import type {
+  BudgetData, ComparableSale, ExecutiveData, FeasibilityData, ResilienceData, RiskData, RiskEntry,
+  ScheduleData, ScheduleMilestone, ScopeData, SiteData, SubsidyProgram, TeamData, VisionData,
+} from "@/types/sectionData";
 
 interface ExecutiveSummaryFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -93,27 +97,27 @@ export const ExecutiveSummaryForm = ({
   saving,
 }: ExecutiveSummaryFormProps) => {
   const { id: projectId } = useParams<{ id: string }>();
-  const [projectData, setProjectData] = useState<any>(null);
-  const [scopeData, setScopeData] = useState<any>(null);
-  const [budgetData, setBudgetData] = useState<any>(null);
-  const [feasibilityData, setFeasibilityData] = useState<any>(null);
-  const [visionData, setVisionData] = useState<any>(null);
-  const [siteData, setSiteData] = useState<any>(null);
-  const [scheduleData, setScheduleData] = useState<any>(null);
-  const [teamData, setTeamData] = useState<any>(null);
-  const [riskData, setRiskData] = useState<any>(null);
-  const [resilienceData, setResilienceData] = useState<any>(null);
+  const [projectData, setProjectData] = useState<{ name?: string; address?: string } | null>(null);
+  const [scopeData, setScopeData] = useState<ScopeData | null>(null);
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+  const [feasibilityData, setFeasibilityData] = useState<FeasibilityData | null>(null);
+  const [visionData, setVisionData] = useState<VisionData | null>(null);
+  const [siteData, setSiteData] = useState<SiteData | null>(null);
+  const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
+  const [teamData, setTeamData] = useState<TeamData | null>(null);
+  const [riskData, setRiskData] = useState<RiskData | null>(null);
+  const [resilienceData, setResilienceData] = useState<ResilienceData | null>(null);
   const [sectionsCompleted, setSectionsCompleted] = useState<Record<string, boolean>>({});
   const [developerProfileName, setDeveloperProfileName] = useState<string>("");
 
-  const [formData, setFormData] = useState<Record<string, any>>({
-    projectOverview: data.projectOverview || "",
-    investmentThesis: data.investmentThesis || "",
-    overviewEdited: data.overviewEdited || false,
-    overviewFingerprint: data.overviewFingerprint || "",
-    thesisFingerprint: data.thesisFingerprint || "",
-    packagePurpose: data.packagePurpose || "",
-    ...data,
+  const [formData, setFormData] = useState<ExecutiveData>({
+    projectOverview: (data.projectOverview as string) || "",
+    investmentThesis: (data.investmentThesis as string) || "",
+    overviewEdited: (data.overviewEdited as boolean) || false,
+    overviewFingerprint: (data.overviewFingerprint as string) || "",
+    thesisFingerprint: (data.thesisFingerprint as string) || "",
+    packagePurpose: (data.packagePurpose as string) || "",
+    ...(data as ExecutiveData),
   });
   const [exporting, setExporting] = useState<string | null>(null);
   const [pendingExport, setPendingExport] = useState<{ label: string; run: () => Promise<void> } | null>(null);
@@ -139,7 +143,7 @@ export const ExecutiveSummaryForm = ({
     }
   };
 
-  const handleAutoSave = useCallback(async (data: any) => {
+  const handleAutoSave = useCallback(async (data: Record<string, unknown>) => {
     // Always persist — never gate autosave on other sections' completion.
     await onSave(data, false);
   }, [onSave]);
@@ -165,17 +169,16 @@ export const ExecutiveSummaryForm = ({
         const completed: Record<string, boolean> = {};
         detailsRes.data.forEach((d) => {
           completed[d.section] = d.completed;
-          const sectionData = d.data as Record<string, any>;
           switch (d.section) {
-            case "project-scope": setScopeData(sectionData); break;
-            case "budget-capital": setBudgetData(sectionData); break;
-            case "feasibility": setFeasibilityData(sectionData); break;
-            case "vision-market": setVisionData(sectionData); break;
-            case "site-location": setSiteData(sectionData); break;
-            case "project-schedule": setScheduleData(sectionData); break;
-            case "project-team": setTeamData(sectionData); break;
-            case "risk-assessment": setRiskData(sectionData); break;
-            case "resilience-factors": setResilienceData(sectionData); break;
+            case "project-scope": setScopeData(d.data as ScopeData); break;
+            case "budget-capital": setBudgetData(d.data as BudgetData); break;
+            case "feasibility": setFeasibilityData(d.data as FeasibilityData); break;
+            case "vision-market": setVisionData(d.data as VisionData); break;
+            case "site-location": setSiteData(d.data as SiteData); break;
+            case "project-schedule": setScheduleData(d.data as ScheduleData); break;
+            case "project-team": setTeamData(d.data as TeamData); break;
+            case "risk-assessment": setRiskData(d.data as RiskData); break;
+            case "resilience-factors": setResilienceData(d.data as ResilienceData); break;
           }
         });
         setSectionsCompleted(completed);
@@ -186,18 +189,18 @@ export const ExecutiveSummaryForm = ({
       const uid = userRes?.user?.id;
       if (uid) {
         const { data: dp } = await supabase
-          .from("developer_profiles" as any)
+          .from("developer_profiles")
           .select("full_name")
           .eq("user_id", uid)
           .maybeSingle();
-        let name = ((dp as any)?.full_name || "").trim();
+        let name = (dp?.full_name || "").trim();
         if (!name) {
           const { data: pr } = await supabase
             .from("profiles")
             .select("full_name")
             .eq("user_id", uid)
             .maybeSingle();
-          name = ((pr as any)?.full_name || "").trim();
+          name = (pr?.full_name || "").trim();
         }
         setDeveloperProfileName(name);
       }
@@ -279,7 +282,7 @@ export const ExecutiveSummaryForm = ({
 
     // Vision & Market data
     const neighborhoodName = vision.neighborhoodName || "";
-    const joinMulti = (v: any) => Array.isArray(v) ? v.filter(Boolean).join(" / ") : (v || "");
+    const joinMulti = (v: string[] | string | undefined): string => Array.isArray(v) ? v.filter(Boolean).join(" / ") : (v || "");
     const targetMarket = joinMulti(vision.targetMarket);
     const targetIncomeLevel = joinMulti(vision.targetIncomeLevel);
     const communityImpact = vision.communityImpact || "";
@@ -287,9 +290,9 @@ export const ExecutiveSummaryForm = ({
     const averageRent = vision.averageRent || 0;
     const vacancyRate = vision.vacancyRate || 0;
     const marketTrend = vision.marketTrend || "";
-    const comps: any[] = vision.comparables || [];
+    const comps: ComparableSale[] = vision.comparables || [];
     const avgPricePerSqFt = comps.length > 0
-      ? comps.reduce((sum: number, c: any) => sum + ((c.price && c.sqft && c.sqft > 0) ? c.price / c.sqft : 0), 0) / comps.filter((c: any) => c.price && c.sqft && c.sqft > 0).length || 0
+      ? comps.reduce((sum: number, c: ComparableSale) => sum + ((c.price && c.sqft && c.sqft > 0) ? c.price / c.sqft : 0), 0) / comps.filter((c: ComparableSale) => c.price && c.sqft && c.sqft > 0).length || 0
       : 0;
 
     // Site data
@@ -299,21 +302,21 @@ export const ExecutiveSummaryForm = ({
     const currentZoning = site.currentZoning || "";
     const currentCondition = site.currentCondition || "";
     const floodZone = site.floodZone || "";
-    const subsidyPrograms: any[] = site.subsidyPrograms || [];
-    const totalSubsidyValue = subsidyPrograms.reduce((sum: number, p: any) => sum + (p.estimatedValue || 0), 0);
-    const subsidyNames = subsidyPrograms.map((p: any) => p.programName).filter(Boolean);
+    const subsidyPrograms: SubsidyProgram[] = site.subsidyPrograms || [];
+    const totalSubsidyValue = subsidyPrograms.reduce((sum: number, p: SubsidyProgram) => sum + (p.estimatedValue || 0), 0);
+    const subsidyNames = subsidyPrograms.map((p: SubsidyProgram) => p.programName).filter(Boolean);
 
     // Schedule data
     const totalDurationWeeks = schedule.milestones?.length > 0
-      ? schedule.milestones.reduce((sum: number, m: any) => sum + (m.durationWeeks || 0), 0)
+      ? schedule.milestones.reduce((sum: number, m: ScheduleMilestone) => sum + (m.durationWeeks || 0), 0)
       : 0;
     const totalMonths = Math.round(totalDurationWeeks / 4.33);
     const scheduleStartDate = schedule.startDate || "";
     const scheduleEndDate = schedule.endDate || "";
-    const milestones: any[] = schedule.milestones || [];
-    const milestonesComplete = milestones.filter((m: any) => m.status === "Complete").length;
-    const milestonesInProgress = milestones.filter((m: any) => m.status === "In Progress").length;
-    const milestonesDelayed = milestones.filter((m: any) => m.status === "Delayed").length;
+    const milestones: ScheduleMilestone[] = schedule.milestones || [];
+    const milestonesComplete = milestones.filter((m: ScheduleMilestone) => m.status === "Complete").length;
+    const milestonesInProgress = milestones.filter((m: ScheduleMilestone) => m.status === "In Progress").length;
+    const milestonesDelayed = milestones.filter((m: ScheduleMilestone) => m.status === "Delayed").length;
 
     // Team data
     const developerName = team.developerName || "";
@@ -330,11 +333,11 @@ export const ExecutiveSummaryForm = ({
     const propertyManagement = team.propertyManagement || "";
 
     // Risk data
-    const risks: any[] = risk.risks || [];
+    const risks: RiskEntry[] = risk.risks || [];
     const riskCount = risks.length;
-    const highRisks = risks.filter((r: any) => r.likelihood === "High").length;
-    const mediumRisks = risks.filter((r: any) => r.likelihood === "Medium").length;
-    const lowRisks = risks.filter((r: any) => r.likelihood === "Low").length;
+    const highRisks = risks.filter((r: RiskEntry) => r.likelihood === "High").length;
+    const mediumRisks = risks.filter((r: RiskEntry) => r.likelihood === "Medium").length;
+    const lowRisks = risks.filter((r: RiskEntry) => r.likelihood === "Low").length;
 
     const insuranceObtained = countObtainedInsurance(risk);
     const permitStatus = risk.permitStatus || "";
@@ -369,7 +372,7 @@ export const ExecutiveSummaryForm = ({
       // Vision
       neighborhoodName, targetMarket, targetIncomeLevel, communityImpact,
       medianHomePrice, averageRent, vacancyRate, marketTrend,
-      avgPricePerSqFt, compsCount: comps.filter((c: any) => c.price).length,
+      avgPricePerSqFt, compsCount: comps.filter((c: ComparableSale) => c.price).length,
       // Site
       fullAddress, lotSize, lotSizeUnit, currentZoning, currentCondition, floodZone,
       totalSubsidyValue, subsidyNames,

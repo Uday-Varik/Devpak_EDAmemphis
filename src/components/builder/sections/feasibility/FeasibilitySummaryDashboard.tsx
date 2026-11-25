@@ -1,3 +1,4 @@
+import type { BudgetData, FeasibilityData } from "@/types/sectionData";
 import { useMemo, useState } from "react";
 import { CheckCircle, AlertTriangle, XCircle, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,8 +9,8 @@ import { computeSensitivityScenarios, CASH_NOT_INVESTED } from "@/utils/calculat
 import { CashNotInvestedNote } from "@/components/builder/CashNotInvested";
 
 interface FeasibilitySummaryDashboardProps {
-  data: any;
-  budgetData: any;
+  data: FeasibilityData;
+  budgetData: BudgetData | null;
   calculations: FeasibilityCalculations;
 }
 

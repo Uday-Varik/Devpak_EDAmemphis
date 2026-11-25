@@ -1,10 +1,11 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { FeasibilityData, ScopeData } from "@/types/sectionData";
 
 interface ComparablesSectionProps {
-  feasibility: Record<string, any>;
-  scope: Record<string, any>;
+  feasibility: FeasibilityData;
+  scope: ScopeData;
 }
 
 export const ComparablesSection = ({ feasibility, scope }: ComparablesSectionProps) => {
@@ -24,7 +25,7 @@ export const ComparablesSection = ({ feasibility, scope }: ComparablesSectionPro
       ? compList.filter(c => c.sqft > 0).reduce((s, c) => s + c.salePrice / c.sqft, 0) / compList.filter(c => c.sqft > 0).length
       : 0;
 
-  const plannedSqFt = scope.sqftPlanned || 0;
+  const plannedSqFt = Number(scope.sqftPlanned) || 0;
   const projectedPricePerSqFt = plannedSqFt > 0 && feasibility.saleExit?.arv > 0
     ? feasibility.saleExit.arv / plannedSqFt
     : 0;

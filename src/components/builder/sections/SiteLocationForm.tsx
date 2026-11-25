@@ -1,3 +1,4 @@
+import type { SiteData, SitePhoto, SubsidyProgram } from "@/types/sectionData";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
@@ -17,8 +18,8 @@ import { SitePhotoUpload } from "./site-location/SitePhotoUpload";
 import { cleanAddressPart } from "@/utils/address";
 
 interface SiteLocationFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -48,8 +49,8 @@ const DEFAULT_DATA = {
   heightLimit: "",
   parkingRequirements: "",
   entitlementStatus: "",
-  subsidyPrograms: [] as any[],
-  photos: [] as any[],
+  subsidyPrograms: [] as SubsidyProgram[],
+  photos: [] as SitePhoto[],
 };
 
 const TOPOGRAPHY_OPTIONS = ["Flat", "Gentle Slope", "Moderate Slope", "Steep", "Irregular"];
@@ -107,8 +108,8 @@ const FieldHelp = ({ text }: { text: string }) => (
 
 export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps) => {
   const { id: projectId } = useParams<{ id: string }>();
-  const [formData, setFormData] = useState(() => {
-    const merged = { ...DEFAULT_DATA, ...data };
+  const [formData, setFormData] = useState<SiteData>(() => {
+    const merged: SiteData = { ...DEFAULT_DATA, ...(data as SiteData) };
     // Legacy data migrations
     const LEGACY_CONDITION_MAP: Record<string, string> = {
       "Vacant Land": "Vacant Parcel / Land",
@@ -148,7 +149,7 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
   const zipMismatch = !!matchedZip && !!enteredZip && matchedZip !== enteredZip;
 
   const handleAutoSave = useCallback(
-    async (d: any) => {
+    async (d: Record<string, unknown>) => {
       await onSave({
         ...d,
         streetAddress: cleanAddressPart(d.streetAddress),
@@ -163,15 +164,15 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
   const ADDRESS_FIELDS = ["streetAddress", "city", "state", "zipCode"];
-  const update = (field: string, value: any) => {
+  const update = (field: string, value: unknown) => {
     const next = ADDRESS_FIELDS.includes(field) && typeof value === "string"
       ? cleanAddressPart(value)
       : value;
-    setFormData((prev: any) => ({ ...prev, [field]: next }));
+    setFormData((prev: SiteData) => ({ ...prev, [field]: next }));
   };
 
   const toggleMultiSelect = (field: string, value: string) => {
-    setFormData((prev: any) => {
+    setFormData((prev: SiteData) => {
       const arr = prev[field] || [];
       return {
         ...prev,
@@ -181,7 +182,7 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
   };
 
   const addSubsidyProgram = (preset?: { name: string; type: string; notes: string }) => {
-    setFormData((prev: any) => ({
+    setFormData((prev: SiteData) => ({
       ...prev,
       subsidyPrograms: [
         ...prev.subsidyPrograms,
@@ -190,8 +191,8 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
     }));
   };
 
-  const updateSubsidyProgram = (index: number, field: string, value: any) => {
-    setFormData((prev: any) => {
+  const updateSubsidyProgram = (index: number, field: string, value: unknown) => {
+    setFormData((prev: SiteData) => {
       const programs = [...prev.subsidyPrograms];
       programs[index] = { ...programs[index], [field]: value };
       return { ...prev, subsidyPrograms: programs };
@@ -199,18 +200,18 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
   };
 
   const removeSubsidyProgram = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev: SiteData) => ({
       ...prev,
-      subsidyPrograms: prev.subsidyPrograms.filter((_: any, i: number) => i !== index),
+      subsidyPrograms: prev.subsidyPrograms.filter((_: SubsidyProgram, i: number) => i !== index),
     }));
   };
 
   const totalSubsidyValue = useMemo(
-    () => (formData.subsidyPrograms || []).reduce((sum: number, p: any) => sum + (Number(p.estimatedValue) || 0), 0),
+    () => (formData.subsidyPrograms || []).reduce((sum: number, p: SubsidyProgram) => sum + (Number(p.estimatedValue) || 0), 0),
     [formData.subsidyPrograms]
   );
 
-  const sanitize = (d: any) => ({
+  const sanitize = (d: SiteData) => ({
     ...d,
     streetAddress: cleanAddressPart(d.streetAddress),
     city: cleanAddressPart(d.city),
@@ -574,7 +575,7 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
                     </p>
                   </div>
                 )}
-                {(formData.subsidyPrograms || []).map((program: any, index: number) => (
+                {(formData.subsidyPrograms || []).map((program: SubsidyProgram, index: number) => (
                   <div key={index} className="p-4 bg-muted/30 rounded-lg border border-border space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground">Program {index + 1}</span>

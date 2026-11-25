@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
 import { CASH_NOT_INVESTED } from "@/utils/calculations";
 import { CashNotInvestedNote } from "@/components/builder/CashNotInvested";
+import type { ScheduleMilestone } from "@/types/sectionData";
 
 interface ExecutiveSummaryDashboardProps {
   calcs: {
@@ -37,7 +38,7 @@ interface ExecutiveSummaryDashboardProps {
     milestonesComplete: number;
     milestonesInProgress: number;
     milestonesDelayed: number;
-    milestones: any[];
+    milestones: ScheduleMilestone[];
     // Risk
     riskCount: number;
     highRisks: number;

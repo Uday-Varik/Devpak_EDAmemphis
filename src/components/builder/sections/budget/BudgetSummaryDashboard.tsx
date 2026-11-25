@@ -4,73 +4,20 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { computeProjectFinancials } from "@/utils/calculations";
+import type { BudgetData, ScopeData } from "@/types/sectionData";
 
-interface BudgetData {
-  acquisition: {
-    purchasePrice: number;
-    closingCosts: number;
-    titleRecording: number;
-    contingencyPercent: number;
-    ownsProperty?: boolean;
-    appraisedLandValue?: number;
-    originalPurchasePrice?: number;
-  };
-  hardCosts: {
-    foundation: number;
-    roofing: number;
-    hvac: number;
-    electrical: number;
-    plumbing: number;
-    interiorFinishes: number;
-    exteriorLandscaping: number;
-    otherHard: number;
-    contingencyPercent: number;
-  };
-  softCosts: {
-    architectureEngineering: number;
-    permitsFees: number;
-    legalAccounting: number;
-    insurance: number;
-    propertyTaxes: number;
-    loanInterestPoints: number;
-    marketingLeasing: number;
-    otherSoft: number;
-    contingencyPercent: number;
-  };
-  holdingCosts: {
-    propertyTaxes: number;
-    insurance: number;
-    loanPayments: number;
-    utilities: number;
-    otherHolding: number;
-    contingencyPercent: number;
-  };
-  operatingReserves: number;
-  capitalStack: {
-    developerEquity: number;
-    privateLender: number;
-    bankLoan: number;
-    grant1Name: string;
-    grant1Amount: number;
-    grant2Name: string;
-    grant2Amount: number;
-    grant3Name: string;
-    grant3Amount: number;
-    otherSources: number;
-  };
-}
 
 interface BudgetSummaryDashboardProps {
   data: BudgetData;
   /** Project Scope data — needed for per-SF construction mode and land equity rules. */
-  scope?: Record<string, any>;
+  scope?: ScopeData;
 }
 
 /**
  * Budget panel figures. Pure mapping of the shared engine's output — no local
  * arithmetic, so this panel always matches Feasibility, Executive Summary, risks and export.
  */
-export const computeBudgetDashboard = (data: Record<string, any>, scope?: Record<string, any>) => {
+export const computeBudgetDashboard = (data: Record<string, unknown>, scope?: ScopeData) => {
   const fin = computeProjectFinancials({ scope, budget: data });
   return {
     acquisitionTotal: fin.acqTotal, acqContingencyPct: fin.acqContPct,

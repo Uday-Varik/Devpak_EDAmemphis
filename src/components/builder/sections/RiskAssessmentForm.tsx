@@ -12,10 +12,11 @@ import { useAutoSave } from "@/hooks/useAutoSave";
 import { RiskSummaryCard } from "./risk-assessment/RiskSummaryCard";
 import { fetchProjectSections, generateAutoRisks } from "@/utils/autoAssess";
 import { AIGenerateButton } from "@/components/ai/AIGenerateButton";
+import type { RiskData } from "@/types/sectionData";
 
 interface RiskAssessmentFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
   projectId: string;
 }
@@ -73,7 +74,19 @@ const DEFAULT_RISKS: Risk[] = [
   },
 ];
 
-const DEFAULT_DATA = {
+type InsuranceField = "buildersRiskInsurance" | "generalLiabilityInsurance" | "titleInsurance" | "propertyInsurance";
+
+type RiskFormState = {
+  risks: Risk[];
+  buildersRiskInsurance: string;
+  generalLiabilityInsurance: string;
+  titleInsurance: string;
+  propertyInsurance: string;
+  permitStatus: string;
+  codeComplianceNotes: string;
+};
+
+const DEFAULT_DATA: RiskFormState = {
   risks: DEFAULT_RISKS,
   buildersRiskInsurance: "",
   generalLiabilityInsurance: "",
@@ -84,11 +97,14 @@ const DEFAULT_DATA = {
 };
 
 export const RiskAssessmentForm = ({ data, onSave, saving, projectId }: RiskAssessmentFormProps) => {
-  const [formData, setFormData] = useState(() => ({
-    ...DEFAULT_DATA,
-    ...data,
-    risks: data.risks?.length ? data.risks : DEFAULT_RISKS,
-  }));
+  const [formData, setFormData] = useState<RiskFormState>(() => {
+    const saved = data as RiskData & { codeComplianceNotes?: string };
+    return {
+      ...DEFAULT_DATA,
+      ...saved,
+      risks: (saved.risks?.length ? saved.risks : DEFAULT_RISKS) as Risk[],
+    };
+  });
   const [openSections, setOpenSections] = useState<string[]>(["project-risks"]);
   const [autoLoading, setAutoLoading] = useState(false);
 
@@ -113,13 +129,13 @@ export const RiskAssessmentForm = ({ data, onSave, saving, projectId }: RiskAsse
   };
 
   const handleAutoSave = useCallback(
-    (dataToSave: Record<string, any>) => onSave(dataToSave, false),
+    (dataToSave: Record<string, unknown>) => onSave(dataToSave, false),
     [onSave]
   );
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
-  const update = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const update = <K extends keyof RiskFormState>(field: K, value: RiskFormState[K]) => {
+    setFormData((prev: RiskFormState) => ({ ...prev, [field]: value }));
   };
 
   const addRisk = () => {
@@ -316,12 +332,12 @@ export const RiskAssessmentForm = ({ data, onSave, saving, projectId }: RiskAsse
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-4">
-                {[
+                {([
                   { key: "buildersRiskInsurance", label: "Builder's Risk Insurance", options: INSURANCE_OPTIONS },
                   { key: "generalLiabilityInsurance", label: "General Liability Insurance", options: INSURANCE_OPTIONS },
                   { key: "titleInsurance", label: "Title Insurance", options: INSURANCE_OPTIONS_NO_NA },
                   { key: "propertyInsurance", label: "Property Insurance", options: INSURANCE_OPTIONS_NO_NA },
-                ].map(({ key, label, options }) => (
+                ] as { key: InsuranceField; label: string; options: readonly string[] }[]).map(({ key, label, options }) => (
                   <div key={key} className="space-y-1.5">
                     <Label>{label}</Label>
                     <Select value={formData[key]} onValueChange={(v) => update(key, v)}>

@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/errorMessage";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Hexagon, ChevronLeft, ChevronRight, CheckCircle2, User, Briefcase, Camera, FolderOpen } from "lucide-react";
@@ -119,8 +120,8 @@ const Onboarding = () => {
       await save(form);
       toast({ title: "Progress saved", description: "You can finish your profile next time you log in." });
       navigate("/dashboard");
-    } catch (e: any) {
-      toast({ title: "Couldn't save progress", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Couldn't save progress", description: errorMessage(e), variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -136,8 +137,8 @@ const Onboarding = () => {
       }
       toast({ title: "Welcome to DevPack!", description: "Your developer profile is set up." });
       navigate("/dashboard");
-    } catch (e: any) {
-      toast({ title: "Couldn't save profile", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Couldn't save profile", description: errorMessage(e), variant: "destructive" });
     } finally {
       setSaving(false);
     }

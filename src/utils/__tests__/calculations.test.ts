@@ -14,7 +14,7 @@ const baseFixture: FinancialsInput = {
   budget: {
     acquisition: { purchasePrice: 75000, closingCosts: 3000, titleRecording: 1500, contingencyPercent: 5 },
     hardCosts: { foundation: 75000, contingencyPercent: 15 },
-    softCosts: { architecture: 7500, contingencyPercent: 10 },
+    softCosts: { architectureEngineering: 7500, contingencyPercent: 10 },
     holdingCosts: { contingencyPercent: 10 },
     operatingReserves: 0,
     capitalStack: { developerEquity: 40000, bankLoan: 120000, grant1Name: "HOME Funds", grant1Amount: 15000 },
@@ -166,7 +166,7 @@ describe("producer identity — FeasibilityForm / ExecutiveSummaryForm / fetchPr
       ...baseFixture,
       budget: {
         ...baseFixture.budget,
-        hardCosts: { foundation: 75000, contingencyPercent: 15, customItems: [{ name: "Sitework", amount: 10000 }] },
+        hardCosts: { foundation: 75000, contingencyPercent: 15, customItems: [{ label: "Sitework", amount: 10000 }] },
       },
     };
     const r = computeProjectFinancials(withCustom);

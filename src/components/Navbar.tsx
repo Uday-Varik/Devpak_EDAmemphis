@@ -35,7 +35,7 @@ const Navbar = ({ onLoginClick, onSignupClick }: NavbarProps) => {
         console.error("Error loading profile photo:", error);
         return;
       }
-      setPhotoUrl((data as any)?.photo_url || null);
+      setPhotoUrl(data?.photo_url || null);
     };
     loadPhoto().catch((error) => console.error("Error loading profile photo:", error));
   }, [user]);

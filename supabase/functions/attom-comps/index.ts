@@ -38,8 +38,28 @@ interface Comp {
   distanceMiles?: number; sqft: number; bedrooms: number; bathrooms: number; landUse: string;
 }
 
-// deno-lint-ignore no-explicit-any
-function mapSale(p: any, subj: { lat?: number; lng?: number }): Comp {
+/** The ATTOM sale/AVM property fields this function reads; ATTOM returns many more. */
+interface AttomProperty {
+  identifier?: { attomId?: number | string; Id?: number | string; apn?: string };
+  address?: { oneLine?: string; line1?: string; line2?: string };
+  location?: { latitude?: number | string; longitude?: number | string };
+  sale?: {
+    saleTransDate?: string;
+    salesearchdate?: string;
+    amount?: { saleamt?: unknown; salerecdate?: string; saletranstype?: string };
+  };
+  summary?: { propclass?: string; propertyType?: string; proptype?: string; propsubtype?: string; propLandUse?: string; yearbuilt?: number | string };
+  lot?: { lotSize1?: unknown };
+  building?: { size?: { universalsize?: unknown; livingsize?: unknown }; rooms?: { beds?: unknown; bathstotal?: unknown } };
+  avm?: { amount?: unknown };
+}
+
+/** Top-level ATTOM response body; only the property list is read. */
+interface AttomBody {
+  property?: AttomProperty[];
+}
+
+function mapSale(p: AttomProperty, subj: { lat?: number; lng?: number }): Comp {
   const lat = Number(p?.location?.latitude), lng = Number(p?.location?.longitude);
   const hasGeo = subj.lat && subj.lng && Number.isFinite(lat) && Number.isFinite(lng);
   return {
@@ -133,9 +153,8 @@ async function attomGet(key: string, path: string, params: Record<string, string
       headers: { apikey: key, Accept: "application/json" }, signal: ctrl.signal,
     });
     const text = await r.text();
-    // deno-lint-ignore no-explicit-any
-    let body: any = null;
-    try { body = JSON.parse(text); } catch { /* non-JSON (e.g. suspended account HTML) */ }
+    let body: AttomBody | null = null;
+    try { body = JSON.parse(text) as AttomBody; } catch { /* non-JSON (e.g. suspended account HTML) */ }
     return { status: r.status, body };
   } finally { clearTimeout(t); }
 }
@@ -231,8 +250,7 @@ Deno.serve(async (req) => {
 
     // Radius search 1 -> 2 -> 3 mi until >=3 comps survive filtering; ZIP search only if geocoding failed
     const radii = coordSource ? [1, 2, 3] : [0];
-    // deno-lint-ignore no-explicit-any
-    let mapped: Comp[] = [], result: any = null, radiusUsed = 0;
+    let mapped: Comp[] = [], result: ReturnType<typeof filterComps> | null = null, radiusUsed = 0;
     for (const r of radii) {
       const params = r ? { ...base, latitude: String(sLat), longitude: String(sLng), radius: String(r) } : { ...base, postalcode: zip };
       const sales = await attomGet(key, "/sale/snapshot", params);
@@ -242,7 +260,7 @@ Deno.serve(async (req) => {
         return fallback(`attom_status_${sales.status}`);
       }
       const raw = Array.isArray(sales.body.property) ? sales.body.property : [];
-      mapped = raw.map((p: unknown) => mapSale(p, { lat: sLat, lng: sLng }));
+      mapped = raw.map((p) => mapSale(p, { lat: sLat, lng: sLng }));
       result = filterComps(mapped, subjectSqft);
       radiusUsed = r;
       if (result.comps.length >= 3) break;

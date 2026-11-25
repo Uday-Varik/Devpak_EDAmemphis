@@ -1,9 +1,10 @@
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { TeamData, TeamMemberData } from "@/types/sectionData";
 
 interface TeamSectionProps {
-  team: Record<string, any>;
+  team: TeamData;
   developerName: string;
   developerTitle: string;
   companyName: string;
@@ -38,7 +39,7 @@ const LicenseBadge = ({ licenseNumber, verified }: { licenseNumber?: string; ver
 export const TeamSection = ({ team, developerName, developerTitle, companyName, developerPhone, developerEmail }: TeamSectionProps) => {
   const gc = team.gc || team.generalContractor || {};
   const architect = team.architect || {};
-  const members: any[] = team.teamMembers || [];
+  const members: TeamMemberData[] = team.teamMembers || [];
   const mgmt = team.management || {};
 
   return (
@@ -62,10 +63,10 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
             <Text style={styles.value}>{team.roleOnProject}</Text>
           </View>
         )}
-        {team.equityContribution > 0 && (
+        {Number(team.equityContribution) > 0 && (
           <View style={{ marginTop: 4 }}>
             <Text style={styles.label}>Equity Contribution</Text>
-            <Text style={styles.value}>{formatCurrency(team.equityContribution)}</Text>
+            <Text style={styles.value}>{formatCurrency(Number(team.equityContribution))}</Text>
           </View>
         )}
       </View>
@@ -142,7 +143,7 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
               <Text style={[styles.tableHeaderText, { flex: 1 }]}>Role</Text>
               <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Contact</Text>
             </View>
-            {members.map((m: any, i: number) => (
+            {members.map((m: TeamMemberData, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
                 <Text style={[styles.tableCellBold, { flex: 1.5 }]}>{m.name || "—"}</Text>
                 <Text style={[styles.tableCell, { flex: 1 }]}>{m.company || "—"}</Text>
