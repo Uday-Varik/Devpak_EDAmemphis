@@ -1,5 +1,6 @@
 import { cleanAddressPart, composeAddress } from "@/utils/address";
 import { supabase } from "@/integrations/supabase/client";
+import { PROJECT_DRAWINGS_BUCKET, PROJECT_PHOTOS_BUCKET, resolveExportImages } from "@/utils/projectStorage";
 import type { PDFData } from "@/components/pdf/DevelopmentPackagePDF";
 import { computeProjectFinancials, computeSensitivityScenarios, indefiniteArticle, type SensitivityScenario } from "./calculations";
 import { isNarrativeStale } from "./narrativeStaleness";
@@ -332,14 +333,21 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     });
   }
 
+  // Private buckets: sign and embed photos and drawings now, so the PDF gets data URLs.
+  // Images that cannot be signed or downloaded are dropped instead of failing the export.
+  const [exportPhotos, exportDrawings] = await Promise.all([
+    resolveExportImages(siteLocation.photos || [], PROJECT_PHOTOS_BUCKET),
+    resolveExportImages(scope.conceptDrawings || [], PROJECT_DRAWINGS_BUCKET),
+  ]);
+
   return {
     projectName: project.name,
     address: resolvedAddress,
     preparedBy, developerTitle, companyName, developerPhone, developerEmail,
-    scope, budget,
+    scope: { ...scope, conceptDrawings: exportDrawings }, budget,
     executiveSummary: { ...execSummary, projectOverview: finalOverview },
     feasibility: { ...feasibility, decision: { ...(feasibility.decision || {}), rationale: finalRationale } },
-    visionMarket, siteLocation, schedule, team: teamData, riskAssessment, resilience,
+    visionMarket, siteLocation: { ...siteLocation, photos: exportPhotos }, schedule, team: teamData, riskAssessment, resilience,
     tdc, arv, netProfit, roi, profitMargin, exitStrategy, fundingGap, riskItems,
     sqftPlanned, constructionPerSF, totalPerSF, salePerSF,
     landEquity, cashEquity, totalEquity: equity, bankLoan, privateLender, grants, totalSources,
