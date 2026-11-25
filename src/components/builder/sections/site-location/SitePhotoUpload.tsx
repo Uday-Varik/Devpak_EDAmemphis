@@ -5,9 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  PROJECT_PHOTOS_BUCKET,
+  deleteProjectFile,
+  getStoredFileRef,
+  type StoredProjectFile,
+} from "@/utils/projectStorage";
+import { useSignedProjectFileUrls } from "@/hooks/useSignedProjectFileUrls";
 
-interface SitePhoto {
-  url: string;
+interface SitePhoto extends StoredProjectFile {
   caption: string;
   featured: boolean;
 }
@@ -21,6 +27,7 @@ interface SitePhotoUploadProps {
 export const SitePhotoUpload = ({ photos, onChange, projectId }: SitePhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const signedUrls = useSignedProjectFileUrls(PROJECT_PHOTOS_BUCKET, photos.map(getStoredFileRef));
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -57,8 +64,7 @@ export const SitePhotoUpload = ({ photos, onChange, projectId }: SitePhotoUpload
         continue;
       }
 
-      const { data: urlData } = supabase.storage.from("project-photos").getPublicUrl(path);
-      newPhotos.push({ url: urlData.publicUrl, caption: "", featured: photos.length === 0 && newPhotos.length === 0 });
+      newPhotos.push({ path, caption: "", featured: photos.length === 0 && newPhotos.length === 0 });
     }
 
     onChange([...photos, ...newPhotos]);
@@ -68,11 +74,7 @@ export const SitePhotoUpload = ({ photos, onChange, projectId }: SitePhotoUpload
 
   const handleDelete = async (index: number) => {
     const photo = photos[index];
-    // Extract path from URL
-    const urlParts = photo.url.split("/project-photos/");
-    if (urlParts[1]) {
-      await supabase.storage.from("project-photos").remove([decodeURIComponent(urlParts[1])]);
-    }
+    await deleteProjectFile(PROJECT_PHOTOS_BUCKET, getStoredFileRef(photo));
     const updated = photos.filter((_, i) => i !== index);
     // If deleted photo was featured, make first remaining photo featured
     if (photo.featured && updated.length > 0) {
@@ -133,13 +135,15 @@ export const SitePhotoUpload = ({ photos, onChange, projectId }: SitePhotoUpload
       {photos.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           {photos.map((photo, i) => (
-            <div key={photo.url} className="relative group rounded-lg border border-border overflow-hidden bg-muted/30">
+            <div key={getStoredFileRef(photo)} className="relative group rounded-lg border border-border overflow-hidden bg-muted/30">
               <div className="aspect-video relative">
-                <img
-                  src={photo.url}
-                  alt={photo.caption || `Site photo ${i + 1}`}
-                  className="w-full h-full object-cover"
-                />
+                {signedUrls[getStoredFileRef(photo)] && (
+                  <img
+                    src={signedUrls[getStoredFileRef(photo)]}
+                    alt={photo.caption || `Site photo ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
                 {photo.featured && (
                   <div className="absolute top-2 left-2 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                     <Star className="w-3 h-3" fill="currentColor" /> Featured

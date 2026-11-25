@@ -5,9 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  PROJECT_DRAWINGS_BUCKET,
+  deleteProjectFile,
+  getStoredFileRef,
+  type StoredProjectFile,
+} from "@/utils/projectStorage";
+import { useSignedProjectFileUrls } from "@/hooks/useSignedProjectFileUrls";
 
-interface ConceptDrawing {
-  url: string;
+interface ConceptDrawing extends StoredProjectFile {
   title: string;
   fileType: string;
 }
@@ -21,6 +27,7 @@ interface ConceptDrawingsUploadProps {
 export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: ConceptDrawingsUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const signedUrls = useSignedProjectFileUrls(PROJECT_DRAWINGS_BUCKET, drawings.map(getStoredFileRef));
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -59,10 +66,9 @@ export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: Concept
         continue;
       }
 
-      const { data: urlData } = supabase.storage.from("project-drawings").getPublicUrl(path);
       const baseName = file.name.replace(/\.[^.]+$/, "").replace(/[_-]/g, " ");
       newDrawings.push({
-        url: urlData.publicUrl,
+        path,
         title: baseName.charAt(0).toUpperCase() + baseName.slice(1),
         fileType: isPDF ? "pdf" : "image",
       });
@@ -75,10 +81,7 @@ export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: Concept
 
   const handleDelete = async (index: number) => {
     const drawing = drawings[index];
-    const urlParts = drawing.url.split("/project-drawings/");
-    if (urlParts[1]) {
-      await supabase.storage.from("project-drawings").remove([decodeURIComponent(urlParts[1])]);
-    }
+    await deleteProjectFile(PROJECT_DRAWINGS_BUCKET, getStoredFileRef(drawing));
     onChange(drawings.filter((_, i) => i !== index));
   };
 
@@ -124,17 +127,19 @@ export const ConceptDrawingsUpload = ({ drawings, onChange, projectId }: Concept
       {drawings.length > 0 && (
         <div className="space-y-3">
           {drawings.map((drawing, i) => (
-            <div key={drawing.url} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
+            <div key={getStoredFileRef(drawing)} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
               {drawing.fileType === "pdf" ? (
                 <div className="w-16 h-16 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
                   <FileText className="w-8 h-8 text-red-500" />
                 </div>
-              ) : (
+              ) : signedUrls[getStoredFileRef(drawing)] ? (
                 <img
-                  src={drawing.url}
+                  src={signedUrls[getStoredFileRef(drawing)]}
                   alt={drawing.title}
                   className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                 />
+              ) : (
+                <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <Input
