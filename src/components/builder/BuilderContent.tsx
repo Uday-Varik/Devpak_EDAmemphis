@@ -14,14 +14,14 @@ import { SectionIntroModal } from "./SectionIntroModal";
 
 interface SectionData {
   section: Section;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   completed: boolean;
 }
 
 interface BuilderContentProps {
   activeSection: Section;
   sectionData: SectionData;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
   projectId: string;
 }

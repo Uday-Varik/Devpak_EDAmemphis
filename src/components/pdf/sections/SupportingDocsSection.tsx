@@ -1,9 +1,10 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
+import type { ConceptDrawing, SitePhoto } from "@/types/sectionData";
 
 interface SupportingDocsSectionProps {
-  drawings: any[];
-  photos: any[];
+  drawings: ConceptDrawing[];
+  photos: SitePhoto[];
 }
 
 const STANDARD_AVAILABLE = [

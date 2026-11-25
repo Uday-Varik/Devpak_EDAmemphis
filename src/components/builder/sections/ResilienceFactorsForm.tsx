@@ -13,8 +13,8 @@ import { ResilienceScoreCard } from "./resilience-factors/ResilienceScoreCard";
 import { fetchProjectSections, generateResilienceScore } from "@/utils/autoAssess";
 
 interface ResilienceFactorsFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
   projectId: string;
 }
@@ -25,9 +25,17 @@ import {
   MARKET_FACTORS,
   computeResilience,
 } from "@/utils/resilience";
+import type { ResilienceData } from "@/types/sectionData";
 
 
-const DEFAULT_DATA: Record<string, any> = {
+/** Factor checkboxes are keyed by factor id; _autoFlags marks values filled from other sections. */
+type ResilienceFormState = {
+  additionalStrengths: string;
+  _autoFlags?: Record<string, boolean>;
+  [factor: string]: unknown;
+};
+
+const DEFAULT_DATA: ResilienceFormState = {
   additionalStrengths: "",
   ...Object.fromEntries(FINANCIAL_FACTORS.map((f) => [f.key, false])),
   ...Object.fromEntries(PROJECT_FACTORS.map((f) => [f.key, false])),
@@ -35,19 +43,19 @@ const DEFAULT_DATA: Record<string, any> = {
 };
 
 export const ResilienceFactorsForm = ({ data, onSave, saving, projectId }: ResilienceFactorsFormProps) => {
-  const [formData, setFormData] = useState(() => ({ ...DEFAULT_DATA, ...data }));
+  const [formData, setFormData] = useState<ResilienceFormState>(() => ({ ...DEFAULT_DATA, ...(data as ResilienceData) }));
   const [openSections, setOpenSections] = useState<string[]>(["financial"]);
   const [autoLoading, setAutoLoading] = useState(false);
   const autoFlags: Record<string, boolean> = formData._autoFlags || {};
 
   const handleAutoSave = useCallback(
-    (dataToSave: Record<string, any>) => onSave(dataToSave, false),
+    (dataToSave: Record<string, unknown>) => onSave(dataToSave, false),
     [onSave]
   );
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
-  const update = (field: string, value: any) => {
-    setFormData((prev: any) => {
+  const update = (field: string, value: unknown) => {
+    setFormData((prev: ResilienceFormState) => {
       const nextFlags = { ...(prev._autoFlags || {}) };
       delete nextFlags[field];
       return { ...prev, [field]: value, _autoFlags: nextFlags };

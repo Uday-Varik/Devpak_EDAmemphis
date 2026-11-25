@@ -1,9 +1,10 @@
 import * as XLSX from "xlsx";
 import { fetchProjectExportData } from "./fetchProjectData";
 import { computeProjectFinancials, computeRentalProjection, NO_ARV_LABEL, CASH_NOT_INVESTED, ruleCheckLabel, type RuleCheckStatus } from "./calculations";
+import type { ComparableSale, CustomCostItem, RiskEntry, ScheduleMilestone } from "@/types/sectionData";
 
 /** Rows for the Excel "Pro Forma" sheet — exported for tests. */
-export const buildExcelRentalProjection = (data: { scope: any; budget: any; feasibility: any }) =>
+export const buildExcelRentalProjection = (data: { scope: unknown; budget: unknown; feasibility: unknown }) =>
   computeRentalProjection(computeProjectFinancials({ scope: data.scope, budget: data.budget, feasibility: data.feasibility }));
 
 
@@ -17,7 +18,7 @@ const bold = (v: string) => ({ v, t: "s" as const });
 const num = (v: number) => ({ v, t: "n" as const, z: "#,##0" });
 const numDec = (v: number) => ({ v, t: "n" as const, z: "#,##0.0" });
 
-const setCell = (ws: XLSX.WorkSheet, r: number, c: number, cell: any) => {
+const setCell = (ws: XLSX.WorkSheet, r: number, c: number, cell: unknown) => {
   const addr = XLSX.utils.encode_cell({ r, c });
   ws[addr] = cell;
 };
@@ -69,7 +70,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     setCell(ws, r, 1, bold("Amount"));
     setCell(ws, r, 2, bold("% of TDC")); r++;
 
-    const useRow = (label: string, amount: number, indent = false) => {
+    const addRow = (label: string, amount: number, indent = false) => {
       setCell(ws, r, 0, { v: indent ? `   ${label}` : label, t: "s" });
       if (amount !== 0) {
         setCell(ws, r, 1, curr(amount));
@@ -87,12 +88,12 @@ export const generateExcel = async (projectId: string): Promise<void> => {
 
     // Acquisition
     setCell(ws, r, 0, bold("Acquisition")); r++;
-    useRow("Purchase Price", acq.purchasePrice || 0, true);
+    addRow("Purchase Price", acq.purchasePrice || 0, true);
     if (!acqExtrasExcluded) {
-      useRow("Closing Costs", acq.closingCosts || 0, true);
-      useRow("Title & Recording", acq.titleRecording || 0, true);
+      addRow("Closing Costs", acq.closingCosts || 0, true);
+      addRow("Title & Recording", acq.titleRecording || 0, true);
     }
-    if (acqCont > 0) useRow(`Contingency (${t.acqContPct}%)`, acqCont, true);
+    if (acqCont > 0) addRow(`Contingency (${t.acqContPct}%)`, acqCont, true);
     subtotalRow("Acquisition Subtotal", acqTotal);
 
     // Construction
@@ -103,12 +104,12 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       ["Exterior/Landscaping", "exteriorLandscaping"], ["Other Construction", "otherHard"],
     ];
     if (perSqft) {
-      useRow(perSqftLabel, hardBase, true);
+      addRow(perSqftLabel, hardBase, true);
     } else {
-      hardItems.forEach(([label, key]) => useRow(label, hard[key] || 0, true));
-      ((hard.customItems || []) as any[]).forEach((ci: any) => { if (ci.amount > 0) useRow(ci.label || "Custom Item", ci.amount, true); });
+      hardItems.forEach(([label, key]) => addRow(label, hard[key] || 0, true));
+      ((hard.customItems || []) as unknown[]).forEach((ci: CustomCostItem) => { if (ci.amount > 0) addRow(ci.label || "Custom Item", ci.amount, true); });
     }
-    if (hardCont > 0) useRow(`Contingency (${t.hardContPct}%)`, hardCont, true);
+    if (hardCont > 0) addRow(`Contingency (${t.hardContPct}%)`, hardCont, true);
     subtotalRow("Construction Subtotal", hardTotal);
 
     // Pre-Development
@@ -119,9 +120,9 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       ["Property Taxes", "propertyTaxes"], ["Loan Interest/Points", "loanInterestPoints"],
       ["Marketing/Leasing", "marketingLeasing"], ["Other Pre-Development", "otherSoft"],
     ];
-    softItems.forEach(([label, key]) => useRow(label, soft[key] || 0, true));
-    ((soft.customItems || []) as any[]).forEach((ci: any) => { if (ci.amount > 0) useRow(ci.label || "Custom Item", ci.amount, true); });
-    if (softCont > 0) useRow(`Contingency (${t.softContPct}%)`, softCont, true);
+    softItems.forEach(([label, key]) => addRow(label, soft[key] || 0, true));
+    ((soft.customItems || []) as unknown[]).forEach((ci: CustomCostItem) => { if (ci.amount > 0) addRow(ci.label || "Custom Item", ci.amount, true); });
+    if (softCont > 0) addRow(`Contingency (${t.softContPct}%)`, softCont, true);
     subtotalRow("Pre-Development Subtotal", softTotal);
 
     // Holding
@@ -130,13 +131,13 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       ["Property Taxes", "propertyTaxes"], ["Insurance", "insurance"],
       ["Loan Payments", "loanPayments"], ["Utilities", "utilities"], ["Other Holding", "otherHolding"],
     ];
-    holdItems.forEach(([label, key]) => useRow(label, holding[key] || 0, true));
-    ((holding.customItems || []) as any[]).forEach((ci: any) => { if (ci.amount > 0) useRow(ci.label || "Custom Item", ci.amount, true); });
-    if (holdCont > 0) useRow(`Contingency (${t.holdingContPct}%)`, holdCont, true);
+    holdItems.forEach(([label, key]) => addRow(label, holding[key] || 0, true));
+    ((holding.customItems || []) as unknown[]).forEach((ci: CustomCostItem) => { if (ci.amount > 0) addRow(ci.label || "Custom Item", ci.amount, true); });
+    if (holdCont > 0) addRow(`Contingency (${t.holdingContPct}%)`, holdCont, true);
     subtotalRow("Holding Subtotal", holdTotal);
 
     // Operating Reserves
-    if (opReserves > 0) useRow("Operating Reserves", opReserves);
+    if (opReserves > 0) addRow("Operating Reserves", opReserves);
 
     r++; // blank
     setCell(ws, r, 0, bold("TOTAL USES"));
@@ -196,7 +197,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       title: string,
       items: { label: string; amount: number; note?: string }[],
       contPct: number,
-      customItems: any[],
+      customItems: CustomCostItem[],
       contAmt: number,
       total: number,
     ) => {
@@ -208,7 +209,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         if (note) setCell(ws, r, 4, { v: note, t: "s" });
         r++;
       });
-      (customItems || []).forEach((ci: any) => {
+      (customItems || []).forEach((ci: CustomCostItem) => {
         if (ci.amount > 0) {
           setCell(ws, r, 0, { v: `   ${ci.label || "Custom Item"}`, t: "s" });
           setCell(ws, r, 1, curr(ci.amount));
@@ -369,7 +370,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent then Sell" };
     setCell(ws, r, 0, { v: "Exit Strategy", t: "s" });
     setCell(ws, r, 1, { v: EXIT_LABELS[fStrategy] || fStrategy, t: "s" }); r += 2;
-    const writeRows = (rows: [string, any][]) => rows.forEach(([label, cell]) => {
+    const writeRows = (rows: [string, unknown][]) => rows.forEach(([label, cell]) => {
       setCell(ws, r, 0, { v: label, t: "s" }); setCell(ws, r, 1, cell); r++;
     });
     const hasArv = rentalFin.arv > 0;
@@ -445,10 +446,10 @@ export const generateExcel = async (projectId: string): Promise<void> => {
 
   // ─── SHEET 5: SCHEDULE ─────────────────────────────────────────────
   {
-    const milestones = data.schedule.milestones || [];
+    const milestones: ScheduleMilestone[] = data.schedule.milestones || [];
     const headers = ["Milestone", "Duration (wks)", "Start Date", "End Date", "Status", "Progress %"];
-    const rows: any[][] = [headers];
-    milestones.forEach((m: any) => {
+    const rows: unknown[][] = [headers];
+    milestones.forEach((m: ScheduleMilestone) => {
       rows.push([
         m.name || "—",
         m.duration || m.durationWeeks || 0,
@@ -458,7 +459,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         (m.progress || 0) / 100,
       ]);
     });
-    const totalWeeks = milestones.reduce((s: number, m: any) => s + (m.duration || m.durationWeeks || 0), 0);
+    const totalWeeks = milestones.reduce((s: number, m: ScheduleMilestone) => s + (m.duration || m.durationWeeks || 0), 0);
     rows.push(["TOTAL", totalWeeks, data.schedule.startDate || "", data.schedule.endDate || "", "", ""]);
 
     const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -482,14 +483,14 @@ export const generateExcel = async (projectId: string): Promise<void> => {
 
     setCell(ws, r, 0, bold("Neighborhood Demographics")); r++;
     const neighborhood = (vm.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "");
-    const demoItems: [string, any][] = [
+    const demoItems: [string, unknown][] = [
       ["Neighborhood", { v: neighborhood || "—", t: "s" }],
-      ["Population", vm.population ? num(vm.population) : { v: "—", t: "s" }],
-      ["Median Income", vm.medianIncome ? curr(vm.medianIncome) : { v: "—", t: "s" }],
+      ["Population", vm.population ? num(Number(vm.population)) : { v: "—", t: "s" }],
+      ["Median Income", vm.medianIncome ? curr(Number(vm.medianIncome)) : { v: "—", t: "s" }],
       ["Median Home Value", vm.medianHomePrice ? curr(vm.medianHomePrice) : { v: "—", t: "s" }],
       ["Average Rent", vm.averageRent ? curr(vm.averageRent) : { v: "—", t: "s" }],
       ["Vacancy Rate", vm.vacancyRate ? pct(vm.vacancyRate) : { v: "—", t: "s" }],
-      ["Ownership Rate", vm.ownershipRate ? pct(vm.ownershipRate) : { v: "—", t: "s" }],
+      ["Ownership Rate", vm.ownershipRate ? pct(Number(vm.ownershipRate)) : { v: "—", t: "s" }],
       ["Market Trend", { v: vm.marketTrend || "—", t: "s" }],
     ];
     demoItems.forEach(([label, cell]) => {
@@ -508,7 +509,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
 
       let totalPSF = 0;
       let psfCount = 0;
-      comps.forEach((c: any) => {
+      comps.forEach((c: ComparableSale) => {
         setCell(ws, r, 0, { v: c.address || "—", t: "s" });
         setCell(ws, r, 1, c.salePrice ? curr(c.salePrice) : { v: "—", t: "s" });
         setCell(ws, r, 2, c.sqft ? num(c.sqft) : { v: "—", t: "s" });
@@ -546,7 +547,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     r++;
 
     const risks = data.riskAssessment.risks || [];
-    risks.forEach((risk: any) => {
+    risks.forEach((risk: RiskEntry) => {
       setCell(ws, r, 0, { v: risk.category || "—", t: "s" });
       setCell(ws, r, 1, { v: risk.description || "—", t: "s" });
       setCell(ws, r, 2, { v: risk.likelihood || "—", t: "s" });

@@ -2,11 +2,12 @@ import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
 import { computeBudgetTotals } from "@/utils/calculations";
+import type { BudgetData } from "@/types/sectionData";
 
 type BudgetTotals = Omit<import("@/utils/calculations").BudgetTotals, "purchasePrice">;
 
 interface ProFormaSectionProps {
-  budget: Record<string, any>;
+  budget: BudgetData;
   sqftPlanned: number;
   /** Pre-computed totals from fetchProjectData — the single source of truth. */
   totals?: BudgetTotals;
@@ -122,7 +123,7 @@ export const ProFormaSection = ({ budget, sqftPlanned, totals }: ProFormaSection
           { label: "Loan Interest/Points", value: soft.loanInterestPoints || 0 },
           { label: "Marketing/Leasing", value: soft.marketingLeasing || 0 },
           { label: "Other Pre-Development", value: soft.otherSoft || 0 },
-          ...((soft.customItems || []) as any[]).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
+          ...(soft.customItems || []).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
         ]}
         contingencyPct={softContPct}
         contingencyAmt={softContAmt}
@@ -146,7 +147,7 @@ export const ProFormaSection = ({ budget, sqftPlanned, totals }: ProFormaSection
           { label: "Interior Finishes", value: hard.interiorFinishes || 0 },
           { label: "Exterior/Landscaping", value: hard.exteriorLandscaping || 0 },
           { label: "Other Construction", value: hard.otherHard || 0 },
-          ...((hard.customItems || []) as any[]).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
+          ...(hard.customItems || []).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
         ]}
         contingencyPct={hardContPct}
         contingencyAmt={hardContAmt}
@@ -162,7 +163,7 @@ export const ProFormaSection = ({ budget, sqftPlanned, totals }: ProFormaSection
           { label: "Loan Payments (Construction)", value: holding.loanPayments || 0 },
           { label: "Utilities (Construction)", value: holding.utilities || 0 },
           { label: "Other Holding", value: holding.otherHolding || 0 },
-          ...((holding.customItems || []) as any[]).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
+          ...(holding.customItems || []).filter((c) => c.amount > 0).map((c) => ({ label: c.label || "Custom Item", value: c.amount })),
         ]}
         contingencyPct={holdingContPct}
         contingencyAmt={holdingContAmt}

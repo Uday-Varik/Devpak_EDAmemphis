@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/errorMessage";
 import { useState } from "react";
 import {
   Dialog,
@@ -42,8 +43,8 @@ const AuthModal = ({ isOpen, onClose, mode, onSwitchMode }: AuthModalProps) => {
         description: "If an account exists for that email, we've sent a link to reset your password.",
       });
       setForgot(false);
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: errorMessage(error), variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -61,7 +62,7 @@ const AuthModal = ({ isOpen, onClose, mode, onSwitchMode }: AuthModalProps) => {
         let firstTime = false;
         if (user) {
           const { data } = await supabase
-            .from("developer_profiles" as any)
+            .from("developer_profiles")
             .select("id")
             .eq("user_id", user.id)
             .maybeSingle();
@@ -81,10 +82,10 @@ const AuthModal = ({ isOpen, onClose, mode, onSwitchMode }: AuthModalProps) => {
         });
         onClose();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage(error),
         variant: "destructive",
       });
     } finally {

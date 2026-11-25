@@ -1,8 +1,9 @@
 import { TrendingUp, Home, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import type { VisionData } from "@/types/sectionData";
 
 interface MarketSnapshotSummaryProps {
-  formData: Record<string, any>;
+  formData: VisionData;
   avgPricePerSqFt: number;
 }
 

@@ -5,6 +5,10 @@ import { cleanAddressPart } from "@/utils/address";
 import { computeResilience } from "@/utils/resilience";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
 import { countObtainedInsurance } from "@/utils/riskInsurance";
+import type {
+  BudgetData, ComparableSale, ExecutiveData, FeasibilityData, ResilienceData, RiskData,
+  ScheduleData, SiteData, TeamData, VisionData,
+} from "@/types/sectionData";
 
 interface CheckItem {
   label: string;
@@ -12,18 +16,25 @@ interface CheckItem {
   section: string;
 }
 
+/** Figures computed by the Executive Summary form (see its calcs memo). */
+export interface ReadinessCalcs {
+  developerName?: string;
+  tdc: number;
+  [key: string]: unknown;
+}
+
 interface PackageReadinessChecklistProps {
-  calcs: Record<string, any>;
+  calcs: ReadinessCalcs;
   sectionsCompleted: Record<string, boolean>;
-  formData: Record<string, any>;
-  budgetData: any;
-  visionData: any;
-  riskData: any;
-  scheduleData: any;
-  teamData: any;
-  siteData: any;
-  feasibilityData: any;
-  resilienceData: any;
+  formData: ExecutiveData;
+  budgetData: BudgetData | null;
+  visionData: VisionData | null;
+  riskData: RiskData | null;
+  scheduleData: ScheduleData | null;
+  teamData: TeamData | null;
+  siteData: SiteData | null;
+  feasibilityData: FeasibilityData | null;
+  resilienceData: ResilienceData | null;
   developerProfileName?: string;
   onNavigate: (section: string) => void;
 }
@@ -43,14 +54,14 @@ export const PackageReadinessChecklist = ({
   developerProfileName = "",
   onNavigate,
 }: PackageReadinessChecklistProps) => {
-  const budget = budgetData || {};
-  const vision = visionData || {};
-  const risk = riskData || {};
-  const schedule = scheduleData || {};
-  const team = teamData || {};
-  const site = siteData || {};
-  const feas = feasibilityData || {};
-  const resilience = resilienceData || {};
+  const budget: BudgetData = budgetData || {};
+  const vision: VisionData = visionData || {};
+  const risk: RiskData = riskData || {};
+  const schedule: ScheduleData = scheduleData || {};
+  const team: TeamData = teamData || {};
+  const site: SiteData = siteData || {};
+  const feas: FeasibilityData = feasibilityData || {};
+  const resilience: ResilienceData = resilienceData || {};
   const cap = budget.capitalStack || {};
 
   // Resolve developer name: team.developerName first, then profile fallback
@@ -91,7 +102,7 @@ export const PackageReadinessChecklist = ({
   const important: CheckItem[] = useMemo(() => [
     {
       label: "At least 2 comparable properties",
-      passed: (vision.comparables || []).filter((c: any) => c.address || c.salePrice || c.price).length >= 2,
+      passed: (vision.comparables || []).filter((c: ComparableSale) => c.address || c.salePrice || c.price).length >= 2,
       section: "vision-market",
     },
     {

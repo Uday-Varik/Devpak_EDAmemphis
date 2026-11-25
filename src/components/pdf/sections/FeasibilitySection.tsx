@@ -3,9 +3,10 @@ import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency, formatPercent } from "../pdfUtils";
 import type { SensitivityScenario } from "@/utils/calculations";
+import type { FeasibilityData } from "@/types/sectionData";
 
 interface FeasibilitySectionProps {
-  feasibility: Record<string, any>;
+  feasibility: FeasibilityData;
   /** All financial metrics come from the single source in fetchProjectData. */
   metrics: {
     tdc: number;

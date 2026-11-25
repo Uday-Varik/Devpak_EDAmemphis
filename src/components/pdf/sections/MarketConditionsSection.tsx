@@ -1,15 +1,16 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { ComparableSale, VisionData } from "@/types/sectionData";
 
 interface MarketConditionsSectionProps {
-  visionMarket: Record<string, any>;
+  visionMarket: VisionData;
 }
 
 export const MarketConditionsSection = ({ visionMarket }: MarketConditionsSectionProps) => {
   const comps = visionMarket.comparables || [];
   const avgPSF = comps.length > 0
-    ? comps.reduce((s: number, c: any) => {
+    ? comps.reduce((s: number, c: ComparableSale) => {
         const sf = c.sqft || c.squareFootage || 0;
         return s + (sf > 0 ? (c.salePrice || 0) / sf : 0);
       }, 0) / comps.length
@@ -85,7 +86,7 @@ export const MarketConditionsSection = ({ visionMarket }: MarketConditionsSectio
               <Text style={[styles.tableHeaderText, { flex: 0.6, textAlign: "right" }]}>$/SF</Text>
               <Text style={[styles.tableHeaderText, { flex: 0.5, textAlign: "right" }]}>Bd/Ba</Text>
             </View>
-            {comps.map((c: any, i: number) => {
+            {comps.map((c: ComparableSale, i: number) => {
               const sf = c.sqft || c.squareFootage || 0;
               const psf = sf > 0 ? (c.salePrice || 0) / sf : 0;
               return (

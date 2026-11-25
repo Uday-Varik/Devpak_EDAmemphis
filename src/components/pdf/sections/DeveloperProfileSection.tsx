@@ -1,8 +1,10 @@
+import type { DeveloperLicense, DeveloperProfile, PortfolioProject } from "@/types/developerProfile";
+import { EMPTY_DEVELOPER_PROFILE } from "@/types/developerProfile";
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 
 interface DeveloperProfilePageProps {
-  developerProfile: any;
+  developerProfile: DeveloperProfile | null;
   developerName: string;
   developerTitle: string;
   companyName: string;
@@ -13,10 +15,10 @@ interface DeveloperProfilePageProps {
 export const DeveloperProfileSection = ({
   developerProfile, developerName, developerTitle, companyName, developerPhone, developerEmail,
 }: DeveloperProfilePageProps) => {
-  const dp = developerProfile || {};
-  const licenses: any[] = Array.isArray(dp.licenses) ? dp.licenses : [];
+  const dp = developerProfile || EMPTY_DEVELOPER_PROFILE;
+  const licenses: DeveloperLicense[] = Array.isArray(dp.licenses) ? dp.licenses : [];
   const certifications: string[] = Array.isArray(dp.certifications) ? dp.certifications : [];
-  const portfolio: any[] = Array.isArray(dp.portfolio) ? dp.portfolio : [];
+  const portfolio: PortfolioProject[] = Array.isArray(dp.portfolio) ? dp.portfolio : [];
 
   return (
     <View>
@@ -25,7 +27,7 @@ export const DeveloperProfileSection = ({
       {/* Header card */}
       <View style={[styles.highlightBox, { padding: 14, flexDirection: "row", gap: 14, alignItems: "center" as const, marginBottom: 12 }]}>
         {!!dp.headshot_url && (
-          <Image src={dp.headshot_url} style={{ width: 70, height: 70, borderRadius: 35, objectFit: "cover" as any }} />
+          <Image src={dp.headshot_url} style={{ width: 70, height: 70, borderRadius: 35, objectFit: "cover" }} />
         )}
         <View style={{ flex: 1 }}>
           <Text style={[styles.value, { fontSize: 14 }]}>{developerName || "—"}</Text>

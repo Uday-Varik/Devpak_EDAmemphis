@@ -1,8 +1,9 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
+import type { ScheduleData, ScheduleMilestone } from "@/types/sectionData";
 
 interface ScheduleSectionProps {
-  schedule: Record<string, any>;
+  schedule: ScheduleData;
 }
 
 const formatDate = (d: string | undefined) => {
@@ -22,7 +23,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 // Bar color based on status + complete flag
-const getBarColor = (m: any): string => {
+const getBarColor = (m: ScheduleMilestone): string => {
   if (m.complete === true || m.status === "complete" || m.status === "Complete") return colors.green;
   if (m.status === "delayed" || m.status === "Delayed") return colors.gold;
   if (m.status === "in-progress" || m.status === "In Progress") return colors.blue;
@@ -54,7 +55,7 @@ const assignLanes = (items: { start: number; end: number; idx: number }[]): numb
 };
 
 interface GanttPDFChartProps {
-  milestones: any[];
+  milestones: ScheduleMilestone[];
 }
 
 const GanttPDFChart = ({ milestones }: GanttPDFChartProps) => {
@@ -191,8 +192,8 @@ const GanttPDFChart = ({ milestones }: GanttPDFChartProps) => {
 };
 
 export const ScheduleSection = ({ schedule }: ScheduleSectionProps) => {
-  const milestones: any[] = schedule.milestones || [];
-  const totalWeeks = schedule.totalDurationWeeks || milestones.reduce((s: number, m: any) => s + (m.durationWeeks || m.duration || 0), 0);
+  const milestones: ScheduleMilestone[] = schedule.milestones || [];
+  const totalWeeks = schedule.totalDurationWeeks || milestones.reduce((s: number, m: ScheduleMilestone) => s + (m.durationWeeks || m.duration || 0), 0);
   const months = Math.round(totalWeeks / 4.33);
 
   return (
@@ -239,7 +240,7 @@ export const ScheduleSection = ({ schedule }: ScheduleSectionProps) => {
               <Text style={[styles.tableHeaderText, { flex: 0.6, textAlign: "right" }]}>Weeks</Text>
               <Text style={[styles.tableHeaderText, { flex: 0.8, textAlign: "right" }]}>Status</Text>
             </View>
-            {milestones.map((m: any, i: number) => (
+            {milestones.map((m: ScheduleMilestone, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
                 <Text style={[styles.tableCellBold, { flex: 2 }]}>{m.name || "—"}</Text>
                 <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatDate(m.startDate)}</Text>

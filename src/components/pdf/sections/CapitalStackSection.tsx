@@ -1,9 +1,10 @@
 import { View, Text } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
 import { formatCurrency } from "../pdfUtils";
+import type { BudgetData } from "@/types/sectionData";
 
 interface CapitalStackSectionProps {
-  budget: Record<string, any>;
+  budget: BudgetData;
   tdc: number;
   cashEquity: number;
   landEquity: number;

@@ -12,7 +12,7 @@ interface CustomItem {
 interface CustomLineItemsProps {
   items: CustomItem[];
   onAdd: () => void;
-  onUpdate: (index: number, field: "label" | "amount", value: any) => void;
+  onUpdate: (index: number, field: "label" | "amount", value: unknown) => void;
   onRemove: (index: number) => void;
   maxItems?: number;
 }

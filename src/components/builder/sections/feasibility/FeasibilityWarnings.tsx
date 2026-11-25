@@ -1,5 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { BudgetData, FeasibilityData } from "@/types/sectionData";
 
 export interface FeasibilityWarning {
   id: string;
@@ -99,9 +100,9 @@ export interface FeasibilityCalculations {
 }
 
 export const calculateFeasibilityWarnings = (
-  data: any,
+  data: FeasibilityData,
   calculations: FeasibilityCalculations,
-  budgetData: any
+  budgetData: BudgetData | null
 ): FeasibilityWarning[] => {
   const warnings: FeasibilityWarning[] = [];
 

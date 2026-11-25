@@ -1,5 +1,6 @@
 import { UserCircle, Hammer, Palette, UsersRound, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { TeamFormData } from "../ProjectTeamForm";
 
 interface ProfileData {
   full_name: string | null;
@@ -13,7 +14,7 @@ interface ProfileData {
 }
 
 interface TeamSummaryCardProps {
-  formData: Record<string, any>;
+  formData: TeamFormData;
   profile: ProfileData | null;
 }
 
@@ -35,10 +36,10 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 export const TeamSummaryCard = ({ formData, profile }: TeamSummaryCardProps) => {
-  const gc = formData.gc || {};
-  const architect = formData.architect || {};
+  const gc = formData.gc;
+  const architect = formData.architect;
   const teamMembers = formData.teamMembers || [];
-  const management = formData.management || {};
+  const management = formData.management;
 
   return (
     <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">

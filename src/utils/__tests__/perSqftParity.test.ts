@@ -1,3 +1,4 @@
+import type { AutoRisk } from "../autoAssess";
 import { describe, it, expect, vi } from "vitest";
 
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
@@ -46,7 +47,7 @@ describe("per-SF construction parity across consumers", () => {
   });
 
   it("risk generator reports the engine's funding gap", () => {
-    const gapRisk = generateAutoRisks(sections).find((r: any) => /Funding gap/.test(r.description));
+    const gapRisk = generateAutoRisks(sections).find((r: AutoRisk) => /Funding gap/.test(r.description));
     expect(gapRisk).toBeDefined();
     expect(gapRisk!.description).toContain(fmt(engine.fundingGap));
   });

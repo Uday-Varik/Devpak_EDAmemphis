@@ -1,3 +1,4 @@
+import type { Json } from "@/integrations/supabase/types";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,7 +36,7 @@ interface Project {
 
 interface SectionData {
   section: Section;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   completed: boolean;
 }
 
@@ -124,7 +125,7 @@ const ProjectBuilder = () => {
           if (SECTIONS.includes(section)) {
             newSectionData[section] = {
               section,
-              data: detail.data as Record<string, any>,
+              data: detail.data as Record<string, unknown>,
               completed: detail.completed,
             };
           }
@@ -155,7 +156,7 @@ const ProjectBuilder = () => {
     }
   }, [user, id, fetchProjectData]);
 
-  const handleSaveSection = async (data: Record<string, any>, markComplete: boolean = false) => {
+  const handleSaveSection = async (data: Record<string, unknown>, markComplete: boolean = false) => {
     if (!id) return;
 
     // Tab is closing: send the final save with keepalive so the browser finishes it.
@@ -176,7 +177,7 @@ const ProjectBuilder = () => {
           {
             project_id: id,
             section: activeSection,
-            data,
+            data: data as Json,
             completed: markComplete,
           },
           { onConflict: "project_id,section" }

@@ -4,12 +4,18 @@ import type { PDFData } from "@/components/pdf/DevelopmentPackagePDF";
 import { computeProjectFinancials, computeSensitivityScenarios, indefiniteArticle, type SensitivityScenario } from "./calculations";
 import { isNarrativeStale } from "./narrativeStaleness";
 import { buildOverviewFingerprint, buildRationaleFingerprint, generateRationaleText } from "./narrativeFingerprints";
+import type {
+  BudgetData, ExecutiveData, FeasibilityData, ResilienceData, RiskData, ScheduleData, ScheduleMilestone,
+  ScopeData, SiteData, TeamData, VisionData,
+} from "@/types/sectionData";
+import type { Tables } from "@/integrations/supabase/types";
+import type { DeveloperLicense, DeveloperProfile, PortfolioProject } from "@/types/developerProfile";
 
 
 const generatePDFOverview = (d: {
   projectName: string; address: string; tdc: number; arv: number; netProfit: number; roi: number | null;
-  exitStrategy: string; scope: Record<string, any>; visionMarket: Record<string, any>;
-  siteLocation: Record<string, any>; schedule: Record<string, any>; team: Record<string, any>;
+  exitStrategy: string; scope: ScopeData; visionMarket: VisionData;
+  siteLocation: SiteData; schedule: ScheduleData; team: TeamData;
   preparedBy: string; companyName: string; fundingGap: number; totalSources: number;
   equity: number; bankLoan: number; privateLender: number; grants: number; landEquity?: number;
   packagePurpose?: string; cashOnCash?: number | null;
@@ -47,7 +53,7 @@ const generatePDFOverview = (d: {
     parts.push(`This document captures the project's plan, budget, schedule, and risk profile for internal reference.`);
   }
 
-  const joinMulti = (v: any) => Array.isArray(v) ? v.filter(Boolean).join(" / ") : (v || "");
+  const joinMulti = (v: unknown) => Array.isArray(v) ? v.filter(Boolean).join(" / ") : (v || "");
   const targetMarket = joinMulti(d.visionMarket.targetMarket);
   const incomeLevel = joinMulti(d.visionMarket.targetIncomeLevel);
   if (targetMarket || incomeLevel) {
@@ -83,7 +89,7 @@ const generatePDFOverview = (d: {
   }
 
   const milestones = d.schedule.milestones || [];
-  const totalWeeks = milestones.reduce((s: number, m: any) => s + (m.duration || 0), 0);
+  const totalWeeks = milestones.reduce((s: number, m: ScheduleMilestone) => s + (m.duration || 0), 0);
   if (totalWeeks > 0 || d.schedule.startDate) {
     let sched = "";
     if (totalWeeks > 0) sched += `Construction is planned over ${totalWeeks} weeks (${Math.round(totalWeeks / 4.33)} months)`;
@@ -103,6 +109,23 @@ const generatePDFOverview = (d: {
 
   return parts.join("\n\n");
 };
+
+/** Maps a developer_profiles row to the typed profile the PDF renders. */
+const toDeveloperProfile = (row: Tables<"developer_profiles">): DeveloperProfile => ({
+  id: row.id,
+  user_id: row.user_id,
+  full_name: row.full_name || "",
+  entity_name: row.entity_name || "",
+  professional_title: row.professional_title || "",
+  bio: row.bio || "",
+  phone: row.phone || "",
+  email: row.email || "",
+  licenses: (row.licenses as unknown as DeveloperLicense[]) || [],
+  certifications: row.certifications || [],
+  years_experience: row.years_experience ?? null,
+  headshot_url: row.headshot_url || "",
+  portfolio: (row.portfolio as unknown as PortfolioProject[]) || [],
+});
 
 export interface ProjectExportData extends PDFData {
   landEquity: number;
@@ -140,7 +163,7 @@ export interface ProjectExportData extends PDFData {
   noi: number;
   dscr: number;
   capRate: number;
-  developerProfile?: any;
+  developerProfile?: DeveloperProfile | null;
 }
 
 export const fetchProjectExportData = async (projectId: string): Promise<ProjectExportData> => {
@@ -160,16 +183,16 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
   let developerPhone = "";
   let developerEmail = "";
   let companyName = "";
-  let developerProfile: any = null;
+  let developerProfile: DeveloperProfile | null = null;
   if (profileRes.data?.user) {
     // Prefer the new developer_profiles table; fall back to legacy profiles table
     const [{ data: devProfile }, { data: legacy }] = await Promise.all([
-      supabase.from("developer_profiles" as any).select("*").eq("user_id", profileRes.data.user.id).maybeSingle(),
+      supabase.from("developer_profiles").select("*").eq("user_id", profileRes.data.user.id).maybeSingle(),
       supabase.from("profiles").select("*").eq("user_id", profileRes.data.user.id).maybeSingle(),
     ]);
-    developerProfile = devProfile || null;
-    const dp: any = devProfile || {};
-    const lp: any = legacy || {};
+    developerProfile = devProfile ? toDeveloperProfile(devProfile) : null;
+    const dp: Partial<Tables<"developer_profiles">> = devProfile || {};
+    const lp: Partial<Tables<"profiles">> = legacy || {};
     const fullName = (dp.full_name || lp.full_name || "").trim();
     if (fullName.length > 0) {
       preparedBy = fullName.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
@@ -184,19 +207,19 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     companyName = dp.entity_name || lp.company_name || "";
   }
 
-  const sectionMap: Record<string, any> = {};
+  const sectionMap: Record<string, unknown> = {};
   details.forEach((d) => { sectionMap[d.section] = d.data; });
 
-  const scope = (sectionMap["project-scope"] as Record<string, any>) || {};
-  const budget = (sectionMap["budget-capital"] as Record<string, any>) || {};
-  const feasibility = (sectionMap["feasibility"] as Record<string, any>) || {};
-  const execSummary = (sectionMap["executive-summary"] as Record<string, any>) || {};
-  const visionMarket = (sectionMap["vision-market"] as Record<string, any>) || {};
-  const siteLocation = (sectionMap["site-location"] as Record<string, any>) || {};
-  const schedule = (sectionMap["project-schedule"] as Record<string, any>) || {};
-  const teamData = (sectionMap["project-team"] as Record<string, any>) || {};
-  const riskAssessment = (sectionMap["risk-assessment"] as Record<string, any>) || {};
-  const resilience = (sectionMap["resilience-factors"] as Record<string, any>) || {};
+  const scope = (sectionMap["project-scope"] as ScopeData) || {};
+  const budget = (sectionMap["budget-capital"] as BudgetData) || {};
+  const feasibility = (sectionMap["feasibility"] as FeasibilityData) || {};
+  const execSummary = (sectionMap["executive-summary"] as ExecutiveData) || {};
+  const visionMarket = (sectionMap["vision-market"] as VisionData) || {};
+  const siteLocation = (sectionMap["site-location"] as SiteData) || {};
+  const schedule = (sectionMap["project-schedule"] as ScheduleData) || {};
+  const teamData = (sectionMap["project-team"] as TeamData) || {};
+  const riskAssessment = (sectionMap["risk-assessment"] as RiskData) || {};
+  const resilience = (sectionMap["resilience-factors"] as ResilienceData) || {};
 
   const acq = budget.acquisition || {};
   const cap = budget.capitalStack || {};
@@ -282,7 +305,7 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
 
   // Go/No-Go rationale: same rule — regenerate at export when the stored text
   // no longer matches the live figures.
-  const decisionData = (feasibility.decision || {}) as Record<string, any>;
+  const decisionData = feasibility.decision || {};
   const storedRationale = String(decisionData.rationale || "").trim();
   const liveRationaleFingerprint = buildRationaleFingerprint({
     decision: decisionData.decision || "",

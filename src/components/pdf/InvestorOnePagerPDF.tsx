@@ -2,6 +2,7 @@ import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 import type { ProjectExportData } from "@/utils/fetchProjectData";
 import { CASH_NOT_INVESTED } from "@/utils/calculations";
 import { colors } from "./PDFStyles";
+import type { RiskEntry, ScheduleMilestone } from "@/types/sectionData";
 
 const s = StyleSheet.create({
   page: { paddingTop: 30, paddingBottom: 30, paddingHorizontal: 35, fontFamily: "Helvetica", fontSize: 9, color: colors.body },
@@ -36,11 +37,11 @@ const MetricRow = ({ label, value }: { label: string; value: string }) => (
 
 export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
   const milestones = data.schedule.milestones || [];
-  const totalWeeks = milestones.reduce((sum: number, m: any) => sum + (m.duration || 0), 0);
+  const totalWeeks = milestones.reduce((sum: number, m: ScheduleMilestone) => sum + (m.duration || 0), 0);
   const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" }); } catch { return d || "—"; } };
   const neighborhood = (data.visionMarket.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "");
   const risks = data.riskAssessment.risks || [];
-  const mitigatedRisks = risks.filter((r: any) => r.status === "Mitigated" || r.status === "Resolved").length;
+  const mitigatedRisks = risks.filter((r: RiskEntry) => r.status === "Mitigated" || r.status === "Resolved").length;
 
   // Capital stack percentages
   const equityPct = data.totalSources > 0 ? (data.totalEquity / data.totalSources) * 100 : 0;

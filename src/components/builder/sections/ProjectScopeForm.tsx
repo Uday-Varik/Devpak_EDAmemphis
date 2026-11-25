@@ -17,10 +17,11 @@ import { ConceptDrawingsUpload } from "./scope/ConceptDrawingsUpload";
 import { AIGenerateButton } from "@/components/ai/AIGenerateButton";
 import { PROJECT_TYPE_OPTIONS, normalizeProjectType, normalizePropertyType } from "@/lib/projectTypes";
 import { toast } from "sonner";
+import type { ConceptDrawing } from "@/types/sectionData";
 
 interface ProjectScopeFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -53,7 +54,7 @@ export const ProjectScopeForm = ({ data, onSave, saving }: ProjectScopeFormProps
       bedroomsPerUnit: "",
       bathroomsPerUnit: "",
       scopeOfWork: "",
-      conceptDrawings: [] as any[],
+      conceptDrawings: [] as ConceptDrawing[],
       ...data,
     };
     base.projectType = normalizeProjectType(base.projectType);
@@ -70,7 +71,7 @@ export const ProjectScopeForm = ({ data, onSave, saving }: ProjectScopeFormProps
     });
   }, [data]);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: unknown) => {
     setFormData((prev) => {
       const next = { ...prev, [field]: value };
       if (field === "projectType" && prev.projectType && prev.projectType !== value) {
@@ -87,15 +88,15 @@ export const ProjectScopeForm = ({ data, onSave, saving }: ProjectScopeFormProps
           fourplex: "4",
         };
         const current = String(prev.numberOfUnits ?? "").trim();
-        if ((current === "" || current === "0") && UNIT_MAP[value]) {
-          next.numberOfUnits = UNIT_MAP[value];
+        if ((current === "" || current === "0") && UNIT_MAP[String(value)]) {
+          next.numberOfUnits = UNIT_MAP[String(value)];
         }
       }
       return next;
     });
   };
 
-  const handleAutoSave = useCallback(async (data: any) => {
+  const handleAutoSave = useCallback(async (data: Record<string, unknown>) => {
     await onSave(data, false);
     // Notify other sections (Budget, Feasibility) that scope changed.
     window.dispatchEvent(new CustomEvent("section-data-updated", { detail: { section: "project-scope" } }));

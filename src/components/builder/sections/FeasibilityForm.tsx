@@ -46,14 +46,28 @@ import { AutoSaveIndicator } from "@/components/builder/AutoSaveIndicator";
 import { isNarrativeStale } from "@/utils/narrativeStaleness";
 import { buildRationaleFingerprint, generateRationaleText } from "@/utils/narrativeFingerprints";
 import { StaleNarrativeNotice } from "@/components/builder/StaleNarrativeNotice";
+import type {
+  BudgetData, ComparableSale, DecisionData, FeasibilityData, RentalExitData, ScopeData, VisionData,
+} from "@/types/sectionData";
 
 interface FeasibilityFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
-const DEFAULT_DATA = {
+type FeasibilityFormState = {
+  exitStrategy: { strategy: "sell" | "rent" | "rent-then-sell"; holdPeriod: number; replace?: string };
+  saleExit: { arv: number; salesCostsPercent: number };
+  rentalExit: RentalExitData;
+  sensitivity: { arvAdjustment: number; costAdjustment: number };
+  decision: DecisionData;
+};
+
+/** Saved payload before defaults are merged in. */
+type FeasibilitySaved = FeasibilityData & { sensitivity?: FeasibilityFormState["sensitivity"] };
+
+const DEFAULT_DATA: FeasibilityFormState = {
   exitStrategy: {
     strategy: "sell" as "sell" | "rent" | "rent-then-sell",
     holdPeriod: 12,
@@ -114,23 +128,30 @@ export const FeasibilityForm = ({
 }: FeasibilityFormProps) => {
   const { id: projectId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(() => ({
-    exitStrategy: { ...DEFAULT_DATA.exitStrategy, ...data.exitStrategy },
-    saleExit: { ...DEFAULT_DATA.saleExit, ...data.saleExit },
-    rentalExit: { ...DEFAULT_DATA.rentalExit, ...data.rentalExit },
-    sensitivity: { ...DEFAULT_DATA.sensitivity, ...data.sensitivity },
-    decision: { ...DEFAULT_DATA.decision, ...data.decision },
-  }));
-  const [budgetData, setBudgetData] = useState<any>(null);
-  const [projectScopeData, setProjectScopeData] = useState<any>(null);
-  const [visionMarketData, setVisionMarketData] = useState<any>(null);
-  const initialStrategy = (data.exitStrategy?.strategy || DEFAULT_DATA.exitStrategy.strategy) as string;
+  const [formData, setFormData] = useState<FeasibilityFormState>(() => {
+    const saved = data as FeasibilitySaved;
+    return {
+      exitStrategy: {
+        ...DEFAULT_DATA.exitStrategy,
+        ...saved.exitStrategy,
+        strategy: (saved.exitStrategy?.strategy as FeasibilityFormState["exitStrategy"]["strategy"]) || DEFAULT_DATA.exitStrategy.strategy,
+      },
+      saleExit: { ...DEFAULT_DATA.saleExit, ...saved.saleExit },
+      rentalExit: { ...DEFAULT_DATA.rentalExit, ...saved.rentalExit },
+      sensitivity: { ...DEFAULT_DATA.sensitivity, ...saved.sensitivity },
+      decision: { ...DEFAULT_DATA.decision, ...saved.decision },
+    };
+  });
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+  const [projectScopeData, setProjectScopeData] = useState<ScopeData | null>(null);
+  const [visionMarketData, setVisionMarketData] = useState<VisionData | null>(null);
+  const initialStrategy = ((data as FeasibilitySaved).exitStrategy?.strategy || DEFAULT_DATA.exitStrategy.strategy) as string;
   const initialOpen = ["exitStrategy"];
   if (initialStrategy === "sell" || initialStrategy === "rent-then-sell") initialOpen.push("saleExit");
   if (initialStrategy === "rent" || initialStrategy === "rent-then-sell") initialOpen.push("rentalExit");
   const [openSections, setOpenSections] = useState<string[]>(initialOpen);
 
-  const handleAutoSave = useCallback(async (data: any) => {
+  const handleAutoSave = useCallback(async (data: Record<string, unknown>) => {
     await onSave(data, false);
   }, [onSave]);
 
@@ -150,21 +171,23 @@ export const FeasibilityForm = ({
       if (detailsData) {
         detailsData.forEach((detail) => {
           if (detail.section === "budget-capital") {
-            setBudgetData(detail.data);
+            const budget = detail.data as BudgetData;
+            setBudgetData(budget);
             // Auto-populate loan amount if not set
-            if (!formData.rentalExit.loanAmount && (detail.data as any)?.capitalStack?.bankLoan) {
+            if (!formData.rentalExit.loanAmount && budget?.capitalStack?.bankLoan) {
               setFormData((prev) => ({
                 ...prev,
                 rentalExit: {
                   ...prev.rentalExit,
-                  loanAmount: (detail.data as any).capitalStack.bankLoan,
+                  loanAmount: budget.capitalStack.bankLoan,
                 },
               }));
             }
           }
           if (detail.section === "project-scope") {
-            setProjectScopeData(detail.data);
-            const scopeUnits = parseInt(String((detail.data as any)?.numberOfUnits || ""), 10);
+            const scope = detail.data as ScopeData;
+            setProjectScopeData(scope);
+            const scopeUnits = parseInt(String(scope?.numberOfUnits || ""), 10);
             // Auto-populate from scope if rental units is still at the default (1) or empty
             if (scopeUnits > 0 && (!formData.rentalExit.numberOfUnits || formData.rentalExit.numberOfUnits <= 1)) {
               setFormData((prev) => ({
@@ -177,7 +200,7 @@ export const FeasibilityForm = ({
             }
           }
           if (detail.section === "vision-market") {
-            setVisionMarketData(detail.data);
+            setVisionMarketData(detail.data as VisionData);
           }
         });
       }
@@ -230,8 +253,8 @@ export const FeasibilityForm = ({
 
   // Vision comps mapped for calculations
   const visionComps = useMemo(() => {
-    const comps = visionMarketData?.comparables || [];
-    return comps.map((c: any) => ({
+    const comps: ComparableSale[] = visionMarketData?.comparables || [];
+    return comps.map((c: ComparableSale) => ({
       address: c.address || "",
       salePrice: c.salePrice || 0,
       sqft: c.sqft || 0,
@@ -244,8 +267,8 @@ export const FeasibilityForm = ({
   }, [visionMarketData]);
 
   const visionAvgPricePerSqft = useMemo(() => {
-    const valid = visionComps.filter((c: any) => c.pricePerSqft > 0);
-    return valid.length > 0 ? valid.reduce((s: number, c: any) => s + c.pricePerSqft, 0) / valid.length : 0;
+    const valid = visionComps.filter((c: ComparableSale) => c.pricePerSqft > 0);
+    return valid.length > 0 ? valid.reduce((s: number, c: ComparableSale) => s + (c.pricePerSqft || 0), 0) / valid.length : 0;
   }, [visionComps]);
 
   // All calculations
@@ -423,7 +446,7 @@ export const FeasibilityForm = ({
 
   const rationaleStale = isNarrativeStale(
     formData.decision.rationale,
-    (formData.decision as any).rationaleFingerprint,
+    formData.decision.rationaleFingerprint,
     rationaleFingerprint
   );
 
@@ -526,7 +549,7 @@ export const FeasibilityForm = ({
                   <Label>Exit Strategy</Label>
                   <Select
                     value={formData.exitStrategy.strategy}
-                    onValueChange={(v: any) => {
+                    onValueChange={(v: string) => {
                       updateSection("exitStrategy", "strategy", v);
                       // Auto-open the relevant analysis section so the user sees the right fields immediately
                       setOpenSections((prev) => {
@@ -1084,7 +1107,7 @@ export const FeasibilityForm = ({
               {visionComps.length > 0 ? (
                 <>
                   {/* Comp cards */}
-                  {visionComps.map((comp: any, i: number) => (
+                  {visionComps.map((comp: ComparableSale, i: number) => (
                     <div key={i} className="p-4 bg-muted/50 rounded-lg">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-2">

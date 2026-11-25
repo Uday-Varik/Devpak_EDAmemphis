@@ -25,8 +25,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatPhone } from "@/lib/formatPhone";
 
 interface ProjectTeamFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -67,7 +67,37 @@ const TEAM_ROLES = [
 const STATUS_OPTIONS = ["Identified", "Under Contract", "Engaged", "Not Yet Identified"];
 const ARCHITECT_STATUS_OPTIONS = [...STATUS_OPTIONS, "Not Required"];
 
-const DEFAULT_DATA = {
+export type PartyForm = {
+  companyName: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  licenseNumber: string;
+  licenseVerified?: boolean;
+  relevantExperience: string;
+  status: string;
+  yearsInBusiness?: string;
+  bidStatus?: string;
+};
+
+export type ManagementForm = {
+  constructionManagement: string;
+  propertyManagement: string;
+  propertyManagerName: string;
+  propertyManagerContact: string;
+  managementFee: number;
+};
+
+export type TeamFormData = {
+  developerRole: string;
+  developerEquity: number;
+  gc: PartyForm;
+  architect: PartyForm;
+  teamMembers: TeamMember[];
+  management: ManagementForm;
+};
+
+const DEFAULT_DATA: TeamFormData = {
   developerRole: "",
   developerEquity: 0,
   gc: {
@@ -90,7 +120,7 @@ const DEFAULT_DATA = {
     relevantExperience: "",
     status: "",
   },
-  teamMembers: [] as TeamMember[],
+  teamMembers: [],
   management: {
     constructionManagement: "",
     propertyManagement: "",
@@ -111,7 +141,7 @@ const EMPTY_MEMBER: TeamMember = {
 
 export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) => {
   const { user } = useAuth();
-  const [formData, setFormData] = useState<Record<string, any>>({ ...DEFAULT_DATA, ...data });
+  const [formData, setFormData] = useState<TeamFormData>({ ...DEFAULT_DATA, ...(data as Partial<TeamFormData>) });
   const [openSections, setOpenSections] = useState<string[]>(["developer"]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -124,7 +154,7 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
     try {
       const [devRes, legacyRes] = await Promise.all([
         supabase
-          .from("developer_profiles" as any)
+          .from("developer_profiles")
           .select("full_name, professional_title, entity_name, phone, headshot_url, years_experience")
           .eq("user_id", user!.id)
           .maybeSingle(),
@@ -138,8 +168,8 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
         console.error("Error fetching profile:", devRes.error ?? legacyRes.error);
         toast.error("Couldn't load your developer profile. You can still enter team details manually.");
       }
-      const dp: any = devRes.data || {};
-      const lp: any = legacyRes.data || {};
+      const dp = devRes.data;
+      const lp = legacyRes.data;
       // Merge — developer_profiles wins, profiles fills gaps
       const merged: ProfileData = {
         full_name: dp.full_name || lp.full_name || null,
@@ -161,19 +191,19 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
   };
 
   const handleAutoSave = useCallback(
-    async (d: any) => { await onSave(d, false); },
+    async (d: Record<string, unknown>) => { await onSave(d, false); },
     [onSave]
   );
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
-  const update = (field: string, value: any) => {
-    setFormData((prev: Record<string, any>) => ({ ...prev, [field]: value }));
+  const update = <K extends keyof TeamFormData>(field: K, value: TeamFormData[K]) => {
+    setFormData((prev: TeamFormData) => ({ ...prev, [field]: value }));
   };
 
-  const updateNested = (section: string, field: string, value: any) => {
-    setFormData((prev: Record<string, any>) => ({
+  const updateNested = <K extends "gc" | "architect" | "management">(section: K, field: string, value: unknown) => {
+    setFormData((prev: TeamFormData) => ({
       ...prev,
-      [section]: { ...prev[section], [field]: value },
+      [section]: { ...prev[section], [field]: value } as TeamFormData[K],
     }));
   };
 

@@ -1,3 +1,4 @@
+import type { BudgetData, CostCategory, CustomCostItem, FeasibilityData, ScopeData } from "@/types/sectionData";
 /**
  * Single source of truth for all project financial calculations.
  *
@@ -126,23 +127,23 @@ export const roundHalfAway = (v: number): number => Math.sign(v || 0) * Math.rou
 
 /** Sums the numeric fields of a budget category plus any custom line items. */
 export const sumCategory = (
-  obj: Record<string, any> | undefined,
+  obj: CostCategory | undefined,
   excludeKeys: string[] = ["contingencyPercent", "customItems"],
 ): number => {
   const base = Object.entries(obj || {}).reduce((sum, [key, val]) => {
     if (excludeKeys.includes(key) || typeof val !== "number") return sum;
     return sum + val;
   }, 0);
-  const customTotal = ((obj || {}).customItems || []).reduce(
-    (sum: number, item: any) => sum + (Number(item?.amount) || 0),
+  const customTotal = ((obj?.customItems as CustomCostItem[] | undefined) || []).reduce(
+    (sum: number, item: CustomCostItem) => sum + (Number(item?.amount) || 0),
     0,
   );
   return base + customTotal;
 };
 
 export const computeBudgetTotals = (
-  budget: Record<string, any> | undefined,
-  scope: Record<string, any> | undefined,
+  budget: BudgetData | undefined,
+  scope: ScopeData | undefined,
 ): BudgetTotals => {
   const b = budget || {};
   const acq = b.acquisition || {};
@@ -194,9 +195,9 @@ export const computeBudgetTotals = (
 };
 
 export interface FinancialsInput {
-  scope?: Record<string, any>;
-  budget?: Record<string, any>;
-  feasibility?: Record<string, any>;
+  scope?: ScopeData;
+  budget?: BudgetData;
+  feasibility?: FeasibilityData;
 }
 
 /** Label shown in place of ROI / cash-on-cash when no developer cash is invested. */

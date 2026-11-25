@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import type { ScopeData } from "@/types/sectionData";
 
 /**
  * Reads `projectType` from the project-scope section of the current project.
@@ -22,7 +23,7 @@ export function useProjectType(): string | null {
         .maybeSingle();
       if (cancelled) return;
       if (details?.data) {
-        const d = details.data as Record<string, any>;
+        const d = details.data as ScopeData;
         setProjectType(d.projectType || null);
       }
     };

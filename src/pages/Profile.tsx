@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/errorMessage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Hexagon, User, LogOut, LayoutDashboard, Briefcase, Camera, FolderOpen, ChevronLeft } from "lucide-react";
@@ -35,8 +36,8 @@ const Profile = () => {
     try {
       await save(form);
       toast({ title: "Profile saved", description: "Your developer profile has been updated." });
-    } catch (e: any) {
-      toast({ title: "Couldn't save profile", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Couldn't save profile", description: errorMessage(e), variant: "destructive" });
     } finally {
       setSaving(false);
     }

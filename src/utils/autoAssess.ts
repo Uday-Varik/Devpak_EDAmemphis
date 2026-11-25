@@ -1,5 +1,8 @@
 import { computeProjectFinancials } from "./calculations";
 import { supabase } from "@/integrations/supabase/client";
+import type {
+  BudgetData, FeasibilityData, RiskData, ScheduleData, ScheduleMilestone, ScopeData, SiteData, TeamData, VisionData,
+} from "@/types/sectionData";
 
 export interface AutoRisk {
   id: string;
@@ -12,14 +15,14 @@ export interface AutoRisk {
 }
 
 export interface ProjectSections {
-  scope: any;
-  visionMarket: any;
-  siteLocation: any;
-  schedule: any;
-  budget: any;
-  team: any;
-  feasibility: any;
-  riskAssessment: any;
+  scope: ScopeData;
+  visionMarket: VisionData;
+  siteLocation: SiteData;
+  schedule: ScheduleData;
+  budget: BudgetData;
+  team: TeamData;
+  feasibility: FeasibilityData;
+  riskAssessment: RiskData;
 }
 
 export const fetchProjectSections = async (projectId: string): Promise<ProjectSections> => {
@@ -28,17 +31,17 @@ export const fetchProjectSections = async (projectId: string): Promise<ProjectSe
     .select("section, data")
     .eq("project_id", projectId);
   if (error) throw error;
-  const map: Record<string, any> = {};
-  (data || []).forEach((d) => { map[d.section] = d.data || {}; });
+  const map: Record<string, Record<string, unknown>> = {};
+  (data || []).forEach((d) => { map[d.section] = (d.data || {}) as Record<string, unknown>; });
   return {
-    scope: map["project-scope"] || {},
-    visionMarket: map["vision-market"] || {},
-    siteLocation: map["site-location"] || {},
-    schedule: map["project-schedule"] || {},
-    budget: map["budget-capital"] || {},
-    team: map["project-team"] || {},
-    feasibility: map["feasibility"] || {},
-    riskAssessment: map["risk-assessment"] || {},
+    scope: (map["project-scope"] || {}) as ScopeData,
+    visionMarket: (map["vision-market"] || {}) as VisionData,
+    siteLocation: (map["site-location"] || {}) as SiteData,
+    schedule: (map["project-schedule"] || {}) as ScheduleData,
+    budget: (map["budget-capital"] || {}) as BudgetData,
+    team: (map["project-team"] || {}) as TeamData,
+    feasibility: (map["feasibility"] || {}) as FeasibilityData,
+    riskAssessment: (map["risk-assessment"] || {}) as RiskData,
   };
 };
 
@@ -50,7 +53,7 @@ export const generateAutoRisks = (s: ProjectSections): AutoRisk[] => {
 
   // a) Rent premium
   const rentPerUnit = s.feasibility?.rentalExit?.monthlyRentPerUnit || 0;
-  const units = s.scope?.numberOfUnits || 0;
+  const units = Number(s.scope?.numberOfUnits) || 0;
   const areaRent = s.visionMarket?.averageRent || 0;
   if (rentPerUnit > 0 && areaRent > 0) {
     const pct = ((rentPerUnit - areaRent) / areaRent) * 100;
@@ -76,8 +79,8 @@ export const generateAutoRisks = (s: ProjectSections): AutoRisk[] => {
   }
 
   // c) Timeline gaps
-  const milestones = (s.schedule?.milestones || []).filter((m: any) => m.startDate && m.endDate);
-  const sorted = [...milestones].sort((a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+  const milestones = (s.schedule?.milestones || []).filter((m: ScheduleMilestone) => m.startDate && m.endDate);
+  const sorted = [...milestones].sort((a: ScheduleMilestone, b: ScheduleMilestone) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
   for (let i = 0; i < sorted.length - 1; i++) {
     const endA = new Date(sorted[i].endDate).getTime();
     const startB = new Date(sorted[i + 1].startDate).getTime();
@@ -190,7 +193,7 @@ export const generateResilienceScore = (s: ProjectSections): ResilienceAutoResul
   const sourcesCount = [
     cap.developerEquity, cap.bankLoan, cap.privateLender,
     cap.grant1Amount, cap.grant2Amount, cap.grant3Amount, cap.otherSources,
-  ].filter((v: any) => (v || 0) > 0).length;
+  ].filter((v) => (Number(v) || 0) > 0).length;
   const grantsTotal = computeProjectFinancials({ scope: s.scope, budget: b, feasibility: s.feasibility }).grants;
 
   const compsCount = (vm.comparables || vm.comps || []).length;
@@ -202,13 +205,13 @@ export const generateResilienceScore = (s: ProjectSections): ResilienceAutoResul
 
   // Cash flow positive (rental)
   const rentPerUnit = fz.rentalExit?.monthlyRentPerUnit || 0;
-  const units = s.scope?.numberOfUnits || 0;
+  const units = Number(s.scope?.numberOfUnits) || 0;
   const monthlyOpEx = fz.rentalExit?.monthlyOperatingExpenses || 0;
   const monthlyDebt = fz.rentalExit?.monthlyDebtService || 0;
   const monthlyCashFlow = rentPerUnit * units - monthlyOpEx - monthlyDebt;
 
   // Timeline buffer: loan maturity vs completion
-  const lastMs = (sched.milestones || []).reduce((latest: any, m: any) => {
+  const lastMs = (sched.milestones || []).reduce((latest: ScheduleMilestone, m: ScheduleMilestone) => {
     if (!m.endDate) return latest;
     if (!latest || new Date(m.endDate) > new Date(latest.endDate)) return m;
     return latest;

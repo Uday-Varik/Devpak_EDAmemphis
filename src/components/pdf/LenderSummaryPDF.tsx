@@ -2,6 +2,7 @@ import { allInBasisRule, seventyRule, ruleCheckLabel, CASH_NOT_INVESTED } from "
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 import type { ProjectExportData } from "@/utils/fetchProjectData";
 import { colors } from "./PDFStyles";
+import type { ComparableSale, RiskEntry, ScheduleMilestone } from "@/types/sectionData";
 
 const s = StyleSheet.create({
   page: { paddingTop: 40, paddingBottom: 50, paddingHorizontal: 45, fontFamily: "Helvetica", fontSize: 9, color: colors.body },
@@ -43,7 +44,7 @@ const Footer = ({ projectName }: { projectName: string }) => (
 export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
   const risks = data.riskAssessment.risks || [];
   const milestones = data.schedule.milestones || [];
-  const totalWeeks = milestones.reduce((s: number, m: any) => s + (m.duration || 0), 0);
+  const totalWeeks = milestones.reduce((s: number, m: ScheduleMilestone) => s + (m.duration || 0), 0);
   const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); } catch { return d || "—"; } };
 
   const insuranceFields = [
@@ -213,7 +214,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
               <Text style={[s.thText, { width: "25%" }]}>Dates</Text>
               <Text style={[s.thText, { width: "20%" }]}>Status</Text>
             </View>
-            {milestones.map((m: any, i: number) => (
+            {milestones.map((m: ScheduleMilestone, i: number) => (
               <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
                 <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{m.name || "—"}</Text>
                 <Text style={[s.tdText, { width: "20%", paddingLeft: 4 }]}>{m.duration || 0} wks</Text>
@@ -235,7 +236,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
               <Text style={[s.thText, { width: "20%" }]}>Likelihood</Text>
               <Text style={[s.thText, { width: "20%" }]}>Status</Text>
             </View>
-            {risks.map((r: any, i: number) => (
+            {risks.map((r: RiskEntry, i: number) => (
               <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
                 <Text style={[s.tdText, { width: "25%", paddingLeft: 4 }]}>{r.category || "—"}</Text>
                 <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{r.description || "—"}</Text>
@@ -306,7 +307,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
                 <Text style={[s.thText, { width: "15%" }]}>Beds/Bath</Text>
                 <Text style={[s.thText, { width: "15%" }]}>Condition</Text>
               </View>
-              {comps.map((c: any, i: number) => (
+              {comps.map((c: ComparableSale, i: number) => (
                 <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
                   <Text style={[s.tdText, { width: "30%", paddingLeft: 4 }]}>{c.address || "—"}</Text>
                   <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.salePrice ? fmt(c.salePrice) : "—"}</Text>

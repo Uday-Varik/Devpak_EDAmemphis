@@ -1,5 +1,6 @@
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
+import type { ConceptDrawing, ScopeData } from "@/types/sectionData";
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
   "new-construction": "New Construction",
@@ -17,7 +18,7 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 interface ProjectScopeSectionProps {
-  scope: Record<string, any>;
+  scope: ScopeData;
   address: string;
 }
 
@@ -29,7 +30,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps) => {
-  const drawings: any[] = scope.conceptDrawings || [];
+  const drawings: ConceptDrawing[] = scope.conceptDrawings || [];
   const isNewConstruction = scope.projectType === "new-construction";
   const sqftExisting = scope.sqftExisting ? `${Number(scope.sqftExisting).toLocaleString()} sq ft` : null;
   const sqftPlanned = scope.sqftPlanned ? `${Number(scope.sqftPlanned).toLocaleString()} sq ft` : null;
@@ -42,7 +43,7 @@ export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps
       <DetailRow label="Address" value={address} />
       <DetailRow label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "—"} />
       <DetailRow label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "—"} />
-      <DetailRow label="Number of Units" value={scope.numberOfUnits || "—"} />
+      <DetailRow label="Number of Units" value={String(scope.numberOfUnits || "—")} />
       {!isNewConstruction && sqftExisting && (
         <DetailRow label="Existing Sq Ft" value={sqftExisting} />
       )}
@@ -52,8 +53,8 @@ export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps
           value={sqftPlanned}
         />
       )}
-      <DetailRow label="Bedrooms / Unit" value={scope.bedroomsPerUnit || "—"} />
-      <DetailRow label="Bathrooms / Unit" value={scope.bathroomsPerUnit || "—"} />
+      <DetailRow label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "—")} />
+      <DetailRow label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "—")} />
 
       {(scope.scopeOfWork || scope.projectDescription) && (
         <View>
@@ -74,12 +75,12 @@ export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps
         <View style={{ marginTop: 12 }}>
           <Text style={styles.subTitle}>Concept Drawings & Plans</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {drawings.map((drawing: any, i: number) => (
+            {drawings.map((drawing: ConceptDrawing, i: number) => (
               <View key={i} style={{ width: "48%", marginBottom: 8 }}>
                 {drawing.fileType === "image" ? (
                   <Image
                     src={drawing.url}
-                    style={{ width: "100%", height: 160, objectFit: "contain" as any, borderRadius: 4, backgroundColor: "#F7F8FA" }}
+                    style={{ width: "100%", height: 160, objectFit: "contain", borderRadius: 4, backgroundColor: "#F7F8FA" }}
                   />
                 ) : (
                   <View style={{ width: "100%", height: 60, backgroundColor: "#FEF2F2", borderRadius: 4, justifyContent: "center", alignItems: "center" }}>

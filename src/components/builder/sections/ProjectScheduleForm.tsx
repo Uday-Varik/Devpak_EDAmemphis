@@ -18,6 +18,7 @@ import { MilestoneEducation } from "./project-schedule/MilestoneEducation";
 import { cn } from "@/lib/utils";
 import { useProjectType } from "@/hooks/useProjectType";
 import { toast } from "sonner";
+import type { ScheduleData, ScheduleMilestone } from "@/types/sectionData";
 
 interface Milestone {
   id: string;
@@ -37,8 +38,8 @@ interface BaselineDates {
 }
 
 interface ProjectScheduleFormProps {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>, markComplete?: boolean) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>, markComplete?: boolean) => Promise<void>;
   saving: boolean;
 }
 
@@ -83,30 +84,38 @@ const DEFAULT_MILESTONES = NEW_CONSTRUCTION_MILESTONES;
 
 const MILESTONE_STATUSES = ["Not Started", "In Progress", "Complete", "Delayed"];
 
+type ScheduleSaved = Omit<ScheduleData, "milestones" | "keyDates"> & {
+  endDateManual?: boolean;
+  baselineDates?: BaselineDates;
+  keyDates?: Partial<Record<"loanClosing" | "constructionStart" | "certificateOfOccupancy" | "firstLeaseSale" | "loanMaturity" | "notes", string>>;
+  milestones?: Milestone[];
+};
+
 export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFormProps) => {
+  const saved = data as ScheduleSaved;
   const projectType = useProjectType();
   const [startDate, setStartDate] = useState<Date | undefined>(
-    data.startDate ? parseISO(data.startDate) : undefined
+    saved.startDate ? parseISO(saved.startDate) : undefined
   );
   const [endDate, setEndDate] = useState<Date | undefined>(
-    data.endDate ? parseISO(data.endDate) : undefined
+    saved.endDate ? parseISO(saved.endDate) : undefined
   );
   const [milestones, setMilestones] = useState<Milestone[]>(
-    data.milestones?.length
-      ? data.milestones.map((m: any) => ({ ...m, progress: m.progress ?? 0, complete: m.complete ?? (m.status === "Complete") }))
+    saved.milestones?.length
+      ? saved.milestones.map((m) => ({ ...m, progress: m.progress ?? 0, complete: m.complete ?? (m.status === "Complete") }))
       : getDefaultMilestones(null)
   );
-  const [endDateManual, setEndDateManual] = useState<boolean>(!!data.endDateManual);
+  const [endDateManual, setEndDateManual] = useState<boolean>(!!saved.endDateManual);
   const [baselineDates, setBaselineDates] = useState<BaselineDates>(
-    data.baselineDates || {}
+    saved.baselineDates || {}
   );
   const [keyDates, setKeyDates] = useState({
-    loanClosing: data.keyDates?.loanClosing || "",
-    constructionStart: data.keyDates?.constructionStart || "",
-    certificateOfOccupancy: data.keyDates?.certificateOfOccupancy || "",
-    firstLeaseSale: data.keyDates?.firstLeaseSale || "",
-    loanMaturity: data.keyDates?.loanMaturity || "",
-    notes: data.keyDates?.notes || "",
+    loanClosing: saved.keyDates?.loanClosing || "",
+    constructionStart: saved.keyDates?.constructionStart || "",
+    certificateOfOccupancy: saved.keyDates?.certificateOfOccupancy || "",
+    firstLeaseSale: saved.keyDates?.firstLeaseSale || "",
+    loanMaturity: saved.keyDates?.loanMaturity || "",
+    notes: saved.keyDates?.notes || "",
   });
 
   // Initial cascade — only runs once to seed dates from project start if milestones lack dates
@@ -187,7 +196,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
 
   useEffect(() => {
     if (!projectType) return;
-    if (data.milestones?.length) return;
+    if (saved.milestones?.length) return;
     setMilestones((current) => {
       if (!isUntouchedDefaults(current)) return current;
       return getDefaultMilestones(projectType);
@@ -253,7 +262,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
     return out;
   };
 
-  const updateMilestone = (index: number, field: keyof Milestone, value: any) => {
+  const updateMilestone = (index: number, field: keyof Milestone, value: unknown) => {
     let updated = milestones.map((m) => ({ ...m }));
     updated[index] = { ...updated[index], [field]: value };
     const m = updated[index];
@@ -270,7 +279,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
       }
     } else if (field === "startDate" && value) {
       // startDate change: preserve durationWeeks, recompute end → cascade
-      const start = parseISO(value);
+      const start = parseISO(String(value));
       const weeks = Math.max(1, m.durationWeeks || 1);
       if (isValid(start)) {
         const newEnd = addWeeks(start, weeks);
@@ -280,7 +289,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
     } else if (field === "endDate" && value && m.startDate) {
       // Manual end-date override: recompute duration + cascade forward from new endDate.
       const start = parseISO(m.startDate);
-      const end = parseISO(value);
+      const end = parseISO(String(value));
       if (isValid(start) && isValid(end)) {
         const weeks = differenceInWeeks(end, start);
         updated[index].durationWeeks = weeks < 1 ? 1 : weeks;

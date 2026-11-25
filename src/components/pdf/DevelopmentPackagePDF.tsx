@@ -1,3 +1,5 @@
+import type { BudgetData, ConceptDrawing, ExecutiveData, FeasibilityData, RiskData, ResilienceData, ScheduleData, ScopeData, SiteData, SitePhoto, TeamData, VisionData } from "@/types/sectionData";
+import type { DeveloperProfile } from "@/types/developerProfile";
 import { Document } from "@react-pdf/renderer";
 import { CoverPage } from "./sections/CoverPage";
 import { DeveloperProfileSection } from "./sections/DeveloperProfileSection";
@@ -24,16 +26,16 @@ export interface PDFData {
   companyName?: string;
   developerPhone?: string;
   developerEmail?: string;
-  scope: Record<string, any>;
-  budget: Record<string, any>;
-  feasibility: Record<string, any>;
-  executiveSummary: Record<string, any>;
-  visionMarket: Record<string, any>;
-  siteLocation: Record<string, any>;
-  schedule: Record<string, any>;
-  team: Record<string, any>;
-  riskAssessment: Record<string, any>;
-  resilience: Record<string, any>;
+  scope: ScopeData;
+  budget: BudgetData;
+  feasibility: FeasibilityData;
+  executiveSummary: ExecutiveData;
+  visionMarket: VisionData;
+  siteLocation: SiteData;
+  schedule: ScheduleData;
+  team: TeamData;
+  riskAssessment: RiskData;
+  resilience: ResilienceData;
   tdc: number;
   arv: number;
   netProfit: number;
@@ -72,13 +74,13 @@ export interface PDFData {
   cashOnCash?: number | null;
   onePercentRule?: number;
   budgetTotals?: Omit<import("@/utils/calculations").BudgetTotals, "purchasePrice">;
-  developerProfile?: any;
+  developerProfile?: DeveloperProfile | null;
 }
 
 export const DevelopmentPackagePDF = ({ data }: { data: PDFData }) => {
-  const photos: any[] = data.siteLocation?.photos || [];
-  const drawings: any[] = data.scope?.conceptDrawings || [];
-  const featuredPhoto = photos.find((p: any) => p.featured) || null;
+  const photos: SitePhoto[] = data.siteLocation?.photos || [];
+  const drawings: ConceptDrawing[] = data.scope?.conceptDrawings || [];
+  const featuredPhoto = photos.find((p) => p.featured) || null;
   const dp = data.developerProfile || null;
   const showDeveloperProfilePage = !!dp && (
     !!dp.bio ||
