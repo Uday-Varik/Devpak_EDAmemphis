@@ -4,7 +4,7 @@ import {
   DEVELOPER_EQUITY_FIELD_ID,
   FOCUS_DEVELOPER_EQUITY_EVENT,
   consumeDeveloperEquityFocus,
-} from "@/components/builder/CashNotInvested";
+} from "@/components/builder/cashNotInvestedFocus";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion,

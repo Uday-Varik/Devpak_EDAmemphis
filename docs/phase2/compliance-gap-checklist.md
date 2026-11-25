@@ -38,7 +38,7 @@ Evidence paths are relative to the repo root. "Exists" means the code or migrati
 | B9 | Data protection impact assessment (DPIA), if required | GDPR Art. 35 | Unknown | Not in repo | Counsel to decide whether one is needed, given the scale and the financial data involved. |
 | B10 | Breach notification procedure | GDPR Art. 33 (72 hours), CCPA and state breach laws | Partial | `docs/phase2/incident-runbook.md` (new) | Owner and counsel to confirm the notice steps, timelines, and contacts. |
 | B11 | Records of processing activities (ROPA) | GDPR Art. 30 | Missing | Not in repo | Create a short register from section 4 of the privacy policy draft. |
-| B12 | Sensitive data handling in uploaded photos and drawings | GDPR and state law | Partial | `supabase/migrations/20260410105404_fb2c77d7-7387-4bb7-a611-5523051a30d4.sql` makes both buckets public (`public = true`) and allows anyone to view files | Decide whether drawings and photos must be private. If yes, change the bucket to private and serve files through signed URLs. Owner decision. |
+| B12 | Sensitive data handling in uploaded photos and drawings | GDPR and state law | Partial | `supabase/migrations/20260410105404_fb2c77d7-7387-4bb7-a611-5523051a30d4.sql` makes both buckets public (`public = true`) and allows anyone to view files. Planned: buckets made private, see the photo-privacy change; until its migration is applied the buckets remain public. | Confirm the private-bucket change (signed URLs) is applied. Owner decision. |
 | B13 | Sharing of user IP addresses with third parties | GDPR transparency | Known | Census and the open data portal are called from the browser: `src/services/censusAPI.ts`; `src/services/dataMidsouthAPI.ts` | Disclose in the privacy policy, or move these calls behind the edge functions. |
 | B14 | Minimization of data sent to AI text generation | GDPR Art. 5(1)(c) | Partial | `supabase/functions/ai-generate/index.ts` (strict system prompt); `src/components/ai/AIGenerateButton.tsx` (sends `context` from the section) | Review what `context` includes for each section and remove fields the model does not need, such as contact details. |
 | B15 | Vendor contract for OpenAI API data use | GDPR Art. 28 | Missing (owner action) | Not in repo | Confirm the OpenAI API terms for data use and retention, and record the account setting used. |
@@ -47,7 +47,7 @@ Evidence paths are relative to the repo root. "Exists" means the code or migrati
 
 ## C. Known gaps to fix first
 
-1. **B12 public project buckets.** Decide now. Site photos and plans can reveal a person's property and plans.
+1. **B12 public project buckets.** Planned: buckets made private, see the photo-privacy change; until its migration is applied the buckets remain public. Site photos and plans can reveal a person's property and plans.
 2. **B1 and B2 data subject requests.** Without a process, you cannot answer a request within the legal deadline. Decide the process even if the feature comes later.
 3. **B4 policy links.** Users must see the policy before they give data.
 4. **B5 DPAs.** Get these signed before taking real user data.
