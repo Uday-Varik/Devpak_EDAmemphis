@@ -1,6 +1,8 @@
 # DevPack Complete Bug Registry
 **October 5, 2026 - All 34 Bugs Documented**
 
+> **Status update (2026-11-25):** All 32 GitHub issues (#1–#32) are closed and merged to `main`. This registry is the original October snapshot and is not edited per bug. For current status, see [PROPOSAL_STATUS.md](PROPOSAL_STATUS.md).
+
 ---
 
 ## EXECUTIVE SUMMARY
