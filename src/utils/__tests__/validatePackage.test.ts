@@ -1,26 +1,35 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type Row = Record<string, unknown>;
+
+interface QueryStub {
+  select: () => QueryStub;
+  eq: (col: string, val: unknown) => QueryStub;
+  maybeSingle: () => Promise<{ data: Row | null; error: null }>;
+  then: (resolve?: (v: { data: Row[]; error: null }) => unknown, reject?: (e: unknown) => unknown) => Promise<unknown>;
+}
+
 // In-memory stand-in for the Supabase tables that runValidation and fetchProjectSections read.
 const db = vi.hoisted(() => ({
-  details: [] as Array<{ project_id: string; section: string; data: any }>,
+  details: [] as Array<{ project_id: string; section: string; data: Record<string, unknown> }>,
   profiles: [] as Array<{ user_id: string; full_name: string }>,
   userId: "user-1" as string | null,
 }));
 
-function query(table: string) {
+function query(table: string): QueryStub {
   const filters: Record<string, unknown> = {};
-  const rows = (): any[] => {
-    const src = table === "project_details" ? db.details : table === "developer_profiles" ? db.profiles : [];
-    return src.filter((r: any) => Object.entries(filters).every(([k, v]) => r[k] === v));
+  const rows = (): Row[] => {
+    const src: Row[] = table === "project_details" ? db.details : table === "developer_profiles" ? db.profiles : [];
+    return src.filter((r) => Object.entries(filters).every(([k, v]) => r[k] === v));
   };
-  const q: any = {
+  const q: QueryStub = {
     select: () => q,
     eq: (col: string, val: unknown) => {
       filters[col] = val;
       return q;
     },
     maybeSingle: async () => ({ data: rows()[0] ?? null, error: null }),
-    then: (resolve: any, reject: any) => Promise.resolve({ data: rows(), error: null }).then(resolve, reject),
+    then: (resolve, reject) => Promise.resolve({ data: rows(), error: null }).then(resolve, reject),
   };
   return q;
 }
@@ -38,7 +47,7 @@ import { sourcesExceedUsesMessage, runValidation } from "../validatePackage";
 import { computeBudgetTotals } from "../calculations";
 
 const PROJECT = "proj-1";
-const put = (section: string, data: any) => db.details.push({ project_id: PROJECT, section, data });
+const put = (section: string, data: Row) => db.details.push({ project_id: PROJECT, section, data });
 
 /** A package where every validation rule passes. */
 function seedFullPackage() {
@@ -108,7 +117,7 @@ describe("runValidation end to end", () => {
   it("flags a funding gap as critical when sources fall short of uses", async () => {
     seedFullPackage();
     const budget = db.details.find((d) => d.section === "budget-capital")!;
-    budget.data.capitalStack.developerEquity = 100000;
+    (budget.data.capitalStack as Row).developerEquity = 100000;
 
     const findings = await runValidation(PROJECT);
 
