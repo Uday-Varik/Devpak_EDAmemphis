@@ -6,6 +6,7 @@
 // - saletranstype mixes non-sales (e.g. "Construction Loan/Financing") and salecode is often empty,
 //   so we deliberately DO NOT filter on either one.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { ATTOM_RATE_LIMIT_PER_HOUR, allowed, rateWindowStartIso } from "./rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -171,6 +172,27 @@ Deno.serve(async (req) => {
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return json({ error: "Invalid body" }, 400);
+
+    // SEC-02: per-user rolling-hour limit. Covers ATTOM calls, cache hits, geocodes and mode=log writes,
+    // and runs before any of them. Fails closed if the counter cannot be read or written.
+    // ponytail: count-then-insert is not atomic, so a concurrent burst can overshoot by a few. Upgrade path: a SQL function with a row lock.
+    const { count, error: countErr } = await admin
+      .from("attom_request_log")
+      .select("user_id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", rateWindowStartIso(Date.now()));
+    if (countErr) {
+      console.error("attom rate limit count failed", countErr);
+      return json({ error: "Rate limit check unavailable" }, 503);
+    }
+    if (!allowed(count ?? 0)) {
+      return json({ error: `Rate limit exceeded: ${ATTOM_RATE_LIMIT_PER_HOUR} comp requests per hour. Try again later.` }, 429);
+    }
+    const { error: recordErr } = await admin.from("attom_request_log").insert({ user_id: user.id });
+    if (recordErr) {
+      console.error("attom rate limit insert failed", recordErr);
+      return json({ error: "Rate limit check unavailable" }, 503);
+    }
 
     const street = str(body.street), city = str(body.city, 80), state = str(body.state, 20), zip = str(body.zip, 10);
     const lat = num(body.lat) || undefined, lng = num(body.lng) || undefined;
