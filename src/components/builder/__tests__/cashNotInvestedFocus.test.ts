@@ -3,7 +3,7 @@ import {
   goToDeveloperEquity,
   consumeDeveloperEquityFocus,
   FOCUS_DEVELOPER_EQUITY_EVENT,
-} from "../CashNotInvested";
+} from "../cashNotInvestedFocus";
 
 afterEach(() => {
   consumeDeveloperEquityFocus(); // clear any pending request between tests

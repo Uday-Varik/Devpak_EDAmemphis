@@ -106,7 +106,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, toast]);
 
   useEffect(() => {
     if (user) {
@@ -131,7 +131,7 @@ const Dashboard = () => {
         fetchData();
       })();
     }
-  }, [user, fetchData, navigate]);
+  }, [user, fetchData, navigate, toast]);
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();

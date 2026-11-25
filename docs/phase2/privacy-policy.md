@@ -74,7 +74,7 @@ Exports you generate are files on your device. DevPack does not email or publish
 
 No system is perfectly secure. [Owner: describe incident-response commitments, if any.]
 
-**Known gap:** the `project-photos` and `project-drawings` buckets are public. Anyone with a file's link can open it, and the policy allows anyone to view files in these buckets. Review this before collecting sensitive site or plan files. [Owner decision required.]
+**Known gap:** the `project-photos` and `project-drawings` buckets are public. Anyone with a file's link can open it, and the policy allows anyone to view files in these buckets. Planned: buckets made private, see the photo-privacy change; until its migration is applied the buckets remain public. Review this before collecting sensitive site or plan files. [Owner decision required.]
 
 ## 8. Your choices and rights
 

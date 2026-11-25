@@ -2,6 +2,24 @@
 
 Scope: static review of `main` at commit `a492d7b`. Covers the two Supabase edge functions, the migrations (tables, RLS, storage), the frontend auth and upload paths, and a production dependency audit. No exploits were run, no requests were sent to the app or to Supabase, and no source code was changed.
 
+## Status
+
+Status of each finding as of this update. The findings below are the original 2026-11 review and are not edited.
+
+- SEC-01 (private buckets): Fix in PR #67
+- SEC-02 (attom-comps rate limit): Fix in PR #66
+- SEC-03 (npm audit): Open: SEC-03 npm audit, planned as a separate PR
+- SEC-04: Open
+- SEC-05: Open
+- SEC-06: Open
+- SEC-07: Open
+- SEC-08: Open
+- SEC-09: Open
+- SEC-10: Open
+- SEC-11: Open
+- SEC-12: Open
+- SEC-13: Open
+
 ## Summary
 
 DevPack's core data model is sound. All six tables in the generated types have RLS enabled, the owner-only policies are correct, both edge functions validate the caller's bearer token before doing any work, and no service-role or OpenAI/ATTOM secret appears in `src/`. The main risks are in storage and cost control. The project-drawings and project-photos buckets are public and have a bucket-wide anonymous SELECT policy, so the storage listing API should let anyone enumerate every user's site photos and concept drawings (this needs a runtime confirmation). The `attom-comps` function has no per-user rate limit, so any signed-in user can drive paid ATTOM calls and unbounded writes through the service-role client. The `ai-generate` rate limiter is held in memory per isolate and does not cap prompt size. The production dependency tree has 13 high and 2 moderate npm advisories. **Overall risk: High.** The two High code findings (SEC-01, SEC-02) should be fixed before lender or investor data goes into production.
