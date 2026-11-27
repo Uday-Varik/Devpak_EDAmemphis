@@ -13,7 +13,7 @@ import { ATTOM_RATE_LIMIT_PER_HOUR, allowed, rateWindowStartIso } from "./rateLi
 // Keep it in sync with the list in ../ai-generate/index.ts.
 const ALLOWED_ORIGINS = [
   "http://localhost:8080", // npm run dev (vite.config.ts)
-  // TODO(owner): add the production and preview origins, e.g. "https://app.example.com".
+  "https://devpack-sparkle.lovable.app", // production and preview (same host)
 ];
 
 function corsHeadersFor(req: Request): Record<string, string> {
