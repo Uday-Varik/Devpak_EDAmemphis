@@ -2,12 +2,35 @@
 // Calls OpenAI gpt-4o-mini to generate professional narrative text.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// Browser origins allowed to call this function (SEC-08). Edit this list when a production or
+// preview domain changes. Other origins get no Access-Control-Allow-Origin header, so the browser blocks them.
+// Keep it in sync with the list in ../attom-comps/index.ts.
+const ALLOWED_ORIGINS = [
+  "http://localhost:8080", // npm run dev (vite.config.ts)
+  // TODO(owner): add the production and preview origins, e.g. "https://app.example.com".
+];
+
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+function corsHeadersFor(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin") ?? "";
+  return {
+    ...(ALLOWED_ORIGINS.includes(origin) ? { "Access-Control-Allow-Origin": origin } : {}),
+    Vary: "Origin",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
+
+// Input caps (SEC-04). Requests over these return 413.
+const PROMPT_MAX_CHARS = 4_000;
+const CONTEXT_MAX_CHARS = 20_000; // serialized JSON of `context`
+// Per-user limits, counted in the ai_generate_request_log table so they hold across isolates.
+const RATE_LIMIT_PER_MINUTE = 10;
+const RATE_LIMIT_PER_DAY = 200;
 
 const SYSTEM_PROMPT = `You are a senior real estate development associate drafting sections of a confidential development package for a construction lender's credit committee. Readers are experienced loan officers who review development packages daily and recognize generic copy instantly.
 
@@ -56,82 +79,77 @@ Never assert that financing is secured, approved, committed, or likely to be app
 
 These constraints exist because this text goes into documents submitted to lenders and grant funders. An unverifiable claim in a financing document is worse than a weaker sentence.`;
 
-// Per-user rate limit: 10 requests / 60s
-const buckets = new Map<string, number[]>();
-const RATE_LIMIT = 10;
-const WINDOW_MS = 60_000;
-
-function rateLimited(userId: string): boolean {
-  const now = Date.now();
-  const arr = (buckets.get(userId) || []).filter((t) => now - t < WINDOW_MS);
-  if (arr.length >= RATE_LIMIT) {
-    buckets.set(userId, arr);
-    return true;
-  }
-  arr.push(now);
-  buckets.set(userId, arr);
-  return false;
-}
-
 Deno.serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
+  const json = (b: unknown, status = 200) =>
+    new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userErr } = await supabase.auth.getUser(token);
-    if (userErr || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // SEC-07: a throw from the auth path is an unauthenticated request, so it returns 401 too.
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    let userId: string | undefined;
+    try {
+      const { data: { user }, error: userErr } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+      if (!userErr && user) userId = user.id;
+    } catch (e) {
+      console.warn("ai-generate auth check threw", e);
     }
-    const userId = user.id;
+    if (!userId) return json({ error: "Unauthorized" }, 401);
 
-    if (rateLimited(userId)) {
-      return new Response(
-        JSON.stringify({ error: "Rate limit exceeded. Try again in a minute." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // SEC-04: per-user per-minute and per-day limits, counted in Postgres so they hold across isolates.
+    // Fails closed if the counter cannot be read or written.
+    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const windowStart = (ms: number) => new Date(Date.now() - ms).toISOString();
+    const [minute, day] = await Promise.all([
+      admin.from("ai_generate_request_log").select("user_id", { count: "exact", head: true })
+        .eq("user_id", userId).gte("created_at", windowStart(60_000)),
+      admin.from("ai_generate_request_log").select("user_id", { count: "exact", head: true })
+        .eq("user_id", userId).gte("created_at", windowStart(24 * 60 * 60_000)),
+    ]);
+    if (minute.error || day.error) {
+      console.error("ai-generate rate limit count failed", minute.error ?? day.error);
+      return json({ error: "Service unavailable" }, 503);
+    }
+    if ((minute.count ?? 0) >= RATE_LIMIT_PER_MINUTE || (day.count ?? 0) >= RATE_LIMIT_PER_DAY) {
+      return json({ error: "Rate limit exceeded. Try again later." }, 429);
+    }
+    const { error: recordErr } = await admin.from("ai_generate_request_log").insert({ user_id: userId });
+    if (recordErr) {
+      console.error("ai-generate rate limit insert failed", recordErr);
+      return json({ error: "Service unavailable" }, 503);
     }
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body.prompt !== "string" || body.prompt.length < 5) {
-      return new Response(JSON.stringify({ error: "Invalid prompt" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "Invalid prompt" }, 400);
     }
+    if (body.prompt.length > PROMPT_MAX_CHARS) return json({ error: "Prompt too large" }, 413);
     const { prompt, context, section, maxTokens } = body as {
       prompt: string;
       context?: Record<string, unknown>;
       section?: string;
       maxTokens?: number;
     };
+    const contextJson = context ? JSON.stringify(context, null, 2) : "";
+    if (contextJson.length > CONTEXT_MAX_CHARS) return json({ error: "Context too large" }, 413);
 
     const apiKey = Deno.env.get("OPENAI_API_KEY");
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "OPENAI_API_KEY not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      // SEC-07: the detail goes to the server log, not to the client.
+      console.error("ai-generate: OPENAI_API_KEY is not set");
+      return json({ error: "Service unavailable" }, 503);
     }
 
     const userContent =
       `Section: ${section || "general"}\n` +
-      (context ? `Context:\n${JSON.stringify(context, null, 2)}\n\n` : "") +
+      (contextJson ? `Context:\n${contextJson}\n\n` : "") +
       `Task:\n${prompt}`;
 
     const r = await fetch("https://api.openai.com/v1/chat/completions", {

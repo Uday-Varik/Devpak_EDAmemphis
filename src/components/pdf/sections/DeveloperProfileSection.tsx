@@ -2,6 +2,7 @@ import type { DeveloperLicense, DeveloperProfile, PortfolioProject } from "@/typ
 import { EMPTY_DEVELOPER_PROFILE } from "@/types/developerProfile";
 import { View, Text, Image } from "@react-pdf/renderer";
 import { styles, colors } from "../PDFStyles";
+import { isSupabaseStorageUrl } from "@/lib/storageUrl";
 
 interface DeveloperProfilePageProps {
   developerProfile: DeveloperProfile | null;
@@ -26,7 +27,8 @@ export const DeveloperProfileSection = ({
 
       {/* Header card */}
       <View style={[styles.highlightBox, { padding: 14, flexDirection: "row", gap: 14, alignItems: "center" as const, marginBottom: 12 }]}>
-        {!!dp.headshot_url && (
+        {isSupabaseStorageUrl(dp.headshot_url) && (
+          // SEC-11: a headshot on another host is not fetched during export.
           <Image src={dp.headshot_url} style={{ width: 70, height: 70, borderRadius: 35, objectFit: "cover" }} />
         )}
         <View style={{ flex: 1 }}>

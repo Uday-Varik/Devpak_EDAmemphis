@@ -8,16 +8,26 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { ATTOM_RATE_LIMIT_PER_HOUR, allowed, rateWindowStartIso } from "./rateLimit.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// Browser origins allowed to call this function (SEC-08). Edit this list when a production or
+// preview domain changes. Other origins get no Access-Control-Allow-Origin header, so the browser blocks them.
+// Keep it in sync with the list in ../ai-generate/index.ts.
+const ALLOWED_ORIGINS = [
+  "http://localhost:8080", // npm run dev (vite.config.ts)
+  // TODO(owner): add the production and preview origins, e.g. "https://app.example.com".
+];
+
+function corsHeadersFor(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin") ?? "";
+  return {
+    ...(ALLOWED_ORIGINS.includes(origin) ? { "Access-Control-Allow-Origin": origin } : {}),
+    Vary: "Origin",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
 const BASE = "https://api.gateway.attomdata.com/propertyapi/v1.0.0";
 const CACHE_MS = 24 * 60 * 60 * 1000;
-const json = (b: unknown, status = 200) =>
-  new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
 const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : Number(v) || 0);
@@ -161,12 +171,21 @@ async function attomGet(key: string, path: string, params: Record<string, string
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
+  const json = (b: unknown, status = 200) =>
+    new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
+    // SEC-07: a throw from the auth path is an unauthenticated request, so it returns 401 too.
     const anon = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
-    const { data: { user } } = await anon.auth.getUser(authHeader.replace("Bearer ", ""));
+    let user: { id: string } | null = null;
+    try {
+      ({ data: { user } } = await anon.auth.getUser(authHeader.replace("Bearer ", "")));
+    } catch (e) {
+      console.warn("attom-comps auth check threw", e);
+    }
     if (!user) return json({ error: "Unauthorized" }, 401);
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -243,7 +262,11 @@ Deno.serve(async (req) => {
       return json({ error: "Add a ZIP code or state in Site & Location to search comps" }, 400);
     }
 
-    const cacheKey = ["v6", street, city, state, zip, subjectSqft || ""].join("|").toLowerCase().replace(/[^a-z0-9|]+/g, " ").replace(/\s+/g, " ").trim();
+    const addrKey = ["v7", street, city, state, zip, subjectSqft || ""].join("|").toLowerCase().replace(/[^a-z0-9|]+/g, " ").replace(/\s+/g, " ").trim();
+    // SEC-09: the coordinate source and rounded coordinates are part of the key, so one user's crafted
+    // point cannot be served to other users of the same address. Census-geocoded lookups share one key.
+    const geoKey = lat && lng ? `geo:site:${lat.toFixed(3)},${lng.toFixed(3)}` : "geo:census";
+    const cacheKey = `${addrKey}|${geoKey}`;
     const { data: cached } = await admin.from("comp_cache").select("payload, created_at").eq("cache_key", cacheKey).maybeSingle();
     if (cached && Date.now() - new Date(cached.created_at).getTime() < CACHE_MS) {
       const p = cached.payload as Record<string, unknown>;
@@ -252,8 +275,13 @@ Deno.serve(async (req) => {
     }
 
     const key = Deno.env.get("ATTOM_API_KEY");
+    // SEC-07: clients get a generic 503 for upstream and config failures; the detail is logged here.
+    const unavailable = (detail: string) => {
+      console.error("attom-comps unavailable:", detail);
+      return json({ fallback: true, reason: "unavailable" }, 503);
+    };
     const fallback = (reason: string) => json({ fallback: true, reason });
-    if (!key) return fallback("not_configured");
+    if (!key) return unavailable("ATTOM_API_KEY is not set");
 
     // Subject coordinates: Site & Location lat/long, else US Census Geocoder (cached with payload)
     let sLat = lat, sLng = lng, coordSource: "site" | "census" | null = lat && lng ? "site" : null;
@@ -279,7 +307,7 @@ Deno.serve(async (req) => {
       if (sales.status === 401 || sales.status === 403 || !sales.body) {
         console.warn("ATTOM unavailable", sales.status);
         if (result) break;
-        return fallback(`attom_status_${sales.status}`);
+        return unavailable(`ATTOM sale/snapshot status ${sales.status}`);
       }
       const raw = Array.isArray(sales.body.property) ? sales.body.property : [];
       mapped = raw.map((p) => mapSale(p, { lat: sLat, lng: sLng }));
@@ -330,6 +358,6 @@ Deno.serve(async (req) => {
     return json(payload);
   } catch (e) {
     console.error("attom-comps error", e);
-    return json({ fallback: true, reason: "error" });
+    return json({ fallback: true, reason: "unavailable" }, 503);
   }
 });

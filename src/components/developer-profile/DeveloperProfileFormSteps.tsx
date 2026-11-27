@@ -20,6 +20,13 @@ interface Props {
 
 const PROJECT_TYPES = ["New Construction", "Renovation/Rehab", "Acquisition + Rehab", "Other"];
 const DISPOSITIONS = ["Sold", "Held / Rental", "Refinanced", "In Progress"];
+const HEADSHOT_EXT_BY_MIME: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+const HEADSHOT_MAX_BYTES = 5 * 1024 * 1024;
 
 export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) => {
   const update = <K extends keyof DeveloperProfile>(k: K, v: DeveloperProfile[K]) =>
@@ -32,9 +39,19 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
 
   const handleHeadshotUpload = async (file: File) => {
     if (!user) return;
+    // SEC-05: check the MIME type and size here; the bucket also enforces them (see migration 20261126120100).
+    // The extension comes from the validated MIME type, not the user's filename.
+    const ext = HEADSHOT_EXT_BY_MIME[file.type];
+    if (!ext) {
+      toast({ title: "Upload failed", description: "Headshot must be a JPEG, PNG, WebP or GIF image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > HEADSHOT_MAX_BYTES) {
+      toast({ title: "Upload failed", description: "Headshot must be 5 MB or smaller.", variant: "destructive" });
+      return;
+    }
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
       const path = `${user.id}/headshot-${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("developer-headshots").upload(path, file, { upsert: true });
       if (error) throw error;
