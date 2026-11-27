@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { trackPageView } from "@/lib/analytics";
 import Index from "./pages/Index";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
@@ -19,6 +20,13 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 const queryClient = new QueryClient();
 
+// Page views only (pathname, no query). Off unless VITE_ANALYTICS_ENDPOINT is set.
+const PageViewTracker = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { trackPageView(pathname); }, [pathname]);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -26,6 +34,7 @@ const App = () => (
         <Toaster />
         <Sonner position="top-right" />
         <BrowserRouter>
+          <PageViewTracker />
           <Suspense fallback={null}>
             <Routes>
               <Route path="/" element={<Index />} />

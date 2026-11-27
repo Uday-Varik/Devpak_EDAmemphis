@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import { toast } from "@/hooks/use-toast";
 import { ExecutiveSummaryDashboard } from "./executive/ExecutiveSummaryDashboard";
 import { PackageReadinessChecklist } from "./executive/PackageReadinessChecklist";
@@ -130,6 +131,7 @@ export const ExecutiveSummaryForm = ({
     setExporting(`Generating ${label}...`);
     try {
       await run();
+      trackEvent("export_generated", { type: label });
       toast({ title: `${label} ready`, description: "Download started." });
     } catch (err) {
       console.error(err);

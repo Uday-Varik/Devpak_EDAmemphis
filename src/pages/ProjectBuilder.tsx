@@ -14,6 +14,7 @@ import { Menu } from "lucide-react";
 import { useTeachingMode } from "@/hooks/useTeachingMode";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
 import { isPageUnloading, keepaliveSectionSave } from "@/utils/unloadSave";
+import { trackEvent } from "@/lib/analytics";
 
 export type Section =
   | "project-scope"
@@ -184,6 +185,7 @@ const ProjectBuilder = () => {
         );
 
       if (error) throw error;
+      trackEvent("section_saved", { section: activeSection, completed: markComplete });
 
       setSectionData((prev) => ({
         ...prev,
