@@ -35,6 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { TeachingModeToggle } from "@/components/TeachingModeToggle";
+import { trackEvent } from "@/lib/analytics";
 
 interface Project {
   id: string;
@@ -161,6 +162,7 @@ const Dashboard = () => {
         }
       }
 
+      trackEvent("project_created");
       toast({ title: "Project created!", description: "Opening your new project…" });
 
       setShowNewProjectModal(false);

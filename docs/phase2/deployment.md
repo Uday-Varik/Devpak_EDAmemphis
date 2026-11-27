@@ -92,6 +92,15 @@ Netlify-side setup (owner):
 4. Add the client environment variables the build needs (names come from `.env.example`).
 5. Enable deploy previews if you want them for pull requests.
 
+### Optional: usage analytics (off by default)
+
+Analytics run only when the build has `VITE_ANALYTICS_ENDPOINT` set (see `.env.example`). Leave it unset to ship with no analytics.
+
+- Set `VITE_ANALYTICS_ENDPOINT` to a Plausible-compatible event endpoint, for example `https://plausible.io/api/event`. Optionally set `VITE_ANALYTICS_DOMAIN` to the site domain the provider expects.
+- The client sends page paths (no query strings; project ids are replaced with `:id`) and a few event names: `project_created`, `section_saved`, `export_generated`. Event props hold only the section key, the completion flag, or the export type.
+- No cookies, localStorage, or user, project, or financial data are sent. This keeps the app within the "strictly necessary storage only" position in `compliance-gap-checklist.md` (B3). If you enable this in production, update `privacy-policy.md` and the sub-processor list (B6) to name the provider.
+- Provider choice: pending owner decision. The module (`src/lib/analytics.ts`) is provider-neutral; only the endpoint changes.
+
 ---
 
 ## 6. Supabase steps
