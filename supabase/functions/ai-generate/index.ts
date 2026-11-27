@@ -7,7 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 // Keep it in sync with the list in ../attom-comps/index.ts.
 const ALLOWED_ORIGINS = [
   "http://localhost:8080", // npm run dev (vite.config.ts)
-  // TODO(owner): add the production and preview origins, e.g. "https://app.example.com".
+  "https://devpack-sparkle.lovable.app", // production and preview (same host)
 ];
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
