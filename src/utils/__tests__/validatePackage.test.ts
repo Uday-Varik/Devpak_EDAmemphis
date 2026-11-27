@@ -146,3 +146,141 @@ describe("runValidation end to end", () => {
     expect(findings.map((f) => f.section)).not.toContain("Developer Profile");
   });
 });
+
+describe("runValidation edge cases", () => {
+  const section = (name: string) => db.details.find((d) => d.section === name)!.data;
+  const sections = (findings: Array<{ section: string }>) => findings.map((f) => f.section);
+
+  beforeEach(() => {
+    db.details.length = 0;
+    db.profiles.length = 0;
+    db.userId = "user-1";
+    seedFullPackage();
+  });
+
+  it("treats addresses that differ only in case or whitespace as consistent", async () => {
+    section("site-location").propertyAddress = "  123 MAIN ST ";
+
+    expect(sections(await runValidation(PROJECT))).not.toContain("Site & Location");
+  });
+
+  it("flags addresses that differ between Scope and Site & Location", async () => {
+    section("site-location").propertyAddress = "456 Oak Ave";
+
+    const findings = await runValidation(PROJECT);
+
+    expect(findings).toContainEqual(expect.objectContaining({ severity: "critical", section: "Site & Location" }));
+  });
+
+  it("allows a DSCR of exactly 1.20 but flags anything below", async () => {
+    const rental = (section("feasibility").rentalExit as Row);
+    rental.dscr = 1.2;
+    expect(sections(await runValidation(PROJECT))).not.toContain("Feasibility");
+
+    rental.dscr = 1.19;
+    const findings = await runValidation(PROJECT);
+    expect(findings).toContainEqual({
+      id: expect.any(String),
+      severity: "critical",
+      section: "Feasibility",
+      message: "Your DSCR is 1.19, below the 1.20 minimum most lenders require.",
+    });
+  });
+
+  it("flags rent only when it is more than 25% above the area average", async () => {
+    (section("feasibility").rentalExit as Row).monthlyRentPerUnit = 1250;
+    expect(sections(await runValidation(PROJECT))).not.toContain("Vision & Market");
+
+    (section("feasibility").rentalExit as Row).monthlyRentPerUnit = 1260;
+    const findings = await runValidation(PROJECT);
+    expect(findings.find((f) => f.section === "Vision & Market")?.message).toBe(
+      "Your projected rent is 26% above the area average. Provide supporting comps."
+    );
+  });
+
+  it("counts comparables that use the price field and those missing sqft", async () => {
+    const comps = (section("vision-market").comparables as Row[]);
+    comps[2] = { price: 270000, sqft: 1900 };
+    expect(sections(await runValidation(PROJECT))).not.toContain("Vision & Market");
+
+    comps[2] = { salePrice: 270000 };
+    const findings = await runValidation(PROJECT);
+    expect(findings.find((f) => f.section === "Vision & Market")?.message).toBe(
+      "Lenders expect at least 3 comparable properties. You have 2. Add more comps."
+    );
+  });
+
+  it("ignores schedule gaps of exactly 14 days and flags longer ones in weeks", async () => {
+    const milestones = section("project-schedule").milestones as Row[];
+    milestones[1].startDate = "2026-07-14"; // 14 days after Foundation ends
+    expect(sections(await runValidation(PROJECT))).not.toContain("Project Schedule");
+
+    milestones[1].startDate = "2026-07-15"; // 15 days
+    const findings = await runValidation(PROJECT);
+    expect(findings.find((f) => f.section === "Project Schedule")?.message).toBe(
+      "There is a 2-week gap between Foundation and Framing. Is this intentional?"
+    );
+  });
+
+  it("warns when the loan matures under 90 days after completion", async () => {
+    // Completion is Framing's end date, 2027-03-31.
+    const rental = section("feasibility").rentalExit as Row;
+    rental.loanMaturityDate = "2027-06-29"; // exactly 90 days
+    expect(sections(await runValidation(PROJECT))).not.toContain("Feasibility");
+
+    rental.loanMaturityDate = "2027-06-01"; // 62 days
+    const findings = await runValidation(PROJECT);
+    expect(findings.find((f) => f.section === "Feasibility")?.message).toBe(
+      "Your loan matures 62 days after completion. Consider a longer term."
+    );
+  });
+
+  it("reports readiness as info only below 50%, ignoring non-factor keys", async () => {
+    const factors = (n: number) =>
+      Object.fromEntries(Array.from({ length: n }, (_, i) => [`factor${i}`, true]));
+    db.details.find((d) => d.section === "resilience-factors")!.data = {
+      ...factors(5),
+      additionalStrengths: "text that is not a factor",
+      _autoFlags: { something: true },
+    };
+    const info = (await runValidation(PROJECT)).find((f) => f.section === "Resilience Factors");
+    expect(info).toEqual({
+      id: expect.any(String),
+      severity: "info",
+      section: "Resilience Factors",
+      message: "Your readiness score is 25%. Consider addressing unchecked items.",
+    });
+
+    db.details.find((d) => d.section === "resilience-factors")!.data = factors(10);
+    expect(sections(await runValidation(PROJECT))).not.toContain("Resilience Factors");
+  });
+
+  it("flags sources that exceed uses as critical", async () => {
+    // Total development cost is $250,000 in the seeded package.
+    (section("budget-capital").capitalStack as Row).developerEquity = 255000;
+
+    const findings = await runValidation(PROJECT);
+
+    expect(findings).toContainEqual({
+      id: expect.any(String),
+      severity: "critical",
+      section: "Budget & Sources/Uses",
+      message: "Sources exceed uses by $5,000. Adjust sources or uses so the budget balances.",
+    });
+  });
+
+  it("does not block on a funding gap for internal-planning packages", async () => {
+    (section("budget-capital").capitalStack as Row).developerEquity = 100000;
+    section("executive-summary").packagePurpose = "internal-planning";
+
+    expect(sections(await runValidation(PROJECT))).not.toContain("Budget & Sources/Uses");
+  });
+
+  it("flags a blank developer name as critical", async () => {
+    db.profiles[0].full_name = "   ";
+
+    const findings = await runValidation(PROJECT);
+
+    expect(findings).toContainEqual(expect.objectContaining({ severity: "critical", section: "Developer Profile" }));
+  });
+});
