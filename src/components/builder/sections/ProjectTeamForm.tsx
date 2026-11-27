@@ -23,6 +23,7 @@ import { TeamSummaryCard } from "./project-team/TeamSummaryCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { formatPhone } from "@/lib/formatPhone";
+import { isSupabaseStorageUrl } from "@/lib/storageUrl";
 
 interface ProjectTeamFormProps {
   data: Record<string, unknown>;
@@ -176,7 +177,8 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
         title: dp.professional_title || lp.title || null,
         company_name: dp.entity_name || lp.company_name || null,
         phone: dp.phone || lp.phone || null,
-        photo_url: dp.headshot_url || lp.photo_url || null,
+        // SEC-11: only same-origin storage URLs are shown or exported; other hosts are dropped.
+        photo_url: [dp.headshot_url, lp.photo_url].find((u) => isSupabaseStorageUrl(u)) ?? null,
         specializations: lp.specializations || null,
         years_experience: dp.years_experience ?? lp.years_experience ?? null,
         completed_projects: lp.completed_projects ?? null,
