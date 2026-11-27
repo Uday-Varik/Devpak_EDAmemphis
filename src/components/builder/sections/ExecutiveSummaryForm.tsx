@@ -32,10 +32,6 @@ import {
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
-import { generatePDF } from "@/utils/generatePDF";
-import { generateLenderSummary } from "@/utils/generateLenderSummary";
-import { generateInvestorOnePager } from "@/utils/generateInvestorOnePager";
-import { generateExcel } from "@/utils/generateExcel";
 import { toast } from "@/hooks/use-toast";
 import { ExecutiveSummaryDashboard } from "./executive/ExecutiveSummaryDashboard";
 import { PackageReadinessChecklist } from "./executive/PackageReadinessChecklist";
@@ -1231,7 +1227,7 @@ export const ExecutiveSummaryForm = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-72">
               <DropdownMenuItem
-                onClick={() => requestExport("Full Development Package", () => generatePDF(projectId!))}
+                onClick={() => requestExport("Full Development Package", async () => (await import("@/utils/generatePDF")).generatePDF(projectId!))}
               >
                 <FileText className="w-4 h-4 mr-3 text-muted-foreground" />
                 <div>
@@ -1240,7 +1236,7 @@ export const ExecutiveSummaryForm = ({
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => requestExport("Lender Summary", () => generateLenderSummary(projectId!))}
+                onClick={() => requestExport("Lender Summary", async () => (await import("@/utils/generateLenderSummary")).generateLenderSummary(projectId!))}
               >
                 <Building2 className="w-4 h-4 mr-3 text-muted-foreground" />
                 <div>
@@ -1249,7 +1245,7 @@ export const ExecutiveSummaryForm = ({
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => requestExport("Investor One-Pager", () => generateInvestorOnePager(projectId!))}
+                onClick={() => requestExport("Investor One-Pager", async () => (await import("@/utils/generateInvestorOnePager")).generateInvestorOnePager(projectId!))}
               >
                 <Briefcase className="w-4 h-4 mr-3 text-muted-foreground" />
                 <div>
@@ -1258,7 +1254,7 @@ export const ExecutiveSummaryForm = ({
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => requestExport("Excel Workbook", () => generateExcel(projectId!))}
+                onClick={() => requestExport("Excel Workbook", async () => (await import("@/utils/generateExcel")).generateExcel(projectId!))}
               >
                 <FileSpreadsheet className="w-4 h-4 mr-3 text-muted-foreground" />
                 <div>
