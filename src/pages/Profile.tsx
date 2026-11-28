@@ -131,7 +131,7 @@ const Profile = () => {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-[#F39C12] hover:bg-[#F39C12]/90 text-white"
+            className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
             size="lg"
           >
             {saving ? "Saving..." : "Save Profile"}

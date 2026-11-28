@@ -100,12 +100,12 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
             <View style={s.capBar}>
               {equityPct > 0 && <View style={{ width: `${equityPct}%`, backgroundColor: "#27AE60" }} />}
               {debtPct > 0 && <View style={{ width: `${debtPct}%`, backgroundColor: "#2E6B8A" }} />}
-              {subsidyPct > 0 && <View style={{ width: `${subsidyPct}%`, backgroundColor: "#F39C12" }} />}
+              {subsidyPct > 0 && <View style={{ width: `${subsidyPct}%`, backgroundColor: "#8FB3C7" }} />}
             </View>
             <View style={{ flexDirection: "row", marginBottom: 6 }}>
               <Text style={{ fontSize: 7, color: "#27AE60" }}>■ Equity {fmtPct(equityPct)}  </Text>
               <Text style={{ fontSize: 7, color: "#2E6B8A" }}>■ Debt {fmtPct(debtPct)}  </Text>
-              <Text style={{ fontSize: 7, color: "#F39C12" }}>■ Subsidy {fmtPct(subsidyPct)}</Text>
+              <Text style={{ fontSize: 7, color: "#8FB3C7" }}>■ Subsidy {fmtPct(subsidyPct)}</Text>
             </View>
             <MetricRow label="Funding Status" value={data.fundingGap > 0 ? `Gap: ${fmt(data.fundingGap)}` : "Fully Funded"} />
             <MetricRow label="Profit Margin" value={fmtPct(data.profitMargin)} />

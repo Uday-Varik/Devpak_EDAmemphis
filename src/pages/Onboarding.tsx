@@ -177,7 +177,7 @@ const Onboarding = () => {
           <h1 className="text-3xl font-bold text-[#162E4A] mb-2">Welcome to DevPack</h1>
           <p className="text-muted-foreground">Let's set up your developer profile. This information will auto-populate every package you build.</p>
           {exists && (
-            <p className="mt-3 inline-block text-xs bg-[#F39C12]/10 text-[#162E4A] px-3 py-1 rounded-full">
+            <p className="mt-3 inline-block text-xs bg-[#2E6B8A]/10 text-[#162E4A] px-3 py-1 rounded-full">
               Picking up where you left off. Step {step} of 4
             </p>
           )}
@@ -259,7 +259,7 @@ const Onboarding = () => {
                 <Button
                   onClick={handleFinish}
                   disabled={saving || !form.full_name.trim() || !form.email.trim()}
-                  className="bg-[#F39C12] hover:bg-[#F39C12]/90 text-white"
+                  className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
                 >
                   {saving ? "Saving..." : "Save & Continue to Dashboard"}
                 </Button>

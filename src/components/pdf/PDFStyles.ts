@@ -10,7 +10,7 @@ export const colors = {
   border: "#E2E8F0",
   green: "#059669",
   red: "#E74C3C",
-  gold: "#F39C12",
+  gold: "#2E6B8A",
   white: "#FFFFFF",
   lightBlue: "#EFF6FF",
   lightGreen: "#ECFDF5",

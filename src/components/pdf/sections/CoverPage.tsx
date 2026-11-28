@@ -45,7 +45,7 @@ export const CoverPage = ({
       <View style={styles.coverLine} />
       <Text style={styles.coverSubtitle}>Development Package</Text>
       {!!packagePurpose && PURPOSE_LABELS[packagePurpose] && (
-        <Text style={{ fontSize: 11, color: "#F39C12", marginTop: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1 }}>
+        <Text style={{ fontSize: 11, color: "#2E6B8A", marginTop: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1 }}>
           {PURPOSE_LABELS[packagePurpose]}
         </Text>
       )}
