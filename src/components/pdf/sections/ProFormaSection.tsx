@@ -9,7 +9,7 @@ type BudgetTotals = Omit<import("@/utils/calculations").BudgetTotals, "purchaseP
 interface ProFormaSectionProps {
   budget: BudgetData;
   sqftPlanned: number;
-  /** Pre-computed totals from fetchProjectData — the single source of truth. */
+  /** Pre-computed totals from fetchProjectData; the single source of truth. */
   totals?: BudgetTotals;
 }
 
@@ -40,7 +40,7 @@ const PhaseTable = ({
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 2.4 }]}>{item.label}</Text>
             <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatCurrency(item.value)}</Text>
-            <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{sqft > 0 ? `$${(item.value / sqft).toFixed(0)}` : "—"}</Text>
+            <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{sqft > 0 ? `$${(item.value / sqft).toFixed(0)}` : "-"}</Text>
             <Text style={[styles.tableCell, { flex: 1.2, color: colors.muted, fontSize: 8 }]}>{item.note || ""}</Text>
           </View>
         ))}
@@ -48,14 +48,14 @@ const PhaseTable = ({
           <View style={[styles.tableRow, { backgroundColor: "#FEF9C3" }]}>
             <Text style={[styles.tableCell, { flex: 2.4, fontStyle: "italic" }]}>Contingency</Text>
             <Text style={[styles.tableCell, { flex: 1, textAlign: "right", fontStyle: "italic" }]}>{formatCurrency(contingencyAmt)}</Text>
-            <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right", fontStyle: "italic" }]}>{sqft > 0 ? `$${(contingencyAmt / sqft).toFixed(0)}` : "—"}</Text>
+            <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right", fontStyle: "italic" }]}>{sqft > 0 ? `$${(contingencyAmt / sqft).toFixed(0)}` : "-"}</Text>
             <Text style={[styles.tableCell, { flex: 1.2, fontStyle: "italic", color: colors.muted, fontSize: 8 }]}>{contingencyPct}% buffer</Text>
           </View>
         )}
         <View style={styles.tableTotalRow}>
           <Text style={[styles.tableTotalText, { flex: 2.4 }]}>Phase Subtotal</Text>
           <Text style={[styles.tableTotalText, { flex: 1, textAlign: "right" }]}>{formatCurrency(total)}</Text>
-          <Text style={[styles.tableTotalText, { flex: 0.7, textAlign: "right" }]}>{sqft > 0 ? `$${(total / sqft).toFixed(0)}` : "—"}</Text>
+          <Text style={[styles.tableTotalText, { flex: 0.7, textAlign: "right" }]}>{sqft > 0 ? `$${(total / sqft).toFixed(0)}` : "-"}</Text>
           <Text style={[styles.tableTotalText, { flex: 1.2 }]}></Text>
         </View>
       </View>
@@ -183,7 +183,7 @@ export const ProFormaSection = ({ budget, sqftPlanned, totals }: ProFormaSection
             <View style={styles.tableRow}>
               <Text style={[styles.tableCell, { flex: 2.4 }]}>Operating Reserves</Text>
               <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatCurrency(operatingReserves)}</Text>
-              <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{sqftPlanned > 0 ? `$${(operatingReserves / sqftPlanned).toFixed(0)}` : "—"}</Text>
+              <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{sqftPlanned > 0 ? `$${(operatingReserves / sqftPlanned).toFixed(0)}` : "-"}</Text>
               <Text style={[styles.tableCell, { flex: 1.2, color: colors.muted, fontSize: 8 }]}>Lease-up / cash buffer</Text>
             </View>
           </View>

@@ -233,7 +233,7 @@ export const BudgetCapitalForm = ({
 
   const { saveStatus, lastSaved } = useAutoSave(formData, handleAutoSave);
 
-  // All totals come from the shared engine (src/utils/calculations.ts) — no local arithmetic.
+  // All totals come from the shared engine (src/utils/calculations.ts); no local arithmetic.
   // The scope is overlaid with the detected project type so land-equity gating matches the form.
   const engineScope = useMemo(
     () => ({ ...(scopeData || {}), projectType: projectType || scopeData?.projectType }),
@@ -469,7 +469,7 @@ export const BudgetCapitalForm = ({
                         <p className="text-xs text-muted-foreground mt-2">
                           {landEquity > 0
                             ? "This counts as developer equity for lender purposes, reducing your cash requirement."
-                            : "No land equity — purchase price meets or exceeds appraised value."}
+                            : "No land equity; purchase price meets or exceeds appraised value."}
                         </p>
                         {landEquity > 0 && (
                           <p className="text-xs text-emerald-700 mt-1 italic">
@@ -641,7 +641,7 @@ export const BudgetCapitalForm = ({
                     <PercentageInput
                       value={formData.hardCosts.contingencyPercent}
                       onChange={(v) => updateSection("hardCosts", "contingencyPercent", v)}
-                      helpText="Buffer for unexpected construction issues — hidden damage, code requirements, material price changes. 15-20% recommended for renovations, 10-15% for new construction."
+                      helpText="Buffer for unexpected construction issues; hidden damage, code requirements, material price changes. 15-20% recommended for renovations, 10-15% for new construction."
                     />
                   </div>
                   <div className="space-y-2">
@@ -823,7 +823,7 @@ export const BudgetCapitalForm = ({
                   <CurrencyInput
                     value={formData.holdingCosts.otherHolding}
                     onChange={(v) => updateSection("holdingCosts", "otherHolding", v)}
-                    helpText="Any other carrying costs during construction — security, lawn maintenance, HOA fees if applicable."
+                    helpText="Any other carrying costs during construction; security, lawn maintenance, HOA fees if applicable."
                   />
                 </div>
                 {/* Custom Line Items */}
@@ -886,7 +886,7 @@ export const BudgetCapitalForm = ({
                   <CurrencyInput
                     value={formData.operatingReserves}
                     onChange={(v) => setFormData(prev => ({ ...prev, operatingReserves: v }))}
-                    helpText="Operating reserves are cash you set aside to cover expenses after construction is complete — things like mortgage payments, property taxes, insurance, and vacancy periods while you find tenants or buyers. Most lenders require 6 months of reserves to approve your loan."
+                    helpText="Operating reserves are cash you set aside to cover expenses after construction is complete; things like mortgage payments, property taxes, insurance, and vacancy periods while you find tenants or buyers. Most lenders require 6 months of reserves to approve your loan."
                   />
                 </div>
               </div>
@@ -939,7 +939,7 @@ export const BudgetCapitalForm = ({
                       </div>
                       <span className="text-emerald-700 font-bold">{formatCurrency(landEquity)}</span>
                     </div>
-                    <p className="text-xs text-emerald-600 mt-1">From property ownership — counts toward developer equity</p>
+                    <p className="text-xs text-emerald-600 mt-1">From property ownership; counts toward developer equity</p>
                   </div>
                 )}
                 <div className="space-y-2" id="developer-equity-field">

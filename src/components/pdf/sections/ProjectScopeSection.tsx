@@ -25,7 +25,7 @@ interface ProjectScopeSectionProps {
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <View style={[styles.row, { marginBottom: 8 }]}>
     <Text style={styles.label}>{label}</Text>
-    <Text style={styles.value}>{value || "—"}</Text>
+    <Text style={styles.value}>{value || "-"}</Text>
   </View>
 );
 
@@ -41,9 +41,9 @@ export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps
 
       <Text style={styles.subTitle}>Property Details</Text>
       <DetailRow label="Address" value={address} />
-      <DetailRow label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "—"} />
-      <DetailRow label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "—"} />
-      <DetailRow label="Number of Units" value={String(scope.numberOfUnits || "—")} />
+      <DetailRow label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "-"} />
+      <DetailRow label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "-"} />
+      <DetailRow label="Number of Units" value={String(scope.numberOfUnits || "-")} />
       {!isNewConstruction && sqftExisting && (
         <DetailRow label="Existing Sq Ft" value={sqftExisting} />
       )}
@@ -53,8 +53,8 @@ export const ProjectScopeSection = ({ scope, address }: ProjectScopeSectionProps
           value={sqftPlanned}
         />
       )}
-      <DetailRow label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "—")} />
-      <DetailRow label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "—")} />
+      <DetailRow label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "-")} />
+      <DetailRow label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "-")} />
 
       {(scope.scopeOfWork || scope.projectDescription) && (
         <View>

@@ -44,7 +44,7 @@ export interface RationaleFingerprintInput {
   tdc: number;
 }
 
-/** Figures only — checklist state is deliberately excluded so the export layer
+/** Figures only; checklist state is deliberately excluded so the export layer
  *  can recompute the same fingerprint without the form's checklist. */
 export const buildRationaleFingerprint = (v: RationaleFingerprintInput): string =>
   buildFingerprint({

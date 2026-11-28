@@ -51,8 +51,8 @@ export const ComparablesSection = ({ feasibility, scope }: ComparablesSectionPro
             <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
               <Text style={[styles.tableCell, { flex: 3 }]}>{comp.address}</Text>
               <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatCurrency(comp.salePrice)}</Text>
-              <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{comp.sqft ? Number(comp.sqft).toLocaleString() : "—"}</Text>
-              <Text style={[styles.tableCellBold, { flex: 1, textAlign: "right" }]}>{ppsf > 0 ? formatCurrency(Math.round(ppsf)) : "—"}</Text>
+              <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{comp.sqft ? Number(comp.sqft).toLocaleString() : "-"}</Text>
+              <Text style={[styles.tableCellBold, { flex: 1, textAlign: "right" }]}>{ppsf > 0 ? formatCurrency(Math.round(ppsf)) : "-"}</Text>
             </View>
           );
         })}

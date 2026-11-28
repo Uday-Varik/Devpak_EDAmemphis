@@ -52,13 +52,13 @@ const Onboarding = () => {
     restoredRef.current = true;
   }, [loaded, loading, exists, user, navigate]);
 
-  // Persist the active step — only after restoring, so the initial step 1
+  // Persist the active step; only after restoring, so the initial step 1
   // doesn't overwrite the saved step before it's read.
   useEffect(() => {
     if (user && restoredRef.current) localStorage.setItem(stepKey(user.id), String(step));
   }, [step, user]);
 
-  // Silent auto-save (best effort) — used on step change & before unload.
+  // Silent auto-save (best effort); used on step change & before unload.
   const formRef = useRef(form);
   useEffect(() => { formRef.current = form; }, [form]);
   const silentSave = async () => {
@@ -178,7 +178,7 @@ const Onboarding = () => {
           <p className="text-muted-foreground">Let's set up your developer profile. This information will auto-populate every package you build.</p>
           {exists && (
             <p className="mt-3 inline-block text-xs bg-[#F39C12]/10 text-[#1B4F72] px-3 py-1 rounded-full">
-              Picking up where you left off — Step {step} of 4
+              Picking up where you left off. Step {step} of 4
             </p>
           )}
         </div>

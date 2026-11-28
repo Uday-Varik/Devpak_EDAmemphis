@@ -213,10 +213,10 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
                   <TableRow key={m.id} className={i % 2 === 0 ? "bg-white" : "bg-[#FAFBFC]"}>
                     <TableCell className="font-medium text-sm">{m.name || "Unnamed"}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {baseline ? format(parseISO(baseline.startDate), "MMM d, yyyy") : "—"}
+                      {baseline ? format(parseISO(baseline.startDate), "MMM d, yyyy") : "-"}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {baseline ? format(parseISO(baseline.endDate), "MMM d, yyyy") : "—"}
+                      {baseline ? format(parseISO(baseline.endDate), "MMM d, yyyy") : "-"}
                     </TableCell>
                     <TableCell className="text-xs">{format(parseISO(m.startDate), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-xs">{format(parseISO(m.endDate), "MMM d, yyyy")}</TableCell>
@@ -226,7 +226,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
                           {variance > 0 ? `+${variance}d` : variance < 0 ? `${variance}d` : "On time"}
                         </span>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center">
@@ -319,7 +319,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
       {/* Split-panel Gantt */}
       <div className="border border-border rounded-xl overflow-x-auto" style={{ minHeight: "500px" }}>
         <div className="flex min-w-[640px]">
-          {/* LEFT PANEL — sticky labels */}
+          {/* LEFT PANEL; sticky labels */}
           <div
             className="flex-shrink-0 border-r border-border bg-white z-10 sticky left-0 w-[120px] lg:w-[280px]"
           >
@@ -369,7 +369,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
             </div>
           </div>
 
-          {/* RIGHT PANEL — scrollable timeline */}
+          {/* RIGHT PANEL; scrollable timeline */}
           <div
             ref={timelineRef}
             onScroll={handleTimelineScroll}
@@ -542,7 +542,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
         >
           <p className="font-semibold text-sm text-foreground">{tooltipData.milestone.name || "Unnamed"}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            {format(parseISO(tooltipData.milestone.startDate), "MMM d, yyyy")} — {format(parseISO(tooltipData.milestone.endDate), "MMM d, yyyy")}
+            {format(parseISO(tooltipData.milestone.startDate), "MMM d, yyyy")}; {format(parseISO(tooltipData.milestone.endDate), "MMM d, yyyy")}
           </p>
           <div className="flex items-center gap-3 mt-1.5 text-xs">
             <span>{tooltipData.milestone.durationWeeks} weeks</span>
@@ -563,7 +563,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
               const variance = differenceInDays(parseISO(tooltipData.milestone.endDate), parseISO(bl.endDate));
               return (
                 <div className="text-xs mt-2 border-t border-border pt-2 text-muted-foreground">
-                  <p>Baseline: {format(parseISO(bl.startDate), "MMM d")} — {format(parseISO(bl.endDate), "MMM d")}</p>
+                  <p>Baseline: {format(parseISO(bl.startDate), "MMM d")}; {format(parseISO(bl.endDate), "MMM d")}</p>
                   <p className={`font-semibold ${variance > 0 ? "text-destructive" : "text-success"}`}>
                     {variance > 0 ? `+${variance} days slippage` : `${Math.abs(variance)} days ahead`}
                   </p>

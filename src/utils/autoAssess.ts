@@ -126,7 +126,7 @@ export const generateAutoRisks = (s: ProjectSections): AutoRisk[] => {
 
   // f) Funding gap
   const b = s.budget || {};
-  // Shared engine only — same TDC / funding gap as Budget, Feasibility and Executive Summary.
+  // Shared engine only; same TDC / funding gap as Budget, Feasibility and Executive Summary.
   const fin = computeProjectFinancials({ scope: s.scope, budget: b, feasibility: s.feasibility });
   const gap = fin.fundingGap;
   if (gap > 0) {

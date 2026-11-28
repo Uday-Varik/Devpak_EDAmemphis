@@ -27,7 +27,7 @@ interface Props {
 const Row = ({ label, value }: { label: string; value: string }) => (
   <View style={[styles.row, { marginBottom: 6 }]}>
     <Text style={styles.label}>{label}</Text>
-    <Text style={styles.value}>{value || "—"}</Text>
+    <Text style={styles.value}>{value || "-"}</Text>
   </View>
 );
 
@@ -47,15 +47,15 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
 
       <Text style={styles.subTitle}>Property Details</Text>
       <Row label="Address" value={address} />
-      <Row label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "—"} />
-      <Row label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "—"} />
-      <Row label="Number of Units" value={String(scope.numberOfUnits || "—")} />
+      <Row label="Project Type" value={PROJECT_TYPE_LABELS[scope.projectType] || scope.projectType || "-"} />
+      <Row label="Property Type" value={PROPERTY_TYPE_LABELS[scope.propertyType] || scope.propertyType || "-"} />
+      <Row label="Number of Units" value={String(scope.numberOfUnits || "-")} />
       {!isNewConstruction && !!sqftExisting && <Row label="Existing Sq Ft" value={sqftExisting} />}
       {!!sqftPlanned && (
         <Row label={isNewConstruction ? "Planned Sq Ft" : "Planned Sq Ft (After Construction)"} value={sqftPlanned} />
       )}
-      <Row label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "—")} />
-      <Row label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "—")} />
+      <Row label="Bedrooms / Unit" value={String(scope.bedroomsPerUnit || "-")} />
+      <Row label="Bathrooms / Unit" value={String(scope.bathroomsPerUnit || "-")} />
 
       {(scope.scopeOfWork || scope.projectDescription) && (
         <View>
@@ -71,13 +71,13 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
           <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
         </View>
         {[
-          { label: "Lot Size", value: siteLocation.lotSize ? `${siteLocation.lotSize.toLocaleString()} ${siteLocation.lotSizeUnit || "sqft"}` : "—" },
-          { label: "Topography", value: siteLocation.topography || "—" },
-          { label: "Current Condition", value: siteLocation.currentCondition || "—" },
-          { label: "Flood Zone", value: siteLocation.floodZone || "—" },
-          { label: "Current Zoning", value: siteLocation.currentZoning || siteLocation.zoningClassification || "—" },
-          { label: "Permitted Use", value: siteLocation.permittedUse || "—" },
-          { label: "Entitlement Status", value: siteLocation.entitlementStatus || "—" },
+          { label: "Lot Size", value: siteLocation.lotSize ? `${siteLocation.lotSize.toLocaleString()} ${siteLocation.lotSizeUnit || "sqft"}` : "-" },
+          { label: "Topography", value: siteLocation.topography || "-" },
+          { label: "Current Condition", value: siteLocation.currentCondition || "-" },
+          { label: "Flood Zone", value: siteLocation.floodZone || "-" },
+          { label: "Current Zoning", value: siteLocation.currentZoning || siteLocation.zoningClassification || "-" },
+          { label: "Permitted Use", value: siteLocation.permittedUse || "-" },
+          { label: "Entitlement Status", value: siteLocation.entitlementStatus || "-" },
         ].map((row, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -144,10 +144,10 @@ export const ProjectScopeSiteSection = ({ scope, siteLocation, address }: Props)
             </View>
             {subsidies.map((s: SubsidyProgram, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{s.estimatedValue ? formatCurrency(s.estimatedValue) : "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 0.8, textAlign: "right" }]}>{s.status || "—"}</Text>
+                <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{s.estimatedValue ? formatCurrency(s.estimatedValue) : "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 0.8, textAlign: "right" }]}>{s.status || "-"}</Text>
               </View>
             ))}
             <View style={styles.tableTotalRow}>

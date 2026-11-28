@@ -35,7 +35,7 @@ const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-
 
 const Footer = ({ projectName }: { projectName: string }) => (
   <View style={s.footer} fixed>
-    <Text style={s.footerText}>Lender Summary — Confidential</Text>
+    <Text style={s.footerText}>Lender Summary: Confidential</Text>
     <Text style={s.footerText}>{projectName}</Text>
     <Text style={s.footerText} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
   </View>
@@ -45,7 +45,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
   const risks = data.riskAssessment.risks || [];
   const milestones = data.schedule.milestones || [];
   const totalWeeks = milestones.reduce((s: number, m: ScheduleMilestone) => s + (m.duration || 0), 0);
-  const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); } catch { return d || "—"; } };
+  const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); } catch { return d || "-"; } };
 
   const insuranceFields = [
     ["General Liability", data.riskAssessment.generalLiabilityInsurance],
@@ -83,7 +83,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
           <Text style={s.coverTitle}>{data.projectName}</Text>
           <Text style={s.coverSubtitle}>{data.address}</Text>
           <Text style={s.coverSubtitle}>
-            Prepared by {data.preparedBy}{data.companyName ? ` — ${data.companyName}` : ""} | {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+            Prepared by {data.preparedBy}{data.companyName ? `; ${data.companyName}` : ""} | {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
           </Text>
         </View>
 
@@ -97,8 +97,8 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
             ["Profit Margin", fmtPct(data.profitMargin)],
             ["Exit Strategy", EXIT_LABELS[data.exitStrategy] || data.exitStrategy],
             ["Funding Gap", data.fundingGap > 0 ? fmt(data.fundingGap) : "Fully Funded"],
-            ["Duration", totalWeeks > 0 ? `${totalWeeks} weeks` : "—"],
-            ["All-in Basis", data.arv > 0 ? fmtPct(data.allInBasis) : "—"],
+            ["Duration", totalWeeks > 0 ? `${totalWeeks} weeks` : "-"],
+            ["All-in Basis", data.arv > 0 ? fmtPct(data.allInBasis) : "-"],
           ].map(([label, value], i) => (
             <View key={i} style={s.metricBox}>
               <Text style={s.metricLabel}>{label}</Text>
@@ -175,7 +175,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
             ["Net Profit", fmt(data.netProfit)],
             ["ROI (Cash Equity)", fmtPct(data.roi)],
             ["Profit Margin", fmtPct(data.profitMargin)],
-            ["All-in Basis", data.arv > 0 ? fmtPct(data.allInBasis) : "—"],
+            ["All-in Basis", data.arv > 0 ? fmtPct(data.allInBasis) : "-"],
           ].map(([label, value], i) => (
             <View key={i} style={s.row}>
               <Text style={s.tdText}>{label}</Text>
@@ -216,9 +216,9 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
             </View>
             {milestones.map((m: ScheduleMilestone, i: number) => (
               <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
-                <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{m.name || "—"}</Text>
+                <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{m.name || "-"}</Text>
                 <Text style={[s.tdText, { width: "20%", paddingLeft: 4 }]}>{m.duration || 0} wks</Text>
-                <Text style={[s.tdText, { width: "25%", paddingLeft: 4 }]}>{m.startDate ? fmtDate(m.startDate) : "—"} – {m.endDate ? fmtDate(m.endDate) : "—"}</Text>
+                <Text style={[s.tdText, { width: "25%", paddingLeft: 4 }]}>{m.startDate ? fmtDate(m.startDate) : "-"} – {m.endDate ? fmtDate(m.endDate) : "-"}</Text>
                 <Text style={[s.tdText, { width: "20%", paddingLeft: 4 }]}>{m.status || "Not Started"}</Text>
               </View>
             ))}
@@ -238,10 +238,10 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
             </View>
             {risks.map((r: RiskEntry, i: number) => (
               <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
-                <Text style={[s.tdText, { width: "25%", paddingLeft: 4 }]}>{r.category || "—"}</Text>
-                <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{r.description || "—"}</Text>
-                <Text style={[s.tdText, { width: "20%", paddingLeft: 4, color: r.likelihood === "High" ? colors.red : r.likelihood === "Medium" ? colors.gold : colors.green }]}>{r.likelihood || "—"}</Text>
-                <Text style={[s.tdText, { width: "20%", paddingLeft: 4 }]}>{r.status || "—"}</Text>
+                <Text style={[s.tdText, { width: "25%", paddingLeft: 4 }]}>{r.category || "-"}</Text>
+                <Text style={[s.tdText, { width: "35%", paddingLeft: 4 }]}>{r.description || "-"}</Text>
+                <Text style={[s.tdText, { width: "20%", paddingLeft: 4, color: r.likelihood === "High" ? colors.red : r.likelihood === "Medium" ? colors.gold : colors.green }]}>{r.likelihood || "-"}</Text>
+                <Text style={[s.tdText, { width: "20%", paddingLeft: 4 }]}>{r.status || "-"}</Text>
               </View>
             ))}
           </View>
@@ -264,7 +264,7 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
           </View>
           <View style={{ width: "48%" }}>
             <Text style={s.subTitle}>Resilience Score</Text>
-            <Text style={[s.metricValue, { fontSize: 18, marginBottom: 4 }]}>{resPct}% — {resLabel}</Text>
+            <Text style={[s.metricValue, { fontSize: 18, marginBottom: 4 }]}>{resPct}%; {resLabel}</Text>
             <View style={s.row}><Text style={s.tdText}>Financial</Text><Text style={s.tdText}>{financialScore}/7</Text></View>
             <View style={s.row}><Text style={s.tdText}>Project</Text><Text style={s.tdText}>{projectScore}/7</Text></View>
             <View style={s.row}><Text style={s.tdText}>Market</Text><Text style={s.tdText}>{marketScore}/6</Text></View>
@@ -283,12 +283,12 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
           <View style={s.highlightBox}>
             {[
               ["Neighborhood", (data.visionMarket.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "")],
-              ["Median Home Price", data.visionMarket.medianHomePrice ? fmt(data.visionMarket.medianHomePrice) : "—"],
-              ["Average Rent", data.visionMarket.averageRent ? fmt(data.visionMarket.averageRent) : "—"],
-              ["Vacancy Rate", data.visionMarket.vacancyRate ? `${data.visionMarket.vacancyRate}%` : "—"],
-              ["Market Trend", data.visionMarket.marketTrend || "—"],
-              ["Population Trend", data.visionMarket.populationTrend || "—"],
-            ].filter(([, v]) => v && v !== "—").map(([label, value], i) => (
+              ["Median Home Price", data.visionMarket.medianHomePrice ? fmt(data.visionMarket.medianHomePrice) : "-"],
+              ["Average Rent", data.visionMarket.averageRent ? fmt(data.visionMarket.averageRent) : "-"],
+              ["Vacancy Rate", data.visionMarket.vacancyRate ? `${data.visionMarket.vacancyRate}%` : "-"],
+              ["Market Trend", data.visionMarket.marketTrend || "-"],
+              ["Population Trend", data.visionMarket.populationTrend || "-"],
+            ].filter(([, v]) => v && v !== "-").map(([label, value], i) => (
               <View key={i} style={s.row}>
                 <Text style={s.tdText}>{label}</Text>
                 <Text style={s.tdText}>{value}</Text>
@@ -309,12 +309,12 @@ export const LenderSummaryPDF = ({ data }: { data: ProjectExportData }) => {
               </View>
               {comps.map((c: ComparableSale, i: number) => (
                 <View key={i} style={[s.tableRow, i % 2 === 1 && s.altRow]}>
-                  <Text style={[s.tdText, { width: "30%", paddingLeft: 4 }]}>{c.address || "—"}</Text>
-                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.salePrice ? fmt(c.salePrice) : "—"}</Text>
-                  <Text style={[s.tdText, { width: "12%", paddingLeft: 4 }]}>{c.sqft ? c.sqft.toLocaleString() : "—"}</Text>
-                  <Text style={[s.tdText, { width: "13%", paddingLeft: 4 }]}>{!!c.sqft && c.salePrice ? fmt(Math.round(c.salePrice / c.sqft)) : "—"}</Text>
-                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.bedrooms || "—"}/{c.bathrooms || "—"}</Text>
-                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.condition || "—"}</Text>
+                  <Text style={[s.tdText, { width: "30%", paddingLeft: 4 }]}>{c.address || "-"}</Text>
+                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.salePrice ? fmt(c.salePrice) : "-"}</Text>
+                  <Text style={[s.tdText, { width: "12%", paddingLeft: 4 }]}>{c.sqft ? c.sqft.toLocaleString() : "-"}</Text>
+                  <Text style={[s.tdText, { width: "13%", paddingLeft: 4 }]}>{!!c.sqft && c.salePrice ? fmt(Math.round(c.salePrice / c.sqft)) : "-"}</Text>
+                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.bedrooms || "-"}/{c.bathrooms || "-"}</Text>
+                  <Text style={[s.tdText, { width: "15%", paddingLeft: 4 }]}>{c.condition || "-"}</Text>
                 </View>
               ))}
             </>

@@ -72,12 +72,12 @@ export const VisionMarketSection = ({ visionMarket }: VisionMarketSectionProps) 
             </View>
             {[
               { label: "Neighborhood", value: (visionMarket.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "") },
-              { label: "Population Trend", value: visionMarket.populationTrend || "—" },
-              { label: "Median Household Income", value: visionMarket.medianHouseholdIncome ? formatCurrency(visionMarket.medianHouseholdIncome) : "—" },
-              { label: "Median Home Price", value: visionMarket.medianHomePrice ? formatCurrency(visionMarket.medianHomePrice) : "—" },
-              { label: "Average Rent", value: visionMarket.averageRent ? `${formatCurrency(visionMarket.averageRent)}/mo` : "—" },
-              { label: "Vacancy Rate", value: visionMarket.vacancyRate ? `${visionMarket.vacancyRate}%` : "—" },
-              { label: "Market Trend", value: visionMarket.marketTrend || "—" },
+              { label: "Population Trend", value: visionMarket.populationTrend || "-" },
+              { label: "Median Household Income", value: visionMarket.medianHouseholdIncome ? formatCurrency(visionMarket.medianHouseholdIncome) : "-" },
+              { label: "Median Home Price", value: visionMarket.medianHomePrice ? formatCurrency(visionMarket.medianHomePrice) : "-" },
+              { label: "Average Rent", value: visionMarket.averageRent ? `${formatCurrency(visionMarket.averageRent)}/mo` : "-" },
+              { label: "Vacancy Rate", value: visionMarket.vacancyRate ? `${visionMarket.vacancyRate}%` : "-" },
+              { label: "Market Trend", value: visionMarket.marketTrend || "-" },
             ].map((row, i) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
                 <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -107,12 +107,12 @@ export const VisionMarketSection = ({ visionMarket }: VisionMarketSectionProps) 
               const psf = sf > 0 ? (c.salePrice || 0) / sf : 0;
               return (
                 <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                  <Text style={[styles.tableCell, { flex: 2 }]}>{c.address || "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{c.salePrice ? formatCurrency(c.salePrice) : "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{sf ? Number(sf).toLocaleString() : "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{psf > 0 ? `$${Math.round(psf)}` : "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 0.5, textAlign: "right" }]}>{c.bedrooms || "—"}/{c.bathrooms || "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{c.condition || "—"}</Text>
+                  <Text style={[styles.tableCell, { flex: 2 }]}>{c.address || "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{c.salePrice ? formatCurrency(c.salePrice) : "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{sf ? Number(sf).toLocaleString() : "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{psf > 0 ? `$${Math.round(psf)}` : "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.5, textAlign: "right" }]}>{c.bedrooms || "-"}/{c.bathrooms || "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.7, textAlign: "right" }]}>{c.condition || "-"}</Text>
                 </View>
               );
             })}

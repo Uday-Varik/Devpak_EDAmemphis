@@ -7,7 +7,7 @@
 
 ### What We're Building
 
-**DevPack** is a web-based platform that helps emerging real estate developers create professional development packages — the documents needed to secure financing for small-scale residential projects (1-4 units).
+**DevPack** is a web-based platform that helps emerging real estate developers create professional development packages; the documents needed to secure financing for small-scale residential projects (1-4 units).
 
 The core idea: **Guide developers through creating investor-ready packages while teaching them why each element matters.** The platform produces professional output while building permanent capacity.
 
@@ -175,7 +175,7 @@ When the project exits (sale closes or lease-up completes):
 
 | Content Type | Purpose | Example |
 |--------------|---------|---------|
-| "Why This Matters" | Explains lender/investor perspective | "Lenders use your budget to assess whether you understand real costs. Unrealistic numbers — too high or too low — signal inexperience." |
+| "Why This Matters" | Explains lender/investor perspective | "Lenders use your budget to assess whether you understand real costs. Unrealistic numbers; too high or too low; signal inexperience." |
 | "What They're Really Asking" | Translates requirements | "When they ask for 'exit strategy,' they want to know: How do I get repaid? What's Plan B?" |
 | "Common Mistakes" | Warns about errors | "Don't list funding sources you haven't secured. Note status clearly: applied, committed, closed." |
 | "Pro Tips" | Advanced insights | "Write your executive summary LAST, after completing all other sections. You'll have sharper numbers." |
@@ -605,20 +605,20 @@ When the project exits (sale closes or lease-up completes):
 
 ### Brand Identity
 
-- **Primary color:** Deep blue (#1B4F72) — trust, professionalism
-- **Secondary color:** Medium blue (#2E86AB) — approachable
-- **Accent color:** Orange/gold (#F39C12) — attention, action
+- **Primary color:** Deep blue (#1B4F72); trust, professionalism
+- **Secondary color:** Medium blue (#2E86AB); approachable
+- **Accent color:** Orange/gold (#F39C12); attention, action
 - **Success:** Green (#27AE60)
 - **Warning:** Yellow (#F1C40F)
 - **Error:** Red (#E74C3C)
 
 ### Design Principles
 
-1. **Clean and uncluttered** — One task at a time, minimal distraction
-2. **Professional output** — The tool should look like it produces quality work
-3. **Progressive disclosure** — Show what's needed now, hide complexity
-4. **Clear navigation** — Always know where you are and what's complete
-5. **Mobile-friendly** — Developers may work from job sites
+1. **Clean and uncluttered**: One task at a time, minimal distraction
+2. **Professional output**: The tool should look like it produces quality work
+3. **Progressive disclosure**: Show what's needed now, hide complexity
+4. **Clear navigation**: Always know where you are and what's complete
+5. **Mobile-friendly**: Developers may work from job sites
 
 ### Typography
 

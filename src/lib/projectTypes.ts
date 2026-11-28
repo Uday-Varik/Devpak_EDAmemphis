@@ -28,7 +28,7 @@ export const isRenovationType = (v: string | null | undefined): boolean => {
   return n === "renovation-rehab" || n === "acquisition-rehab";
 };
 
-// Property type legacy normalization — "mixed-use" no longer supported.
+// Property type legacy normalization; "mixed-use" no longer supported.
 export const normalizePropertyType = (v: string | null | undefined): string => {
   if (!v) return "";
   if (v === "mixed-use") return "single-family";

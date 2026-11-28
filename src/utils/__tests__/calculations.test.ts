@@ -42,7 +42,7 @@ const noGrantsFixture: FinancialsInput = {
 
 const near = (actual: number, expected: number) => expect(actual).toBeCloseTo(expected, 6);
 
-describe("Fixture 1 — itemized construction with grants", () => {
+describe("Fixture 1; itemized construction with grants", () => {
   const r = computeProjectFinancials(baseFixture);
 
   // Hand calculation:
@@ -85,7 +85,7 @@ describe("Fixture 1 — itemized construction with grants", () => {
   });
 });
 
-describe("Fixture 2 — per-square-foot construction estimate", () => {
+describe("Fixture 2; per-square-foot construction estimate", () => {
   const r = computeProjectFinancials(perSqftFixture);
 
   it("derives construction base from $/SF x planned sq ft", () => {
@@ -105,7 +105,7 @@ describe("Fixture 2 — per-square-foot construction estimate", () => {
   });
 });
 
-describe("Fixture 3 — no grants", () => {
+describe("Fixture 3; no grants", () => {
   const r = computeProjectFinancials(noGrantsFixture);
 
   it("leaves netTdc equal to TDC", () => {
@@ -127,7 +127,7 @@ describe("Fixture 3 — no grants", () => {
  * raw section data. These assertions pin that contract: any producer that reintroduces a
  * local calculation will drift from these values and fail here.
  */
-describe("producer identity — FeasibilityForm / ExecutiveSummaryForm / fetchProjectData", () => {
+describe("producer identity: FeasibilityForm / ExecutiveSummaryForm / fetchProjectData", () => {
   const fixtures: Array<[string, FinancialsInput]> = [
     ["itemized", baseFixture],
     ["perSqft", perSqftFixture],
@@ -205,7 +205,7 @@ const rentalNoUnitsFixture: FinancialsInput = {
   },
 };
 
-describe("Fixture 4 — rental exit", () => {
+describe("Fixture 4; rental exit", () => {
   const r = computeProjectFinancials(rentalFixture);
 
   // Hand calculation:
@@ -245,7 +245,7 @@ describe("Fixture 4 — rental exit", () => {
   });
 });
 
-describe("Fixture 5 — rent per unit set, numberOfUnits absent", () => {
+describe("Fixture 5; rent per unit set, numberOfUnits absent", () => {
   const r = computeProjectFinancials(rentalNoUnitsFixture);
 
   it("never silently returns zero for the rental metrics", () => {
@@ -263,7 +263,7 @@ describe("Fixture 5 — rent per unit set, numberOfUnits absent", () => {
   });
 });
 
-describe("producer identity — rental metrics", () => {
+describe("producer identity; rental metrics", () => {
   it("produces identical NOI / DSCR / cap rate / cash-on-cash across all three producers", () => {
     const feasibility = computeProjectFinancials({
       scope: rentalFixture.scope,

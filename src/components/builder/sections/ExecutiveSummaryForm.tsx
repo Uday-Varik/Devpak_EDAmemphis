@@ -142,7 +142,7 @@ export const ExecutiveSummaryForm = ({
   };
 
   const handleAutoSave = useCallback(async (data: Record<string, unknown>) => {
-    // Always persist — never gate autosave on other sections' completion.
+    // Always persist; never gate autosave on other sections' completion.
     await onSave(data, false);
   }, [onSave]);
 
@@ -340,7 +340,7 @@ export const ExecutiveSummaryForm = ({
     const insuranceObtained = countObtainedInsurance(risk);
     const permitStatus = risk.permitStatus || "";
 
-    // Resilience — single shared source (keys + scoring) so the percentage
+    // Resilience; single shared source (keys + scoring) so the percentage
     // and the category breakdown can never disagree.
     const resilienceScores = computeResilience(resilience);
     const totalResilienceChecked = resilienceScores.total;
@@ -390,7 +390,7 @@ export const ExecutiveSummaryForm = ({
     };
   }, [budgetData, feasibilityData, scopeData, projectData, visionData, siteData, scheduleData, teamData, riskData, resilienceData]);
 
-  // Generate overview text — comprehensive 5-paragraph lender pitch
+  // Generate overview text; comprehensive 5-paragraph lender pitch
   const generateOverview = useCallback(() => {
     const {
       projectName, projectType, fullAddress, address, scopeOfWork,
@@ -758,26 +758,26 @@ export const ExecutiveSummaryForm = ({
           </div>
           <div className="p-5">
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <SnapshotItem icon={Home} label="Project" value={calcs.projectName || "—"} />
-              <SnapshotItem icon={MapPin} label="Address" value={calcs.fullAddress || calcs.address || "—"} className="col-span-2" />
-              <SnapshotItem icon={Building2} label="Neighborhood" value={calcs.neighborhoodName || "—"} />
-              <SnapshotItem icon={Target} label="Target Market" value={calcs.targetMarket || "—"} />
-              <SnapshotItem icon={DollarSign} label="Total Investment" value={calcs.tdc > 0 ? formatCompact(calcs.tdc) : "—"} highlight={calcs.tdc > 0} />
+              <SnapshotItem icon={Home} label="Project" value={calcs.projectName || "-"} />
+              <SnapshotItem icon={MapPin} label="Address" value={calcs.fullAddress || calcs.address || "-"} className="col-span-2" />
+              <SnapshotItem icon={Building2} label="Neighborhood" value={calcs.neighborhoodName || "-"} />
+              <SnapshotItem icon={Target} label="Target Market" value={calcs.targetMarket || "-"} />
+              <SnapshotItem icon={DollarSign} label="Total Investment" value={calcs.tdc > 0 ? formatCompact(calcs.tdc) : "-"} highlight={calcs.tdc > 0} />
               {calcs.exitStrategy === "rent" ? (
                 <>
-                  <SnapshotItem icon={TrendingUp} label="Annual NOI" value={calcs.hasRentalData ? formatCompact(calcs.noi) : "—"} highlight={calcs.hasRentalData && calcs.noi > 0} />
-                  <SnapshotItem icon={DollarSign} label="Cap Rate" value={calcs.hasRentalData ? formatPercent(calcs.capRate) : "—"} highlight={calcs.hasRentalData && calcs.capRate >= 7} />
-                  <SnapshotItem icon={TrendingUp} label="DSCR" value={calcs.hasRentalData && calcs.dscr > 0 ? calcs.dscr.toFixed(2) : "—"} highlight={calcs.hasRentalData && calcs.dscr >= 1.25} />
+                  <SnapshotItem icon={TrendingUp} label="Annual NOI" value={calcs.hasRentalData ? formatCompact(calcs.noi) : "-"} highlight={calcs.hasRentalData && calcs.noi > 0} />
+                  <SnapshotItem icon={DollarSign} label="Cap Rate" value={calcs.hasRentalData ? formatPercent(calcs.capRate) : "-"} highlight={calcs.hasRentalData && calcs.capRate >= 7} />
+                  <SnapshotItem icon={TrendingUp} label="DSCR" value={calcs.hasRentalData && calcs.dscr > 0 ? calcs.dscr.toFixed(2) : "-"} highlight={calcs.hasRentalData && calcs.dscr >= 1.25} />
                 </>
               ) : (
                 <>
-                  <SnapshotItem icon={TrendingUp} label="After Repair Value" value={calcs.hasARV ? formatCompact(calcs.arv) : "—"} highlight={calcs.hasARV} />
-                  <SnapshotItem icon={DollarSign} label="Net Profit" value={calcs.hasARV ? formatCompact(calcs.netProfit) : "—"} highlight={calcs.hasARV && calcs.netProfit > 0} />
-                  <SnapshotItem icon={TrendingUp} label="ROI (Cash)" value={calcs.hasARV ? returnText(calcs.roi) : "—"} highlight={calcs.hasARV && calcs.roi !== null && calcs.roi > 15} />
+                  <SnapshotItem icon={TrendingUp} label="After Repair Value" value={calcs.hasARV ? formatCompact(calcs.arv) : "-"} highlight={calcs.hasARV} />
+                  <SnapshotItem icon={DollarSign} label="Net Profit" value={calcs.hasARV ? formatCompact(calcs.netProfit) : "-"} highlight={calcs.hasARV && calcs.netProfit > 0} />
+                  <SnapshotItem icon={TrendingUp} label="ROI (Cash)" value={calcs.hasARV ? returnText(calcs.roi) : "-"} highlight={calcs.hasARV && calcs.roi !== null && calcs.roi > 15} />
                 </>
               )}
-              <SnapshotItem icon={Target} label="Exit Strategy" value={EXIT_LABELS[calcs.exitStrategy] || "—"} />
-              <SnapshotItem icon={Clock} label="Duration" value={calcs.totalDurationWeeks > 0 ? `${calcs.totalDurationWeeks}w (${calcs.totalMonths}mo)` : "—"} />
+              <SnapshotItem icon={Target} label="Exit Strategy" value={EXIT_LABELS[calcs.exitStrategy] || "-"} />
+              <SnapshotItem icon={Clock} label="Duration" value={calcs.totalDurationWeeks > 0 ? `${calcs.totalDurationWeeks}w (${calcs.totalMonths}mo)` : "-"} />
               {calcs.landEquity > 0 && (
                 <SnapshotItem icon={Landmark} label="Developer Equity" value={`${formatCompact(calcs.cashEquity)} cash + ${formatCompact(calcs.landEquity)} land`} />
               )}
@@ -900,13 +900,13 @@ export const ExecutiveSummaryForm = ({
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Developer</span>
                     <span className="font-medium text-foreground">
-                      {calcs.developerName ? `${calcs.developerName}${calcs.developerRole ? ` — ${calcs.developerRole}` : ""}` : "—"}
+                      {calcs.developerName ? `${calcs.developerName}${calcs.developerRole ? `; ${calcs.developerRole}` : ""}` : "-"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">General Contractor</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">{calcs.gcCompany || "—"}</span>
+                      <span className="font-medium text-foreground">{calcs.gcCompany || "-"}</span>
                       {calcs.gcStatus && (
                         <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full border font-medium", getStatusBadge(calcs.gcStatus))}>
                           {calcs.gcStatus}
@@ -917,7 +917,7 @@ export const ExecutiveSummaryForm = ({
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Architect</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">{calcs.architectCompany || "—"}</span>
+                      <span className="font-medium text-foreground">{calcs.architectCompany || "-"}</span>
                       {calcs.architectStatus && (
                         <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full border font-medium", getStatusBadge(calcs.architectStatus))}>
                           {calcs.architectStatus}
@@ -940,23 +940,23 @@ export const ExecutiveSummaryForm = ({
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Duration</span>
                     <span className="font-medium text-foreground">
-                      {calcs.totalDurationWeeks > 0 ? `${calcs.totalDurationWeeks} weeks` : "—"}
+                      {calcs.totalDurationWeeks > 0 ? `${calcs.totalDurationWeeks} weeks` : "-"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Start</span>
-                    <span className="font-medium text-foreground">{calcs.scheduleStartDate || "—"}</span>
+                    <span className="font-medium text-foreground">{calcs.scheduleStartDate || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Completion</span>
-                    <span className="font-medium text-foreground">{calcs.scheduleEndDate || "—"}</span>
+                    <span className="font-medium text-foreground">{calcs.scheduleEndDate || "-"}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Milestones</span>
                     <span className="font-medium text-foreground">
                       {calcs.milestones.length > 0
                         ? `${calcs.milestonesComplete} / ${calcs.milestones.length} complete`
-                        : "—"}
+                        : "-"}
                     </span>
                   </div>
                 </div>
@@ -1169,7 +1169,7 @@ export const ExecutiveSummaryForm = ({
                     <StaleNarrativeNotice
                       stale={thesisStale}
                       actionLabel="Mark as current"
-                      message="Figures have changed since this was written — review the text, then confirm or regenerate it with AI."
+                      message="Figures have changed since this was written; review the text, then confirm or regenerate it with AI."
                       onRegenerate={() =>
                         setFormData((prev) => ({ ...prev, thesisFingerprint: narrativeFingerprint }))
                       }

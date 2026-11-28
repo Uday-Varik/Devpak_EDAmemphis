@@ -60,7 +60,7 @@ const TARGET_INCOME_OPTIONS = [
   "Market Rate", "Mixed Income",
 ];
 
-// Legacy values that may exist in saved data — map to current label
+// Legacy values that may exist in saved data; map to current label
 const LEGACY_INCOME_VALUE_MAP: Record<string, string> = {
   "section-8": "Voucher Program Tenants",
   "Section 8": "Voucher Program Tenants",
@@ -306,7 +306,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
           saleDate: sale.recordDate,
           distance: typeof sale.distanceMiles === "number" ? Number(sale.distanceMiles.toFixed(2)) : undefined,
           source: compMeta?.source || "datamidsouth",
-          notes: `${sale.transactionType} — ${sale.propertyType || ""}${sale.yearBuilt ? `, Built ${sale.yearBuilt}` : ""}`,
+          notes: `${sale.transactionType}; ${sale.propertyType || ""}${sale.yearBuilt ? `, Built ${sale.yearBuilt}` : ""}`,
         },
       ],
     }));
@@ -576,7 +576,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
                       }}
                       currentValue={formData.neighborhoodDescription || ""}
                       onInsert={(t) => update("neighborhoodDescription", t)}
-                      prompt={`Write a professional neighborhood description for the ${formData.neighborhoodName || "subject"} neighborhood in ${siteAddress?.city || "Memphis"}, ${siteAddress?.state || "TN"}${siteAddress?.zip ? ` (ZIP ${siteAddress?.zip})` : ""}. Median household income is ${formData.medianHouseholdIncome ? formatCurrency(Number(formData.medianHouseholdIncome)) : "n/a"}, median home price is ${formData.medianHomePrice ? formatCurrency(Number(formData.medianHomePrice)) : "n/a"}, average rent is ${formData.averageRent ? formatCurrency(Number(formData.averageRent)) : "n/a"}/mo, vacancy rate is ${formData.vacancyRate || "n/a"}%. Population trend is ${formData.populationTrend || "stable"}. Write 2-3 sentences suitable for a real estate development package. Frame the neighborhood positively or neutrally. Focus on opportunity, growth trajectory, community assets, and development momentum. Do not emphasize poverty, crime, vacancy, or decline. Even in challenged neighborhoods, highlight the investment thesis: affordability, upside potential, community need, and municipal support. A development package is a pitch document — the neighborhood description should support the project, not undermine it.`}
+                      prompt={`Write a professional neighborhood description for the ${formData.neighborhoodName || "subject"} neighborhood in ${siteAddress?.city || "Memphis"}, ${siteAddress?.state || "TN"}${siteAddress?.zip ? ` (ZIP ${siteAddress?.zip})` : ""}. Median household income is ${formData.medianHouseholdIncome ? formatCurrency(Number(formData.medianHouseholdIncome)) : "n/a"}, median home price is ${formData.medianHomePrice ? formatCurrency(Number(formData.medianHomePrice)) : "n/a"}, average rent is ${formData.averageRent ? formatCurrency(Number(formData.averageRent)) : "n/a"}/mo, vacancy rate is ${formData.vacancyRate || "n/a"}%. Population trend is ${formData.populationTrend || "stable"}. Write 2-3 sentences suitable for a real estate development package. Frame the neighborhood positively or neutrally. Focus on opportunity, growth trajectory, community assets, and development momentum. Do not emphasize poverty, crime, vacancy, or decline. Even in challenged neighborhoods, highlight the investment thesis: affordability, upside potential, community need, and municipal support. A development package is a pitch document; the neighborhood description should support the project, not undermine it.`}
                     />
                   </div>
                   <Textarea
@@ -787,15 +787,15 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
                                     <span>
                                       {new Date(sale.recordDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
                                     </span>
-                                    <span>{sale.sqft > 0 ? `${sale.sqft.toLocaleString()} SF` : "— SF"}</span>
-                                    <span>{sale.bedrooms > 0 ? `${sale.bedrooms} bd` : "— bd"}</span>
-                                    <span>{sale.bathrooms > 0 ? `${sale.bathrooms} ba` : "— ba"}</span>
+                                    <span>{sale.sqft > 0 ? `${sale.sqft.toLocaleString()} SF` : ". SF"}</span>
+                                    <span>{sale.bedrooms > 0 ? `${sale.bedrooms} bd` : "; bd"}</span>
+                                    <span>{sale.bathrooms > 0 ? `${sale.bathrooms} ba` : "; ba"}</span>
                                     {(typeof sale.distanceMiles === "number" || !searchNote?.includes("distance unavailable")) && <span className="text-muted-foreground">
                                       {typeof sale.distanceMiles === "number"
                                         ? sale.distanceMiles < 0.1
                                           ? "<0.1 mi"
                                           : `${sale.distanceMiles.toFixed(2)} mi`
-                                        : "— mi"}
+                                        : "; mi"}
                                     </span>}
                                     <span>{sale.transactionType}</span>
                                     {cat === "sale" && (
@@ -846,7 +846,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
                       rel="noopener noreferrer"
                       className="text-xs text-secondary hover:underline inline-flex items-center gap-1"
                     >
-                      Shelby County Assessor — Neighborhood Sales
+                      Shelby County Assessor: Neighborhood Sales
                       <ExternalLink className="w-3 h-3" />
                     </a>
                     <a
@@ -906,7 +906,7 @@ export const VisionMarketForm = ({ data, onSave, saving }: VisionMarketFormProps
                         <Label>Price / Sq Ft</Label>
                         <Input
                           readOnly
-                          value={comp.sqft > 0 && comp.salePrice > 0 ? `$${(comp.salePrice / comp.sqft).toFixed(2)}` : "—"}
+                          value={comp.sqft > 0 && comp.salePrice > 0 ? `$${(comp.salePrice / comp.sqft).toFixed(2)}` : "-"}
                           className="mt-1.5 bg-muted/50 cursor-not-allowed"
                         />
                       </div>

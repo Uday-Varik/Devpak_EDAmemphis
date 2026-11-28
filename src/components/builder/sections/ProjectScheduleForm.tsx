@@ -118,7 +118,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
     notes: saved.keyDates?.notes || "",
   });
 
-  // Initial cascade — only runs once to seed dates from project start if milestones lack dates
+  // Initial cascade; only runs once to seed dates from project start if milestones lack dates
   const recalculateDates = useCallback((projectStart: Date | undefined, currentMilestones: Milestone[]) => {
     if (!projectStart) return currentMilestones;
 
@@ -596,7 +596,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
           </AccordionItem>
         </Accordion>
 
-        {/* GANTT CHART — Full-width standalone card, always visible */}
+        {/* GANTT CHART: Full-width standalone card, always visible */}
         <div className="bg-white rounded-xl border border-border shadow-sm p-6 my-4" style={{ minHeight: "500px" }}>
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">

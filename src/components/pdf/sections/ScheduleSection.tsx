@@ -7,11 +7,11 @@ interface ScheduleSectionProps {
 }
 
 const formatDate = (d: string | undefined) => {
-  if (!d) return "—";
+  if (!d) return "-";
   try {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   } catch {
-    return "—";
+    return "-";
   }
 };
 
@@ -72,7 +72,7 @@ const GanttPDFChart = ({ milestones }: GanttPDFChartProps) => {
   const maxTime = Math.max(...parsed.map(m => m._end));
   const totalMs = maxTime - minTime || 1;
 
-  // Layout constants — page content width ~495 (Letter 612 - 50*2 margins)
+  // Layout constants; page content width ~495 (Letter 612 - 50*2 margins)
   const CHART_WIDTH = 495;
   const LABEL_WIDTH = 130;
   const DATE_WIDTH = 95;
@@ -150,7 +150,7 @@ const GanttPDFChart = ({ milestones }: GanttPDFChartProps) => {
           >
             <View style={{ width: LABEL_WIDTH, paddingRight: 6 }}>
               <Text style={{ fontSize: 7.5, color: colors.body, fontFamily: "Helvetica-Bold" }}>
-                {m.name || "—"}
+                {m.name || "-"}
               </Text>
             </View>
             <View style={{ width: TIMELINE_WIDTH, height: ROW_HEIGHT, position: "relative" }}>
@@ -242,12 +242,12 @@ export const ScheduleSection = ({ schedule }: ScheduleSectionProps) => {
             </View>
             {milestones.map((m: ScheduleMilestone, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCellBold, { flex: 2 }]}>{m.name || "—"}</Text>
+                <Text style={[styles.tableCellBold, { flex: 2 }]}>{m.name || "-"}</Text>
                 <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatDate(m.startDate)}</Text>
                 <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatDate(m.endDate)}</Text>
-                <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{m.durationWeeks || m.duration || "—"}</Text>
+                <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{m.durationWeeks || m.duration || "-"}</Text>
                 <Text style={[styles.tableCell, { flex: 0.8, textAlign: "right" }]}>
-                  {STATUS_LABELS[m.status] || m.status || "—"}
+                  {STATUS_LABELS[m.status] || m.status || "-"}
                 </Text>
               </View>
             ))}

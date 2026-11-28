@@ -31,7 +31,7 @@ export const FeasibilitySummaryDashboard = ({
   const arv = data.saleExit?.arv || 0;
   const hasARV = arv > 0;
 
-  // Gross TDC comes from the shared engine via the calculations prop — never
+  // Gross TDC comes from the shared engine via the calculations prop; never
   // recompute locally (this panel previously understated TDC and diverged from
   // the Executive Summary and PDF export).
   const totalDevelopmentCost = calculations.grossTdc;
@@ -129,7 +129,7 @@ export const FeasibilitySummaryDashboard = ({
     if (showDash) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-500 border border-gray-200">
-          {label}: N/A — no ARV entered
+          {label}: N/A; no ARV entered
         </span>
       );
     }
@@ -220,7 +220,7 @@ export const FeasibilitySummaryDashboard = ({
             value={formatCompact(totalDevelopmentCost)}
             sublabel={
               totalSubsidies > 0
-                ? `Gross basis — ${formatCompact(totalSubsidies)} in grants not deducted`
+                ? `Gross basis; ${formatCompact(totalSubsidies)} in grants not deducted`
                 : undefined
             }
           />
@@ -229,29 +229,29 @@ export const FeasibilitySummaryDashboard = ({
             <>
               <MetricCard
                 label="After Repair Value"
-                value={hasARV ? formatCompact(arv) : "—"}
+                value={hasARV ? formatCompact(arv) : "-"}
               />
               <MetricCard
                 label="Net Profit"
-                value={hasARV ? formatCompact(calculations.netProfit) : "—"}
+                value={hasARV ? formatCompact(calculations.netProfit) : "-"}
                 isGood={hasARV ? calculations.netProfit > 0 : undefined}
                 large
               />
               <MetricCard
                 label="ROI"
-                value={hasARV ? returnLabel(calculations.roi) : "—"}
+                value={hasARV ? returnLabel(calculations.roi) : "-"}
                 target=">15%"
                 isGood={hasARV && calculations.roi !== null ? calculations.roi >= 15 : undefined}
               />
               <MetricCard
                 label="Profit Margin"
-                value={hasARV ? formatPercent(calculations.profitMargin) : "—"}
+                value={hasARV ? formatPercent(calculations.profitMargin) : "-"}
                 target=">10%"
                 isGood={hasARV ? calculations.profitMargin >= 10 : undefined}
               />
               <MetricCard
                 label="All-in Basis"
-                value={hasARV ? formatPercent(calculations.allInBasis) : "—"}
+                value={hasARV ? formatPercent(calculations.allInBasis) : "-"}
                 isGood={hasARV ? calculations.allInBasisPassed : undefined}
               />
             </>

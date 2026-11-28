@@ -47,7 +47,7 @@ export const PreExportValidationModal = ({ open, projectId, exportLabel, onCance
         <DialogHeader>
           <DialogTitle>Pre-Export Review</DialogTitle>
           <DialogDescription>
-            Review these findings before exporting. All issues are advisory — you can proceed regardless.
+            Review these findings before exporting. All issues are advisory; you can proceed regardless.
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +97,7 @@ export const PreExportValidationModal = ({ open, projectId, exportLabel, onCance
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
           <Button className="btn-accent" onClick={onProceed} disabled={loading}>
-            {hasIssues ? `Export Anyway — ${exportLabel}` : `Continue — ${exportLabel}`}
+            {hasIssues ? `Export Anyway: ${exportLabel}` : `Continue: ${exportLabel}`}
           </Button>
         </DialogFooter>
       </DialogContent>
