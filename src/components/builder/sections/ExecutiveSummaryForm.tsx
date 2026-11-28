@@ -500,8 +500,8 @@ export const ExecutiveSummaryForm = ({
     let p6 = "";
     if (exitStrategy === "sell") {
       p6 = "The planned exit strategy is to sell the completed property.";
-      if (hasARV && sqftPlanned > 0) {
-        p6 += ` Comparable sales in the area support the projected ARV.`;
+      if (hasARV && sqftPlanned > 0 && calcs.compsCount > 0) {
+        p6 += ` ${calcs.compsCount} comparable ${calcs.compsCount === 1 ? "sale is" : "sales are"} recorded in the market analysis.`;
       }
     } else if (exitStrategy === "rent") {
       p6 = "The planned exit strategy is to rent the completed property.";
