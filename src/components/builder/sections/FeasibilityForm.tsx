@@ -1,3 +1,4 @@
+import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Accordion,
@@ -539,7 +540,7 @@ export const FeasibilityForm = ({
                   <span className="font-semibold text-foreground">Exit Strategy</span>
                 </div>
                 <span className="text-sm text-muted-foreground capitalize">
-                  {exitStrategy.replace("-", " → ")}
+                  {exitStrategy.replace("-", " then ")}
                 </span>
               </div>
             </AccordionTrigger>
@@ -755,7 +756,7 @@ export const FeasibilityForm = ({
                         !hasARV ? "bg-gray-100 text-gray-500" :
                         calculations.seventyPercentPassed ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                       )}>
-                        {hasARV ? (calculations.seventyPercentPassed ? "✓ Pass" : "✗ Fail") : NO_ARV_LABEL}
+                        {hasARV ? (<span className="inline-flex items-center gap-1">{calculations.seventyPercentPassed ? <CheckIcon className="h-3.5 w-3.5" aria-hidden="true" /> : <XIcon className="h-3.5 w-3.5" aria-hidden="true" />}{calculations.seventyPercentPassed ? "Pass" : "Fail"}</span>) : NO_ARV_LABEL}
                       </div>
                     </div>
                   </div>

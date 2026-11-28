@@ -410,7 +410,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     }
 
     setCell(ws, r, 0, bold("Rule of Thumb Checks")); r++;
-    const pf = (st: RuleCheckStatus) => ({ v: ruleCheckLabel(st, "PASS ✓", "FAIL ✗"), t: "s" as const });
+    const pf = (st: RuleCheckStatus) => ({ v: ruleCheckLabel(st, "PASS", "FAIL"), t: "s" as const });
     if (fIncludesSale) {
       setCell(ws, r, 0, { v: "85% Rule (TDC ≤ 85% ARV)", t: "s" });
       setCell(ws, r, 1, pf(rentalFin.allInBasisCheck)); r++;
@@ -419,7 +419,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     }
     if (fIncludesRental) {
       setCell(ws, r, 0, { v: "1% Rule (Monthly Rent ≥ 1% TDC)", t: "s" });
-      setCell(ws, r, 1, { v: rentalFin.monthlyRentTotal > 0 ? (rentalFin.onePercentRule >= 1 ? "PASS ✓" : "FAIL ✗") : "N/A", t: "s" }); r++;
+      setCell(ws, r, 1, { v: rentalFin.monthlyRentTotal > 0 ? (rentalFin.onePercentRule >= 1 ? "PASS" : "FAIL") : "N/A", t: "s" }); r++;
     }
 
     if (fIncludesSale) {
@@ -597,7 +597,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         if (checked) totalChecked++;
         totalItems++;
         setCell(ws, r, 0, { v: `   ${label}`, t: "s" });
-        setCell(ws, r, 1, { v: checked ? "✓ Yes" : ". No", t: "s" });
+        setCell(ws, r, 1, { v: checked ? "Yes" : "No", t: "s" });
         r++;
       });
       r++;

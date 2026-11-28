@@ -1,3 +1,4 @@
+import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import type { BudgetData, FeasibilityData } from "@/types/sectionData";
 import { useMemo, useState } from "react";
 import { CheckCircle, AlertTriangle, XCircle, TrendingDown } from "lucide-react";
@@ -142,7 +143,7 @@ export const FeasibilitySummaryDashboard = ({
             : "bg-red-100 text-red-700 border border-red-200"
         )}
       >
-        {label} {passed ? "✓" : "✗"}
+        {label}{passed ? <CheckIcon className="ml-1 h-3 w-3" aria-hidden="true" /> : <XIcon className="ml-1 h-3 w-3" aria-hidden="true" />}
       </span>
     );
   };

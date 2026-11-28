@@ -645,7 +645,7 @@ export const ExecutiveSummaryForm = ({
   const EXIT_LABELS: Record<string, string> = {
     sell: "Sell",
     rent: "Rent",
-    "rent-then-sell": "Rent → Sell",
+    "rent-then-sell": "Rent, then sell",
   };
 
   const getStatusBadge = (status: string) => {

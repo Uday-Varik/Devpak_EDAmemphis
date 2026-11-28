@@ -52,7 +52,7 @@ export const FeasibilitySection = ({ feasibility, metrics }: FeasibilitySectionP
   const includesRental = strategy === "rent" || strategy === "rent-then-sell";
 
 
-  const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent → Sell" };
+  const EXIT_LABELS: Record<string, string> = { sell: "Sell", rent: "Rent", "rent-then-sell": "Rent, then sell" };
 
   const getScenarioColor = (ret: number | null) =>
     ret === null ? colors.gold : ret >= 20 ? colors.green : ret >= 0 ? colors.gold : colors.red;

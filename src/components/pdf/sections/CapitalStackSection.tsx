@@ -82,7 +82,7 @@ export const CapitalStackSection = ({
           {fundingGap > 0 ? "Funding Gap" : "Fully Funded"}
         </Text>
         <Text style={[styles.highlightValue, { color: fundingGap > 0 ? colors.red : colors.green }]}>
-          {fundingGap > 0 ? formatCurrency(fundingGap) : "✓"}
+          {fundingGap > 0 ? formatCurrency(fundingGap) : "Fully funded"}
         </Text>
         <Text style={[styles.value, { color: colors.muted, marginTop: 4 }]}>
           Total Uses: {formatCurrency(tdc)} • Total Sources: {formatCurrency(totalSources)}

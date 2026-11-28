@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { format, addWeeks, differenceInWeeks, differenceInDays, parseISO, isValid } from "date-fns";
 import { CalendarIcon, Plus, Trash2, Calendar, ClipboardList, BarChart3 } from "lucide-react";
@@ -679,7 +680,7 @@ export const ProjectScheduleForm = ({ data, onSave, saving }: ProjectScheduleFor
             {saving ? "Saving..." : "Save Draft"}
           </Button>
           <Button onClick={() => handleSave(true)} disabled={saving} className="btn-accent px-6 transition-all duration-300">
-            {saving ? "Saving..." : "Save & Continue →"}
+            {saving ? "Saving..." : (<span className="inline-flex items-center gap-1">Save & Continue<ArrowRight className="h-4 w-4" aria-hidden="true" /></span>)}
           </Button>
         </div>
       </div>

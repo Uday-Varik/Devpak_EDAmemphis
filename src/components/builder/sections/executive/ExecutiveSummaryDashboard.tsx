@@ -1,3 +1,4 @@
+import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import { CheckCircle, AlertTriangle, XCircle, TrendingDown, Check, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
@@ -156,7 +157,7 @@ export const ExecutiveSummaryDashboard = ({
             : "bg-red-100 text-red-700 border border-red-200"
         )}
       >
-        {label} {passed ? "✓" : "✗"}
+        {label}{passed ? <CheckIcon className="ml-1 h-3 w-3" aria-hidden="true" /> : <XIcon className="ml-1 h-3 w-3" aria-hidden="true" />}
       </span>
     );
   };

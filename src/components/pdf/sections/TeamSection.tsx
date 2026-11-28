@@ -29,7 +29,7 @@ const LicenseBadge = ({ licenseNumber, verified }: { licenseNumber?: string; ver
       </Text>
       {!!verified && (
         <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#DCFCE7", borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 }}>
-          <Text style={{ fontSize: 8, color: "#15803D", fontFamily: "Helvetica-Bold" }}>✓ License Verified</Text>
+          <Text style={{ fontSize: 8, color: "#15803D", fontFamily: "Helvetica-Bold" }}>License verified</Text>
         </View>
       )}
     </View>
