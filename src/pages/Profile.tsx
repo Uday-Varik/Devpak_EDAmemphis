@@ -44,11 +44,11 @@ const Profile = () => {
   };
 
   if (authLoading || loading) {
-    return <div className="min-h-screen bg-[#FAFBFC] flex items-center justify-center text-muted-foreground">Loading...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC]">
+    <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-white shadow-sm">
         <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/dashboard")}>
