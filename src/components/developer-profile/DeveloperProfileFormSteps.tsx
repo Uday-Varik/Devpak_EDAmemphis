@@ -223,7 +223,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
                 <Camera className="w-8 h-8 text-muted-foreground" />
               </div>
             )}
-            <label className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+            <label className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#162E4A] text-white flex items-center justify-center cursor-pointer hover:bg-[#2E6B8A] transition-colors">
               <Upload className="w-4 h-4" />
               <input
                 type="file"
@@ -274,7 +274,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
       {profile.portfolio.map((p, i) => (
         <div key={i} className="p-4 bg-white border border-border rounded-lg space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-primary">Project {i + 1}</span>
+            <span className="text-sm font-semibold text-[#162E4A]">Project {i + 1}</span>
             <Button type="button" variant="ghost" size="icon" onClick={() => removeProject(i)}>
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
