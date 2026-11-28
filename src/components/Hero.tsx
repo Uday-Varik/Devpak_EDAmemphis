@@ -7,7 +7,15 @@ interface HeroProps {
 
 const Hero = ({ onGetStartedClick }: HeroProps) => {
   return (
-    <section className="relative pt-32 pb-20 px-6 hero-gradient overflow-hidden">
+    <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+      {/* Memphis skyline background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url(/images/memphis-skyline.jpg)" }}
+        aria-hidden="true"
+      />
+      {/* Light overlay so the text stays readable */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background/95" aria-hidden="true" />
       {/* Dot pattern overlay */}
       <div className="absolute inset-0 dot-pattern pointer-events-none" />
       
