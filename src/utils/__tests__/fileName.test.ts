@@ -16,6 +16,14 @@ describe("exportFileBase", () => {
     expect(exportFileBase("a".repeat(200)).length).toBeLessThanOrEqual(80);
   });
 
+  it("cuts at a word boundary, not mid-word", () => {
+    const out = exportFileBase("alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi");
+    expect(out.length).toBeLessThanOrEqual(80);
+    expect(out.endsWith("_")).toBe(false);
+    const words = out.split("_");
+    expect(words.every((w) => ["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi"].includes(w))).toBe(true);
+  });
+
   it("does not keep HTML from a malicious name", () => {
     expect(exportFileBase('<img src=x onerror="alert(1)">')).not.toMatch(/[<>"=]/);
   });
