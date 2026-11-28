@@ -8,7 +8,7 @@ describe("ARV-dependent rule checks", () => {
     const f = computeProjectFinancials({ budget, feasibility: { exitStrategy: { strategy: "rent" } } });
     expect(f.allInBasisCheck).toBe("na");
     expect(f.seventyRuleCheck).toBe("na");
-    expect(ruleCheckLabel(f.allInBasisCheck)).toBe("N/A — no ARV entered");
+    expect(ruleCheckLabel(f.allInBasisCheck)).toBe("N/A; no ARV entered");
   });
   it("pass/fail with ARV", () => {
     expect(computeProjectFinancials({ budget, feasibility: { saleExit: { arv: 300000 } } }).allInBasisCheck).toBe("pass");

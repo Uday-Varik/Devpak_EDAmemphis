@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { computeProjectFinancials } from "./calculations";
 import type { ComparableSale, ExecutiveData, ResilienceData, ScheduleMilestone } from "@/types/sectionData";
 
-/** Funding gap for validation — straight from the shared engine. */
+/** Funding gap for validation; straight from the shared engine. */
 export const computeFundingGap = (sections: ProjectSections): number =>
   computeProjectFinancials({ scope: sections.scope, budget: sections.budget, feasibility: sections.feasibility }).fundingGap;
 

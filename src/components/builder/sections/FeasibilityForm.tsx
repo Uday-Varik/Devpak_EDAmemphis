@@ -283,7 +283,7 @@ export const FeasibilityForm = ({
       budget: budgetData || {},
       feasibility: formData,
     });
-    // Net basis (TDC − grants) is used ONLY for netProfit / roi / profitMargin — see engine.
+    // Net basis (TDC − grants) is used ONLY for netProfit / roi / profitMargin; see engine.
     const totalGrants = rentalFin.grants;
     const salesCostsAmount = rentalFin.salesCosts;
     const netSaleProceeds = rentalFin.netSaleProceeds;
@@ -608,7 +608,7 @@ export const FeasibilityForm = ({
                     "font-bold text-lg",
                     hasARV ? (calculations.netProfit >= 0 ? "text-green-600" : "text-red-600") : "text-muted-foreground"
                   )}>
-                    {hasARV ? formatCompact(calculations.netProfit) : "—"}
+                    {hasARV ? formatCompact(calculations.netProfit) : "-"}
                   </span>
                 </div>
               </AccordionTrigger>
@@ -622,7 +622,7 @@ export const FeasibilityForm = ({
                       <CurrencyInput
                         value={formData.saleExit.arv}
                         onChange={(v) => updateSection("saleExit", "arv", v)}
-                        helpText="The After Repair Value (ARV) is what your property will be worth on the open market after all renovations are complete. Base this on recent comparable sales (comps) of similar properties in the same neighborhood — not on listing prices or Zillow estimates."
+                        helpText="The After Repair Value (ARV) is what your property will be worth on the open market after all renovations are complete. Base this on recent comparable sales (comps) of similar properties in the same neighborhood; not on listing prices or Zillow estimates."
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -723,7 +723,7 @@ export const FeasibilityForm = ({
                       <Label>All-in Basis</Label>
                       <div className="flex items-center gap-2">
                         <Input
-                          value={hasARV ? `${calculations.allInBasis.toFixed(1)}%` : "—"}
+                          value={hasARV ? `${calculations.allInBasis.toFixed(1)}%` : "-"}
                           readOnly
                           className="bg-gray-50 border-gray-200 text-gray-700"
                         />
@@ -739,7 +739,7 @@ export const FeasibilityForm = ({
                     <div className="space-y-2">
                       <Label>70% Rule Max Purchase</Label>
                       <Input
-                        value={hasARV ? formatCurrency(calculations.seventyPercentMaxPurchase) : "—"}
+                        value={hasARV ? formatCurrency(calculations.seventyPercentMaxPurchase) : "-"}
                         readOnly
                         className="bg-gray-50 border-gray-200 text-gray-700"
                       />
@@ -828,7 +828,7 @@ export const FeasibilityForm = ({
                       <PercentageInput
                         value={formData.rentalExit.vacancyRate}
                         onChange={(v) => updateSection("rentalExit", "vacancyRate", v)}
-                        helpText="Vacancy rate is the percentage of time your units will be empty (between tenants, during turnover, etc.). Memphis averages 8-10% vacancy for residential rentals. Always be conservative — underestimating vacancy is one of the most common mistakes new developers make."
+                        helpText="Vacancy rate is the percentage of time your units will be empty (between tenants, during turnover, etc.). Memphis averages 8-10% vacancy for residential rentals. Always be conservative; underestimating vacancy is one of the most common mistakes new developers make."
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
@@ -847,7 +847,7 @@ export const FeasibilityForm = ({
                       <PercentageInput
                         value={formData.rentalExit.managementPercent}
                         onChange={(v) => updateSection("rentalExit", "managementPercent", v)}
-                        helpText="Property management companies handle tenant placement, rent collection, maintenance coordination, and evictions. In Memphis, management fees typically run 8-10% of collected rent. Enter 0% only if you plan to self-manage — but lenders may still underwrite at 8-10%."
+                        helpText="Property management companies handle tenant placement, rent collection, maintenance coordination, and evictions. In Memphis, management fees typically run 8-10% of collected rent. Enter 0% only if you plan to self-manage; but lenders may still underwrite at 8-10%."
                       />
                     </div>
                     <div className="space-y-2">
@@ -1065,7 +1065,7 @@ export const FeasibilityForm = ({
                       <Label>GRM (Gross Rent Multiplier)</Label>
                       <div className="flex items-center gap-2">
                         <Input
-                          value={calculations.grm > 0 ? calculations.grm.toFixed(1) : "—"}
+                          value={calculations.grm > 0 ? calculations.grm.toFixed(1) : "-"}
                           readOnly
                           className="bg-gray-50 border-gray-200 text-gray-700"
                         />
@@ -1083,7 +1083,7 @@ export const FeasibilityForm = ({
             </AccordionItem>
           )}
 
-          {/* COMPARABLE SALES — Read-only from Vision & Market Case */}
+          {/* COMPARABLE SALES: Read-only from Vision & Market Case */}
           <AccordionItem
             value="comparables"
             className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"
@@ -1099,7 +1099,7 @@ export const FeasibilityForm = ({
                 <span className="text-primary font-bold">
                   {visionComps.length > 0 && visionAvgPricePerSqft > 0
                     ? `$${visionAvgPricePerSqft.toFixed(0)}/sqft`
-                    : "—"}
+                    : "-"}
                 </span>
               </div>
             </AccordionTrigger>
@@ -1115,25 +1115,25 @@ export const FeasibilityForm = ({
                           <span className="font-medium text-sm text-foreground">{comp.address || `Comp ${i + 1}`}</span>
                         </div>
                         <span className="text-sm font-bold text-primary">
-                          {comp.salePrice > 0 ? formatCurrency(comp.salePrice) : "—"}
+                          {comp.salePrice > 0 ? formatCurrency(comp.salePrice) : "-"}
                         </span>
                       </div>
                       <div className="grid grid-cols-4 gap-3 mt-2 text-xs text-muted-foreground">
                         <div>
                           <span className="block">Sq Ft</span>
-                          <span className="font-medium text-foreground">{comp.sqft > 0 ? comp.sqft.toLocaleString() : "—"}</span>
+                          <span className="font-medium text-foreground">{comp.sqft > 0 ? comp.sqft.toLocaleString() : "-"}</span>
                         </div>
                         <div>
                           <span className="block">$/SqFt</span>
-                          <span className="font-medium text-foreground">{comp.pricePerSqft > 0 ? `$${comp.pricePerSqft.toFixed(0)}` : "—"}</span>
+                          <span className="font-medium text-foreground">{comp.pricePerSqft > 0 ? `$${comp.pricePerSqft.toFixed(0)}` : "-"}</span>
                         </div>
                         <div>
                           <span className="block">Bed/Bath</span>
-                          <span className="font-medium text-foreground">{comp.bedrooms || "—"}/{comp.bathrooms || "—"}</span>
+                          <span className="font-medium text-foreground">{comp.bedrooms || "-"}/{comp.bathrooms || "-"}</span>
                         </div>
                         <div>
                           <span className="block">Condition</span>
-                          <span className="font-medium text-foreground capitalize">{comp.condition || "—"}</span>
+                          <span className="font-medium text-foreground capitalize">{comp.condition || "-"}</span>
                         </div>
                       </div>
                     </div>
@@ -1145,13 +1145,13 @@ export const FeasibilityForm = ({
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground">Avg Price/SqFt</Label>
                         <p className="font-bold text-foreground">
-                          {visionAvgPricePerSqft > 0 ? `$${visionAvgPricePerSqft.toFixed(0)}` : "—"}
+                          {visionAvgPricePerSqft > 0 ? `$${visionAvgPricePerSqft.toFixed(0)}` : "-"}
                         </p>
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground">Your Projected $/SqFt</Label>
                         <p className="font-bold text-foreground">
-                          {calculations.yourPricePerSqft > 0 ? `$${calculations.yourPricePerSqft.toFixed(0)}` : "—"}
+                          {calculations.yourPricePerSqft > 0 ? `$${calculations.yourPricePerSqft.toFixed(0)}` : "-"}
                         </p>
                       </div>
                       <div className="space-y-1">
@@ -1162,7 +1162,7 @@ export const FeasibilityForm = ({
                         )}>
                           {calculations.yourPricePerSqft > 0
                             ? `${calculations.compVariance > 0 ? "+" : ""}${calculations.compVariance.toFixed(0)}%`
-                            : "—"}
+                            : "-"}
                         </p>
                       </div>
                     </div>
@@ -1236,7 +1236,7 @@ export const FeasibilityForm = ({
                   "font-bold",
                   hasARV ? (calculations.marginOfSafety >= 0 ? "text-green-600" : "text-red-600") : "text-muted-foreground"
                 )}>
-                  {hasARV ? `${formatCompact(calculations.marginOfSafety)} margin` : "—"}
+                  {hasARV ? `${formatCompact(calculations.marginOfSafety)} margin` : "-"}
                 </span>
               </div>
             </AccordionTrigger>
@@ -1394,7 +1394,7 @@ export const FeasibilityForm = ({
                   passedCount >= 2 ? "text-amber-700" :
                   "text-red-700"
                 )}>
-                  {passedCount} of 5 criteria met — {
+                  {passedCount} of 5 criteria met; {
                     passedCount >= 4 ? "Ready to proceed" :
                     passedCount >= 2 ? "Review flagged items" :
                     "Significant concerns"
@@ -1439,10 +1439,10 @@ export const FeasibilityForm = ({
                       <SelectValue placeholder="Select your decision" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="go">GO — Proceed to next phase</SelectItem>
-                      <SelectItem value="conditional">CONDITIONAL GO — Proceed with modifications</SelectItem>
-                      <SelectItem value="hold">HOLD — Additional information needed</SelectItem>
-                      <SelectItem value="no-go">NO GO — Do not proceed</SelectItem>
+                      <SelectItem value="go">GO: Proceed to next phase</SelectItem>
+                      <SelectItem value="conditional">CONDITIONAL GO: Proceed with modifications</SelectItem>
+                      <SelectItem value="hold">HOLD: Additional information needed</SelectItem>
+                      <SelectItem value="no-go">NO GO: Do not proceed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

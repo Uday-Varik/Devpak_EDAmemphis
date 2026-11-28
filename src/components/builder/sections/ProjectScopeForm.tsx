@@ -185,7 +185,7 @@ export const ProjectScopeForm = ({ data, onSave, saving }: ProjectScopeFormProps
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {showExisting && (
           <div className="space-y-2">
-            <Label htmlFor="sqftExisting">Square Footage — Existing</Label>
+            <Label htmlFor="sqftExisting">Square Footage: Existing</Label>
             <Input
               id="sqftExisting"
               type="number"

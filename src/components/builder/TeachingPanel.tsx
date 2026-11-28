@@ -14,10 +14,10 @@ const TEACHING_CONTENT: Partial<Record<Section, {
   memphisContext?: string[];
 }>> = {
   "project-scope": {
-    whyMatters: "Lenders evaluate your project scope first to understand the deal's scale and complexity. A clear, well-defined scope signals that you've done your homework and understand what you're getting into. If the scope is vague or the numbers don't add up, lenders will question every other section of your package. Think of this as your project's foundation — everything else builds on it.",
+    whyMatters: "Lenders evaluate your project scope first to understand the deal's scale and complexity. A clear, well-defined scope signals that you've done your homework and understand what you're getting into. If the scope is vague or the numbers don't add up, lenders will question every other section of your package. Think of this as your project's foundation; everything else builds on it.",
     commonMistakes: [
       "Underestimating the full scope of renovation work needed. Walk the property with a contractor before filling this out, and document every issue you find with photos.",
-      "Not verifying that current zoning actually allows your intended use. Call the city planning department to confirm — don't assume based on what was there before.",
+      "Not verifying that current zoning actually allows your intended use. Call the city planning department to confirm; don't assume based on what was there before.",
       "Confusing existing square footage with planned square footage after renovation. Be precise about what the property is now versus what it will be when you're done.",
       "Forgetting to account for common areas, hallways, and utility spaces in multi-unit projects. These don't generate rent but still cost money to build and maintain.",
     ],
@@ -29,11 +29,11 @@ const TEACHING_CONTENT: Partial<Record<Section, {
     ],
   },
   "budget-capital": {
-    whyMatters: "Your budget is the financial blueprint lenders use to evaluate risk. A detailed, realistic budget with proper contingencies shows you understand what it actually costs to develop a property — not just the purchase price, but every permit, every professional fee, and every month of holding costs. The sources and uses section proves you can actually fund the project and have enough personal investment ('skin in the game') that you won't walk away if things get difficult.",
+    whyMatters: "Your budget is the financial blueprint lenders use to evaluate risk. A detailed, realistic budget with proper contingencies shows you understand what it actually costs to develop a property; not just the purchase price, but every permit, every professional fee, and every month of holding costs. The sources and uses section proves you can actually fund the project and have enough personal investment ('skin in the game') that you won't walk away if things get difficult.",
     commonMistakes: [
       "Underestimating pre-development costs like architecture, permits, insurance, and loan interest. These should be 15-25% of construction costs. If yours are lower, you're probably missing something.",
       "Setting contingency too low to make the deal look better on paper. Never go below 10%, and 15-20% is recommended for rehab projects. Lenders will catch this and lose confidence in your budget.",
-      "Forgetting to include holding costs during the construction period — monthly loan payments, property taxes, insurance, and utilities add up fast over 6-12 months.",
+      "Forgetting to include holding costs during the construction period; monthly loan payments, property taxes, insurance, and utilities add up fast over 6-12 months.",
       "Not including post-completion operating reserves. Lenders want to see that you can cover 6 months of expenses even if the property doesn't immediately generate income.",
       "Listing funding sources without documentation. Every dollar in your sources and uses should have a commitment letter, bank statement, or approval letter behind it.",
     ],
@@ -48,27 +48,27 @@ const TEACHING_CONTENT: Partial<Record<Section, {
       "Shelby County building permit fees typically run 1-2% of your total construction value. Contact the Memphis Division of Planning & Development for current fee schedules before finalizing your budget.",
       "Local CDFI lenders like Community LIFT and Pathway Lending often offer better rates and more flexible terms than national banks for emerging developers. They're also more familiar with Memphis neighborhoods.",
       "Check MLGW (Memphis Light, Gas & Water) requirements early in your planning. Electrical panel upgrades, gas line work, and water/sewer connections can add $10,000-20,000 to your budget if not anticipated.",
-      "Many Memphis developers start with property they already own — inherited lots, tax sale purchases, or Land Bank acquisitions. The difference between what you paid and what it's worth today is land equity, and lenders count this toward your equity contribution. This can significantly reduce the cash you need to bring to the deal. Get a current appraisal or BPO to document the value.",
+      "Many Memphis developers start with property they already own; inherited lots, tax sale purchases, or Land Bank acquisitions. The difference between what you paid and what it's worth today is land equity, and lenders count this toward your equity contribution. This can significantly reduce the cash you need to bring to the deal. Get a current appraisal or BPO to document the value.",
       "Memphis developers should explore all available subsidy programs before finalizing their sources and uses. CDBG and HOME funds can significantly reduce out-of-pocket costs for qualifying projects. Land Bank acquisitions often come with property tax freezes that improve cash flow projections.",
     ],
   },
   "feasibility": {
-    whyMatters: "This is where lenders determine whether your deal actually makes financial sense. Strong feasibility metrics with conservative assumptions show you're a serious developer who understands the numbers — not a speculator hoping the market bails you out. The 'pencil test' (does the deal pencil out?) separates fundable projects from wishful thinking. If the numbers don't work here, no amount of polish elsewhere will convince a lender to fund your deal.",
+    whyMatters: "This is where lenders determine whether your deal actually makes financial sense. Strong feasibility metrics with conservative assumptions show you're a serious developer who understands the numbers; not a speculator hoping the market bails you out. The 'pencil test' (does the deal pencil out?) separates fundable projects from wishful thinking. If the numbers don't work here, no amount of polish elsewhere will convince a lender to fund your deal.",
     commonMistakes: [
       "Using unrealistic After Repair Value (ARV) assumptions without solid comparable sales to back them up. Your ARV should be supported by at least 3 recent sales of similar properties within half a mile.",
       "Underestimating vacancy rates. Memphis averages 8-10% vacancy for residential rentals, and new properties take time to lease up. Using 5% vacancy to make the numbers look better will undermine your credibility.",
       "Forgetting to include all operating expenses when calculating Net Operating Income. Property management, maintenance reserves, insurance, and property taxes all reduce your cash flow.",
-      "Ignoring debt service when calculating cash flow. Your mortgage payment is a real cost — Net Operating Income is not the same as money in your pocket.",
+      "Ignoring debt service when calculating cash flow. Your mortgage payment is a real cost. Net Operating Income is not the same as money in your pocket.",
       "Not running stress test scenarios to see what happens if ARV drops 10-20% or costs increase. Lenders want to know your deal survives bad conditions, not just good ones.",
       "Using distant or non-comparable sales as comps. A renovated 3-bedroom in Midtown is not comparable to a 3-bedroom in Frayser, even if the square footage matches.",
     ],
     proTips: [
-      "Definition — 70% Rule: A quick feasibility check used by real estate investors. Maximum purchase price should be no more than 70% of the After Repair Value (ARV) minus repair costs. Example: ARV of $200,000 with $40,000 in repairs → max purchase = ($200,000 × 0.70) − $40,000 = $100,000. This builds a margin for unexpected costs and ensures profitability.",
-      "Definition — All-In Basis: The total cost of a project including every expense — acquisition, construction, soft costs, financing costs, holding costs, and contingency. Lenders evaluate deals on an all-in basis because it shows the true total investment needed. Your all-in cost divided by the ARV tells you how much of the property value is consumed by costs.",
-      "Definition — Sensitivity Analysis: Tests how your deal performs under different scenarios. What if construction costs run 10% over budget? What if the property sells for 10% less than expected? By adjusting key variables up and down, you can see how sensitive your profit is to changes. A strong deal still works in the pessimistic scenario. For single family and small residential, focus on testing ARV changes and construction cost overruns — these have the biggest impact on profitability.",
+      "Definition, 70% Rule: A quick feasibility check used by real estate investors. Maximum purchase price should be no more than 70% of the After Repair Value (ARV) minus repair costs. Example: ARV of $200,000 with $40,000 in repairs → max purchase = ($200,000 × 0.70) − $40,000 = $100,000. This builds a margin for unexpected costs and ensures profitability.",
+      "Definition, All-In Basis: The total cost of a project including every expense; acquisition, construction, soft costs, financing costs, holding costs, and contingency. Lenders evaluate deals on an all-in basis because it shows the true total investment needed. Your all-in cost divided by the ARV tells you how much of the property value is consumed by costs.",
+      "Definition, Sensitivity Analysis: Tests how your deal performs under different scenarios. What if construction costs run 10% over budget? What if the property sells for 10% less than expected? By adjusting key variables up and down, you can see how sensitive your profit is to changes. A strong deal still works in the pessimistic scenario. For single family and small residential, focus on testing ARV changes and construction cost overruns; these have the biggest impact on profitability.",
       "Use at least 3 recent comparable sales within 0.5 miles that sold within the last 6 months. Adjust for differences in size, condition, and features. Document your sources.",
       "Model three scenarios: best case, expected, and stress test. If the deal still works in the stress test scenario, you have a strong project. If it only works in the best case, walk away.",
-      "A DSCR (Debt Service Coverage Ratio) of 1.25 means your Net Operating Income is 125% of your debt payments — the minimum most lenders require. Aim for 1.3 or higher.",
+      "A DSCR (Debt Service Coverage Ratio) of 1.25 means your Net Operating Income is 125% of your debt payments; the minimum most lenders require. Aim for 1.3 or higher.",
       "The 70% rule (purchase price + renovation ≤ 70% of ARV) builds in enough profit margin to protect you even if costs run over or ARV comes in lower than expected.",
       "Show your math and cite your data sources. Lenders are more likely to fund a deal with conservative, well-documented assumptions than one with aggressive numbers and no backup.",
       "If the deal doesn't pencil out, it's okay to walk away. There will be other opportunities, and a bad deal can set you back years.",
@@ -83,17 +83,17 @@ const TEACHING_CONTENT: Partial<Record<Section, {
     ],
   },
   "executive-summary": {
-    whyMatters: "The executive summary is often the only page a busy lender reads closely before deciding whether to dig deeper into your package. It needs to tell your deal's story concisely and compellingly — hitting all the key points that make this a fundable project in 1-2 pages. Think of it as your elevator pitch in written form: if a lender only reads this one section, they should understand what the project is, why it works financially, and exactly what you're asking for.",
+    whyMatters: "The executive summary is often the only page a busy lender reads closely before deciding whether to dig deeper into your package. It needs to tell your deal's story concisely and compellingly; hitting all the key points that make this a fundable project in 1-2 pages. Think of it as your elevator pitch in written form: if a lender only reads this one section, they should understand what the project is, why it works financially, and exactly what you're asking for.",
     commonMistakes: [
       "Making the executive summary too long. Keep it to 1-2 pages maximum. If you can't explain the deal concisely, lenders will worry you don't fully understand it yourself.",
-      "Leading with your personal background instead of the deal itself. Lenders want to see the numbers first — who you are matters, but what the deal looks like matters more.",
+      "Leading with your personal background instead of the deal itself. Lenders want to see the numbers first; who you are matters, but what the deal looks like matters more.",
       "Burying the key financial metrics in long paragraphs of text. Use bullet points, tables, and clear formatting so a lender can scan the highlights in 30 seconds.",
       "Using industry jargon or vague language instead of clear, direct statements. Say 'projected 18% ROI' not 'strong anticipated returns on investment.'",
     ],
     proTips: [
       "Every development package exists to accomplish one thing: persuade a specific reader to take a specific action. Selecting your Package Purpose ensures the entire document is framed for your audience. A loan request reads differently than a grant application.",
       "Lead with the deal highlights: property address, total investment, ARV, expected ROI, and your funding ask. Put these front and center where they can't be missed.",
-      "Use bullet points and short paragraphs for easy scanning. Lenders review dozens of packages — make yours easy to evaluate quickly.",
+      "Use bullet points and short paragraphs for easy scanning. Lenders review dozens of packages; make yours easy to evaluate quickly.",
       "Include a clear, specific ask: how much money you need, what terms you're seeking, and what timeline you're working with. Vague asks get vague responses.",
       "Have someone outside of real estate read your executive summary for clarity. If they can understand the deal, a lender definitely will.",
     ],
@@ -109,7 +109,7 @@ const TEACHING_CONTENT: Partial<Record<Section, {
     proTips: [
       "Call the local planning department before you buy. They can tell you in 5 minutes if your intended use is allowed.",
       "Always get a Phase I environmental assessment for properties built before 1980.",
-      "Document everything — lenders want to see you've done your homework.",
+      "Document everything; lenders want to see you've done your homework.",
       "Check for any pending zoning changes or planned developments nearby that could affect your project.",
     ],
     memphisContext: [
@@ -151,7 +151,7 @@ const TEACHING_CONTENT: Partial<Record<Section, {
     ],
     proTips: [
       "Include brief bios for each team member highlighting relevant project experience.",
-      "Lenders look for a track record — if you don't have one personally, your team's collective experience counts.",
+      "Lenders look for a track record; if you don't have one personally, your team's collective experience counts.",
       "Get at least 3 contractor bids and document why you chose your GC.",
       "Always have an attorney review your operating agreement and construction contracts.",
       "If using a property manager, confirm their portfolio size and vacancy rates on similar properties.",
@@ -166,7 +166,7 @@ const TEACHING_CONTENT: Partial<Record<Section, {
   "risk-assessment": {
     whyMatters: "Risk assessment shows lenders you have thought through what could go wrong and have a plan. Every project has risks. Lenders do not expect zero risk. They expect you to identify risks, quantify them, and show mitigation strategies. A missing risk section is a red flag.",
     commonMistakes: [
-      "Ignoring risks and hoping for the best. Every project has risks — pretending otherwise destroys credibility.",
+      "Ignoring risks and hoping for the best. Every project has risks; pretending otherwise destroys credibility.",
       "Not having adequate insurance before starting construction. This can halt your project entirely.",
       "Underestimating timeline risks. Delays cost money in holding costs every single month.",
       "Not including contingency in the budget for identified risks.",
@@ -176,14 +176,14 @@ const TEACHING_CONTENT: Partial<Record<Section, {
       "Pre-populate your risk register with the most common risks for your project type and adjust from there.",
       "Show your lender you have insurance lined up before they ask. It demonstrates professionalism.",
       "If you have never done a project before, acknowledge it as a risk and show how your team compensates.",
-      "Update your risk register throughout the project — it's a living document, not a one-time exercise.",
+      "Update your risk register throughout the project; it's a living document, not a one-time exercise.",
     ],
     memphisContext: [
-      "Property crime during construction is a real risk in Memphis — secure the site and get builder's risk insurance.",
+      "Property crime during construction is a real risk in Memphis; secure the site and get builder's risk insurance.",
       "Termite damage is common in older Memphis structures. Budget for inspection and treatment.",
       "Lead paint and asbestos in pre-1980 buildings require certified remediation, which adds cost and time.",
       "Check Memphis/Shelby County building codes which may differ from state standards.",
-      "Flash flooding in certain areas — verify FEMA flood zone status before closing.",
+      "Flash flooding in certain areas; verify FEMA flood zone status before closing.",
     ],
   },
   "resilience-factors": {
@@ -198,7 +198,7 @@ const TEACHING_CONTENT: Partial<Record<Section, {
     proTips: [
       "Aim for at least 60% of the resilience factors checked. If you're below 50%, revisit your project structure.",
       "Each checked factor is a talking point in your lender meeting. Know why each one matters.",
-      "Lenders love to see multiple exit strategies and conservative numbers — it shows maturity.",
+      "Lenders love to see multiple exit strategies and conservative numbers; it shows maturity.",
       "The resilience score is a quick self-assessment. Use it to identify weak areas before a lender does.",
     ],
     memphisContext: [
@@ -222,15 +222,15 @@ const TEACHING_CONTENT: Partial<Record<Section, {
       "Add 20% buffer to every estimated duration. It's better to finish early than to miss deadlines.",
       "Build the schedule backwards from your target completion date to identify the latest possible start.",
       "Coordinate with your GC on realistic timelines before committing to lender deadlines.",
-      "Include seasonal considerations — avoid starting exterior work in December.",
+      "Include seasonal considerations; avoid starting exterior work in December.",
       "Track progress weekly against the schedule and update statuses regularly.",
     ],
     memphisContext: [
       "Memphis permitting typically takes 4-8 weeks for residential projects. Plan accordingly.",
       "Schedule around Memphis weather: summer heat slows exterior work, and spring storms cause delays.",
-      "Memphis Light Gas and Water (MLGW) hookups can take 2-4 weeks — schedule early.",
+      "Memphis Light Gas and Water (MLGW) hookups can take 2-4 weeks; schedule early.",
       "Shelby County inspections are usually available within 48 hours of request.",
-      "Factor in Memphis holiday schedules — city offices close for several local observances.",
+      "Factor in Memphis holiday schedules; city offices close for several local observances.",
     ],
   },
 };

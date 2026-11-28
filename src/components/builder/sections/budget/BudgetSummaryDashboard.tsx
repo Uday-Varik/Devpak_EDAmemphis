@@ -9,12 +9,12 @@ import type { BudgetData, ScopeData } from "@/types/sectionData";
 
 interface BudgetSummaryDashboardProps {
   data: BudgetData;
-  /** Project Scope data — needed for per-SF construction mode and land equity rules. */
+  /** Project Scope data; needed for per-SF construction mode and land equity rules. */
   scope?: ScopeData;
 }
 
 /**
- * Budget panel figures. Pure mapping of the shared engine's output — no local
+ * Budget panel figures. Pure mapping of the shared engine's output; no local
  * arithmetic, so this panel always matches Feasibility, Executive Summary, risks and export.
  */
 export const computeBudgetDashboard = (data: Record<string, unknown>, scope?: ScopeData) => {

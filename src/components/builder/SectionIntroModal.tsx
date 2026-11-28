@@ -17,7 +17,7 @@ import { useProjectType } from "@/hooks/useProjectType";
 const SECTION_INTROS: Record<Section, { title: string; body: string }> = {
   "project-scope": {
     title: "Project Scope",
-    body: "Lenders evaluate your project scope to understand what you are building and whether it is realistic for the market. Take your time here — a clear scope makes every other section easier.",
+    body: "Lenders evaluate your project scope to understand what you are building and whether it is realistic for the market. Take your time here; a clear scope makes every other section easier.",
   },
   "vision-market": {
     title: "Vision & Market Case",
@@ -29,7 +29,7 @@ const SECTION_INTROS: Record<Section, { title: string; body: string }> = {
   },
   "project-schedule": {
     title: "Project Schedule",
-    body: "A realistic timeline shows lenders you have thought through the construction process. Include buffer time for permits and inspections — Memphis permitting can take longer than expected.",
+    body: "A realistic timeline shows lenders you have thought through the construction process. Include buffer time for permits and inspections. Memphis permitting can take longer than expected.",
   },
   "budget-capital": {
     title: "Budget & Sources/Uses",
@@ -134,7 +134,7 @@ export const SectionIntroModal = ({ activeSection, isEmpty }: SectionIntroModalP
     if (normalized === "new-construction") {
       intro = { ...baseIntro, body: baseIntro.body + " For new construction in Shelby County, plan on 6-9 months from groundbreaking to certificate of occupancy." };
     } else if (normalized === "renovation-rehab") {
-      intro = { ...baseIntro, body: baseIntro.body + " A renovation in Memphis typically runs 3-6 months end to end. Gut-level scopes often surface hidden conditions (knob-and-tube wiring, rotted framing, lead paint) — budget extra time for demo discoveries." };
+      intro = { ...baseIntro, body: baseIntro.body + " A renovation in Memphis typically runs 3-6 months end to end. Gut-level scopes often surface hidden conditions (knob-and-tube wiring, rotted framing, lead paint); budget extra time for demo discoveries." };
     } else if (normalized === "acquisition-rehab") {
       intro = { ...baseIntro, body: baseIntro.body + " For acquisition + rehab, 3-6 months is typical for light to moderate scope." };
     }

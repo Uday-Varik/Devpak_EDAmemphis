@@ -32,7 +32,7 @@ export const DeveloperProfileSection = ({
           <Image src={dp.headshot_url} style={{ width: 70, height: 70, borderRadius: 35, objectFit: "cover" }} />
         )}
         <View style={{ flex: 1 }}>
-          <Text style={[styles.value, { fontSize: 14 }]}>{developerName || "—"}</Text>
+          <Text style={[styles.value, { fontSize: 14 }]}>{developerName || "-"}</Text>
           {developerTitle ? <Text style={[styles.label, { marginTop: 2 }]}>{developerTitle}</Text> : null}
           {companyName ? <Text style={[styles.tableCell, { color: colors.blue, marginTop: 2 }]}>{companyName}</Text> : null}
           {(developerPhone || developerEmail) ? (
@@ -67,9 +67,9 @@ export const DeveloperProfileSection = ({
               </View>
               {licenses.map((l, i) => (
                 <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                  <Text style={[styles.tableCellBold, { flex: 2 }]}>{l.type || "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 1 }]}>{l.number || "—"}</Text>
-                  <Text style={[styles.tableCell, { flex: 0.5, textAlign: "right" }]}>{l.state || "—"}</Text>
+                  <Text style={[styles.tableCellBold, { flex: 2 }]}>{l.type || "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 1 }]}>{l.number || "-"}</Text>
+                  <Text style={[styles.tableCell, { flex: 0.5, textAlign: "right" }]}>{l.state || "-"}</Text>
                 </View>
               ))}
             </View>
@@ -97,11 +97,11 @@ export const DeveloperProfileSection = ({
             </View>
             {portfolio.map((p, i) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCellBold, { flex: 2 }]}>{p.address || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 0.6 }]}>{p.year || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{p.type || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{p.disposition || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{p.role || "—"}</Text>
+                <Text style={[styles.tableCellBold, { flex: 2 }]}>{p.address || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 0.6 }]}>{p.year || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{p.type || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{p.disposition || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{p.role || "-"}</Text>
               </View>
             ))}
           </View>

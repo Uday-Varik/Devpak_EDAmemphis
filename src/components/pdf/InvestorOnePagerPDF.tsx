@@ -38,7 +38,7 @@ const MetricRow = ({ label, value }: { label: string; value: string }) => (
 export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
   const milestones = data.schedule.milestones || [];
   const totalWeeks = milestones.reduce((sum: number, m: ScheduleMilestone) => sum + (m.duration || 0), 0);
-  const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" }); } catch { return d || "—"; } };
+  const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" }); } catch { return d || "-"; } };
   const neighborhood = (data.visionMarket.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "");
   const risks = data.riskAssessment.risks || [];
   const mitigatedRisks = risks.filter((r: RiskEntry) => r.status === "Mitigated" || r.status === "Resolved").length;
@@ -74,7 +74,7 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
         <View style={s.headerBar}>
           <Text style={s.projectTitle}>{data.projectName}</Text>
           <Text style={s.headerSub}>
-            {data.address}{neighborhood ? ` | ${neighborhood}` : ""} | Prepared by {data.preparedBy}{data.companyName ? ` — ${data.companyName}` : ""} | {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            {data.address}{neighborhood ? ` | ${neighborhood}` : ""} | Prepared by {data.preparedBy}{data.companyName ? `; ${data.companyName}` : ""} | {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
           </Text>
         </View>
 
@@ -84,8 +84,8 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
           <View style={s.col}>
             <Text style={s.colTitle}>THE DEAL</Text>
             <MetricRow label="Project Type" value={data.scope.projectType || "Development"} />
-            <MetricRow label="Property Type" value={`${data.scope.propertyType || "—"} | ${data.scope.unitCount || 1} unit(s)`} />
-            <MetricRow label="Square Footage" value={data.sqftPlanned > 0 ? `${data.sqftPlanned.toLocaleString()} SF` : "—"} />
+            <MetricRow label="Property Type" value={`${data.scope.propertyType || "-"} | ${data.scope.unitCount || 1} unit(s)`} />
+            <MetricRow label="Square Footage" value={data.sqftPlanned > 0 ? `${data.sqftPlanned.toLocaleString()} SF` : "-"} />
             <MetricRow label="Total Investment" value={fmt(data.tdc)} />
             <MetricRow label="After Repair Value" value={fmt(data.arv)} />
             <MetricRow label="Net Profit" value={fmt(data.netProfit)} />
@@ -109,7 +109,7 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
             </View>
             <MetricRow label="Funding Status" value={data.fundingGap > 0 ? `Gap: ${fmt(data.fundingGap)}` : "Fully Funded"} />
             <MetricRow label="Profit Margin" value={fmtPct(data.profitMargin)} />
-            <MetricRow label="All-in Basis" value={data.arv > 0 ? fmtPct(data.allInBasis) : "—"} />
+            <MetricRow label="All-in Basis" value={data.arv > 0 ? fmtPct(data.allInBasis) : "-"} />
             <View style={{ marginTop: 4, borderTopWidth: 0.5, borderTopColor: colors.border, paddingTop: 4 }}>
               <Text style={[s.label, { marginBottom: 2 }]}>Sensitivity</Text>
               <MetricRow label="Best Case" value={`${fmtPct(bestRoi)} ROI`} />
@@ -122,11 +122,11 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
           {/* Column 3: The Market */}
           <View style={s.col}>
             <Text style={s.colTitle}>THE MARKET</Text>
-            <MetricRow label="Neighborhood" value={neighborhood || "—"} />
-            <MetricRow label="Market Trend" value={data.visionMarket.marketTrend || "—"} />
-            <MetricRow label="Median Home Price" value={data.visionMarket.medianHomePrice ? fmt(data.visionMarket.medianHomePrice) : "—"} />
-            <MetricRow label="Average Rent" value={data.visionMarket.averageRent ? fmt(data.visionMarket.averageRent) : "—"} />
-            <MetricRow label="Vacancy Rate" value={data.visionMarket.vacancyRate ? `${data.visionMarket.vacancyRate}%` : "—"} />
+            <MetricRow label="Neighborhood" value={neighborhood || "-"} />
+            <MetricRow label="Market Trend" value={data.visionMarket.marketTrend || "-"} />
+            <MetricRow label="Median Home Price" value={data.visionMarket.medianHomePrice ? fmt(data.visionMarket.medianHomePrice) : "-"} />
+            <MetricRow label="Average Rent" value={data.visionMarket.averageRent ? fmt(data.visionMarket.averageRent) : "-"} />
+            <MetricRow label="Vacancy Rate" value={data.visionMarket.vacancyRate ? `${data.visionMarket.vacancyRate}%` : "-"} />
             {data.visionMarket.avgPricePerSqFt > 0 && (
               <MetricRow label="Comp Avg $/SF" value={fmt(Math.round(data.visionMarket.avgPricePerSqFt))} />
             )}
@@ -140,7 +140,7 @@ export const InvestorOnePagerPDF = ({ data }: { data: ProjectExportData }) => {
             <Text style={s.bottomText}>
               {totalWeeks > 0 ? `${totalWeeks} weeks (${Math.round(totalWeeks / 4.33)} months)` : "TBD"}
               {data.schedule.startDate ? ` | ${fmtDate(data.schedule.startDate)}` : ""}
-              {data.schedule.endDate ? ` — ${fmtDate(data.schedule.endDate)}` : ""}
+              {data.schedule.endDate ? `; ${fmtDate(data.schedule.endDate)}` : ""}
             </Text>
           </View>
           <View style={s.bottomBox}>

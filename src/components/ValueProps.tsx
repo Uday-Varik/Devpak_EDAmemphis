@@ -5,7 +5,7 @@ const ValueProps = () => {
     {
       icon: FileText,
       title: "Guided Process",
-      description: "Step-by-step package building with expert guidance. No guesswork—just follow the prompts and build your complete development package.",
+      description: "Step-by-step package building with expert guidance. No guesswork; just follow the prompts and build your complete development package.",
       gridClass: "md:col-span-2", // 65% width
     },
     {

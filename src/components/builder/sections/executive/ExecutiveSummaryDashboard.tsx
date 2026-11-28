@@ -143,7 +143,7 @@ export const ExecutiveSummaryDashboard = ({
     if (showDash) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground border border-border">
-          {label} —
+          {label}
         </span>
       );
     }
@@ -174,48 +174,48 @@ export const ExecutiveSummaryDashboard = ({
       <div className="space-y-3">
         <p className="text-sm font-medium text-foreground">Key Numbers</p>
         <div className="space-y-2">
-          <MetricRow label="Total Investment" value={calcs.tdc > 0 ? formatCompact(calcs.tdc) : "—"} />
+          <MetricRow label="Total Investment" value={calcs.tdc > 0 ? formatCompact(calcs.tdc) : "-"} />
           {calcs.exitStrategy === "rent" ? (
             <>
               <MetricRow
                 label="Annual NOI"
-                value={calcs.hasRentalData ? formatCompact(calcs.noi || 0) : "—"}
+                value={calcs.hasRentalData ? formatCompact(calcs.noi || 0) : "-"}
                 highlight={calcs.hasRentalData ? ((calcs.noi || 0) > 0 ? "green" : "red") : undefined}
               />
               <MetricRow
                 label="Cap Rate"
-                value={calcs.hasRentalData ? formatPercent(calcs.capRate || 0) : "—"}
+                value={calcs.hasRentalData ? formatPercent(calcs.capRate || 0) : "-"}
                 highlight={calcs.hasRentalData ? ((calcs.capRate || 0) >= 7 ? "green" : (calcs.capRate || 0) >= 5 ? undefined : "red") : undefined}
               />
               <MetricRow
                 label="DSCR"
-                value={calcs.hasRentalData && (calcs.dscr || 0) > 0 ? (calcs.dscr || 0).toFixed(2) : "—"}
+                value={calcs.hasRentalData && (calcs.dscr || 0) > 0 ? (calcs.dscr || 0).toFixed(2) : "-"}
                 highlight={calcs.hasRentalData ? ((calcs.dscr || 0) >= 1.25 ? "green" : (calcs.dscr || 0) >= 1.0 ? undefined : "red") : undefined}
               />
               <MetricRow
                 label="Cash-on-Cash"
-                value={calcs.hasRentalData ? (calcs.cashOnCash == null ? CASH_NOT_INVESTED : formatPercent(calcs.cashOnCash)) : "—"}
+                value={calcs.hasRentalData ? (calcs.cashOnCash == null ? CASH_NOT_INVESTED : formatPercent(calcs.cashOnCash)) : "-"}
                 highlight={calcs.hasRentalData && calcs.cashOnCash != null ? (calcs.cashOnCash >= 8 ? "green" : calcs.cashOnCash >= 5 ? undefined : "red") : undefined}
               />
               {calcs.hasRentalData && calcs.cashOnCash == null && <div className="px-1 pb-1"><CashNotInvestedNote /></div>}
             </>
           ) : (
             <>
-              <MetricRow label="ARV" value={calcs.hasARV ? formatCompact(calcs.arv) : "—"} />
+              <MetricRow label="ARV" value={calcs.hasARV ? formatCompact(calcs.arv) : "-"} />
               <MetricRow
                 label="Net Profit"
-                value={calcs.hasARV ? formatCompact(calcs.netProfit) : "—"}
+                value={calcs.hasARV ? formatCompact(calcs.netProfit) : "-"}
                 highlight={calcs.hasARV ? (calcs.netProfit > 0 ? "green" : "red") : undefined}
               />
               <MetricRow
                 label="ROI"
-                value={calcs.hasARV ? (calcs.roi === null ? CASH_NOT_INVESTED : formatPercent(calcs.roi)) : "—"}
+                value={calcs.hasARV ? (calcs.roi === null ? CASH_NOT_INVESTED : formatPercent(calcs.roi)) : "-"}
                 highlight={calcs.hasARV && calcs.roi !== null ? (calcs.roi >= 15 ? "green" : calcs.roi >= 10 ? undefined : "red") : undefined}
               />
               {calcs.hasARV && calcs.roi === null && <div className="px-1 pb-1"><CashNotInvestedNote /></div>}
               <MetricRow
                 label="Profit Margin"
-                value={calcs.hasARV ? formatPercent(calcs.profitMargin) : "—"}
+                value={calcs.hasARV ? formatPercent(calcs.profitMargin) : "-"}
               />
             </>
           )}
@@ -235,7 +235,7 @@ export const ExecutiveSummaryDashboard = ({
                 calcs.resiliencePercent >= 70 ? "text-emerald-600" :
                 calcs.resiliencePercent >= 40 ? "text-amber-600" : "text-destructive"
               )}>
-                {calcs.resiliencePercent}% — {calcs.resilienceLabel}
+                {calcs.resiliencePercent}%; {calcs.resilienceLabel}
               </span>
             </div>
             <div className="h-2 rounded-full overflow-hidden bg-muted">

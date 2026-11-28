@@ -59,7 +59,7 @@ export async function fetchCensusData(zipCode: string): Promise<CensusFetchResul
     }
 
     // Some upstream failures (e.g. missing API key) redirect to an HTML page
-    // that parses as text — guard against that before assuming JSON.
+    // that parses as text; guard against that before assuming JSON.
     const contentType = res.headers.get("content-type") || "";
     const raw = await res.text();
     if (!contentType.includes("json") || !raw.trim().startsWith("[")) {

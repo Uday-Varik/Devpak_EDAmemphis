@@ -113,8 +113,8 @@ function extractZip(address: string): string {
  * Search for nearby comparable sales.
  *
  * Priority:
- *   1. Geographic proximity (within_distance) when lat/lng provided — sorted by distance
- *   2. Strict ZIP-code-only fallback (exact suffix match) — sorted by record_date DESC
+ *   1. Geographic proximity (within_distance) when lat/lng provided; sorted by distance
+ *   2. Strict ZIP-code-only fallback (exact suffix match); sorted by record_date DESC
  *
  * Always returns up to MAX_RESULTS (10) records.
  */

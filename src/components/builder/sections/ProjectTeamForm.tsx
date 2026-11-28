@@ -171,7 +171,7 @@ export const ProjectTeamForm = ({ data, onSave, saving }: ProjectTeamFormProps) 
       }
       const dp = devRes.data;
       const lp = legacyRes.data;
-      // Merge — developer_profiles wins, profiles fills gaps
+      // Merge; developer_profiles wins, profiles fills gaps
       const merged: ProfileData = {
         full_name: dp.full_name || lp.full_name || null,
         title: dp.professional_title || lp.title || null,

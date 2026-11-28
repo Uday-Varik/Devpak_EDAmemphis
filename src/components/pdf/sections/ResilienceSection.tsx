@@ -23,7 +23,7 @@ const CheckItem = ({ checked, label }: { checked: boolean; label: string }) => (
       color: checked ? colors.green : colors.light,
       fontFamily: "Helvetica-Bold",
     }}>
-      {checked ? "✓" : "—"}
+      {checked ? "✓" : "-"}
     </Text>
     <Text style={{ fontSize: 8, color: checked ? colors.body : colors.light }}>{label}</Text>
   </View>

@@ -648,7 +648,7 @@ export const SiteLocationForm = ({ data, onSave, saving }: SiteLocationFormProps
 
                 {/* Quick-select panel */}
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground">Quick Add — Common Memphis Programs</p>
+                  <p className="text-xs font-medium text-muted-foreground">Quick Add. Common Memphis Programs</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {QUICK_SELECT_PROGRAMS.map((preset) => (
                       <button

@@ -9,11 +9,11 @@ interface PageWrapperProps {
 export const PageWrapper = ({ projectName, children }: PageWrapperProps) => (
   <Page size="LETTER" style={styles.page}>
     <View style={styles.header}>
-      <Text style={styles.headerText}>{projectName} — Development Package</Text>
+      <Text style={styles.headerText}>{projectName}: Development Package</Text>
     </View>
     {children}
     <View style={styles.footer} fixed>
-      <Text style={styles.footerLeft}>Confidential — Prepared for Lender Review</Text>
+      <Text style={styles.footerLeft}>Confidential: Prepared for Lender Review</Text>
       <Text style={styles.footerCenter}>{projectName}</Text>
       <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />
     </View>

@@ -42,11 +42,11 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
           <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
         </View>
         {[
-          { label: "Lot Size", value: siteLocation.lotSize ? `${siteLocation.lotSize.toLocaleString()} ${siteLocation.lotSizeUnit || "sqft"}` : "—" },
-          { label: "Lot Dimensions", value: siteLocation.lotDimensions || "—" },
-          { label: "Topography", value: siteLocation.topography || "—" },
-          { label: "Current Condition", value: siteLocation.currentCondition || "—" },
-          { label: "Flood Zone", value: siteLocation.floodZone || "—" },
+          { label: "Lot Size", value: siteLocation.lotSize ? `${siteLocation.lotSize.toLocaleString()} ${siteLocation.lotSizeUnit || "sqft"}` : "-" },
+          { label: "Lot Dimensions", value: siteLocation.lotDimensions || "-" },
+          { label: "Topography", value: siteLocation.topography || "-" },
+          { label: "Current Condition", value: siteLocation.currentCondition || "-" },
+          { label: "Flood Zone", value: siteLocation.floodZone || "-" },
         ].map((row, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -83,14 +83,14 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
           <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
         </View>
         {[
-          { label: "Current Zoning", value: siteLocation.currentZoning || siteLocation.zoningClassification || "—" },
-          { label: "Zoning Description", value: siteLocation.zoningDescription || "—" },
-          { label: "Permitted Use", value: siteLocation.permittedUse || "—" },
-          { label: "Max Density", value: siteLocation.maxDensity || "—" },
-          { label: "Setbacks", value: siteLocation.setbackRequirements || siteLocation.setbacks || "—" },
-          { label: "Height Limit", value: siteLocation.heightLimit ? `${siteLocation.heightLimit} ft` : "—" },
-          { label: "Parking Required", value: siteLocation.parkingRequirements || siteLocation.parkingRequired || "—" },
-          { label: "Entitlement Status", value: siteLocation.entitlementStatus || "—" },
+          { label: "Current Zoning", value: siteLocation.currentZoning || siteLocation.zoningClassification || "-" },
+          { label: "Zoning Description", value: siteLocation.zoningDescription || "-" },
+          { label: "Permitted Use", value: siteLocation.permittedUse || "-" },
+          { label: "Max Density", value: siteLocation.maxDensity || "-" },
+          { label: "Setbacks", value: siteLocation.setbackRequirements || siteLocation.setbacks || "-" },
+          { label: "Height Limit", value: siteLocation.heightLimit ? `${siteLocation.heightLimit} ft` : "-" },
+          { label: "Parking Required", value: siteLocation.parkingRequirements || siteLocation.parkingRequired || "-" },
+          { label: "Entitlement Status", value: siteLocation.entitlementStatus || "-" },
         ].map((row, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -135,10 +135,10 @@ export const SiteLocationSection = ({ siteLocation }: SiteLocationSectionProps) 
             </View>
             {subsidies.map((s: SubsidyProgram, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{s.estimatedValue ? formatCurrency(s.estimatedValue) : "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 0.8, textAlign: "right" }]}>{s.status || "—"}</Text>
+                <Text style={[styles.tableCell, { flex: 2 }]}>{s.name || s.programName || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{s.type || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{s.estimatedValue ? formatCurrency(s.estimatedValue) : "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 0.8, textAlign: "right" }]}>{s.status || "-"}</Text>
               </View>
             ))}
             <View style={styles.tableTotalRow}>

@@ -17,7 +17,7 @@ const StatusText = ({ status }: { status: string }) => {
     : status === "Under Contract" || status === "Identified" ? colors.gold
     : status === "Not Yet Identified" ? colors.red
     : colors.muted;
-  return <Text style={{ fontSize: 9, color, fontFamily: "Helvetica-Bold" }}>{status || "—"}</Text>;
+  return <Text style={{ fontSize: 9, color, fontFamily: "Helvetica-Bold" }}>{status || "-"}</Text>;
 };
 
 const LicenseBadge = ({ licenseNumber, verified }: { licenseNumber?: string; verified?: boolean }) => {
@@ -49,7 +49,7 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
       {/* Developer */}
       <Text style={styles.subTitle}>Developer / Sponsor</Text>
       <View style={[styles.highlightBox, { padding: 12 }]}>
-        <Text style={[styles.value, { fontSize: 13, marginBottom: 2 }]}>{developerName || "—"}</Text>
+        <Text style={[styles.value, { fontSize: 13, marginBottom: 2 }]}>{developerName || "-"}</Text>
         {!!developerTitle && <Text style={[styles.label, { marginBottom: 1 }]}>{developerTitle}</Text>}
         {!!companyName && <Text style={[styles.tableCell, { color: colors.blue, marginBottom: 2 }]}>{companyName}</Text>}
         {(developerPhone || developerEmail) && (
@@ -86,10 +86,10 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
           <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
         </View>
         {[
-          { label: "Phone", value: gc.phone || "—" },
-          { label: "Email", value: gc.email || "—" },
-          { label: "Years in Business", value: gc.yearsInBusiness ? `${gc.yearsInBusiness} years` : "—" },
-          { label: "Bid Status", value: gc.bidStatus || "—" },
+          { label: "Phone", value: gc.phone || "-" },
+          { label: "Email", value: gc.email || "-" },
+          { label: "Years in Business", value: gc.yearsInBusiness ? `${gc.yearsInBusiness} years` : "-" },
+          { label: "Bid Status", value: gc.bidStatus || "-" },
         ].map((row, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -118,8 +118,8 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
           <Text style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>Value</Text>
         </View>
         {[
-          { label: "Phone", value: architect.phone || "—" },
-          { label: "Email", value: architect.email || "—" },
+          { label: "Phone", value: architect.phone || "-" },
+          { label: "Email", value: architect.email || "-" },
         ].map((row, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.label}</Text>
@@ -145,10 +145,10 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
             </View>
             {members.map((m: TeamMemberData, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCellBold, { flex: 1.5 }]}>{m.name || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{m.company || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{m.role || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{m.phone || m.email || "—"}</Text>
+                <Text style={[styles.tableCellBold, { flex: 1.5 }]}>{m.name || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{m.company || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{m.role || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{m.phone || m.email || "-"}</Text>
               </View>
             ))}
           </View>
@@ -160,11 +160,11 @@ export const TeamSection = ({ team, developerName, developerTitle, companyName, 
       <View style={{ marginBottom: 8 }}>
         <View style={styles.row}>
           <Text style={styles.label}>Construction Management</Text>
-          <Text style={styles.value}>{mgmt.constructionManagement || team.constructionManagement || "—"}</Text>
+          <Text style={styles.value}>{mgmt.constructionManagement || team.constructionManagement || "-"}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Property Management</Text>
-          <Text style={styles.value}>{mgmt.propertyManagement || team.propertyManagement || "—"}</Text>
+          <Text style={styles.value}>{mgmt.propertyManagement || team.propertyManagement || "-"}</Text>
         </View>
         {(mgmt.propertyManagement === "Property Management Company" || team.propertyManagement === "Property Management Company") && (
           <>

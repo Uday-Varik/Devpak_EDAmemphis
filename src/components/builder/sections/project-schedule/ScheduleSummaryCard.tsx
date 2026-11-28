@@ -45,19 +45,19 @@ export const ScheduleSummaryCard = ({
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Total Duration</span>
           <span className="font-semibold text-foreground">
-            {totalDurationWeeks > 0 ? `${totalDurationWeeks} weeks (${totalMonths} mo)` : "—"}
+            {totalDurationWeeks > 0 ? `${totalDurationWeeks} weeks (${totalMonths} mo)` : "-"}
           </span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Start Date</span>
           <span className="font-medium text-foreground">
-            {startDate ? format(startDate, "MMM d, yyyy") : "—"}
+            {startDate ? format(startDate, "MMM d, yyyy") : "-"}
           </span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Target Completion</span>
           <span className="font-medium text-foreground">
-            {endDate ? format(endDate, "MMM d, yyyy") : "—"}
+            {endDate ? format(endDate, "MMM d, yyyy") : "-"}
           </span>
         </div>
       </div>

@@ -67,7 +67,7 @@ export const PackageReadinessChecklist = ({
   // Resolve developer name: team.developerName first, then profile fallback
   const resolvedDeveloperName = ((calcs.developerName || "").trim() || (developerProfileName || "").trim());
 
-  // Resilience — shared engine (same source as the snapshot & category breakdown)
+  // Resilience; shared engine (same source as the snapshot & category breakdown)
   const resilienceScores = computeResilience(resilience);
   const resiliencePercentComputed = resilienceScores.percent;
 

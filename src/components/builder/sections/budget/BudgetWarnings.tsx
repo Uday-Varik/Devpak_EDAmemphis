@@ -45,7 +45,7 @@ export const calculateWarnings = (data: {
     warnings.push({
       id: "low-contingency",
       message:
-        "Construction contingency below 10% — consider increasing for unexpected costs. Most lenders expect 15-20% for renovation projects.",
+        "Construction contingency below 10%; consider increasing for unexpected costs. Most lenders expect 15-20% for renovation projects.",
     });
   }
 
@@ -66,7 +66,7 @@ export const calculateWarnings = (data: {
     warnings.push({
       id: "no-reserves",
       message:
-        "No operating reserves budgeted — lenders typically require 6 months of operating expenses as reserves.",
+        "No operating reserves budgeted; lenders typically require 6 months of operating expenses as reserves.",
     });
   }
 

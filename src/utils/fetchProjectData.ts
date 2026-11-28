@@ -272,7 +272,7 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
   const storedOverview = String(execSummary.projectOverview || "").trim();
 
   // A stored narrative may only be rendered when its fingerprint still matches
-  // the live figures — otherwise it would contradict the numbers on the page.
+  // the live figures; otherwise it would contradict the numbers on the page.
   const liveOverviewFingerprint = buildOverviewFingerprint({
     address: resolvedAddress,
     projectType: scope.projectType || "",
@@ -304,7 +304,7 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     }) ||
     "";
 
-  // Go/No-Go rationale: same rule — regenerate at export when the stored text
+  // Go/No-Go rationale: same rule; regenerate at export when the stored text
   // no longer matches the live figures.
   const decisionData = feasibility.decision || {};
   const storedRationale = String(decisionData.rationale || "").trim();

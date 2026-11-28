@@ -60,7 +60,7 @@ const buildAsk = (
     case "internal-planning":
       return `This document captures the plan, budget, schedule, and risk profile for ${projectName}.`;
     default:
-      return `${projectName} — full development package for review.`;
+      return `${projectName}; full development package for review.`;
   }
 };
 
@@ -79,24 +79,24 @@ export const ExecutiveSummarySection = (props: ExecutiveSummarySectionProps) => 
   // Adaptive metrics based on exit strategy
   const metrics = isRental
     ? [
-        { label: "Project", value: projectName || "—" },
-        { label: "Address", value: address || "—" },
-        { label: "Total Investment", value: tdc > 0 ? formatCompact(tdc) : "—" },
-        { label: "NOI (Annual)", value: noi > 0 ? formatCompact(noi) : "—" },
-        { label: "DSCR", value: dscr > 0 ? dscr.toFixed(2) : "—", highlight: dscr >= 1.25 },
-        { label: "Cap Rate", value: capRate > 0 ? formatPercent(capRate) : "—" },
-        { label: "Exit Strategy", value: EXIT_LABELS[exitStrategy] || "—" },
+        { label: "Project", value: projectName || "-" },
+        { label: "Address", value: address || "-" },
+        { label: "Total Investment", value: tdc > 0 ? formatCompact(tdc) : "-" },
+        { label: "NOI (Annual)", value: noi > 0 ? formatCompact(noi) : "-" },
+        { label: "DSCR", value: dscr > 0 ? dscr.toFixed(2) : "-", highlight: dscr >= 1.25 },
+        { label: "Cap Rate", value: capRate > 0 ? formatPercent(capRate) : "-" },
+        { label: "Exit Strategy", value: EXIT_LABELS[exitStrategy] || "-" },
         { label: "Funding Gap", value: fundingGap > 0 ? formatCurrency(fundingGap) : "Fully Funded" },
       ]
     : [
-        { label: "Project", value: projectName || "—" },
-        { label: "Address", value: address || "—" },
-        { label: "Total Investment", value: tdc > 0 ? formatCompact(tdc) : "—" },
-        { label: "After Repair Value", value: hasARV ? formatCompact(arv) : "—" },
-        { label: "Net Profit", value: hasARV ? formatCompact(netProfit) : "—", highlight: hasARV && netProfit > 0 },
-        { label: "ROI", value: hasARV ? (roi === null ? CASH_NOT_INVESTED : formatPercent(roi)) : "—", highlight: hasARV && roi !== null && roi > 0 },
-        { label: "Profit Margin", value: hasARV ? formatPercent(profitMargin) : "—" },
-        { label: "Exit Strategy", value: EXIT_LABELS[exitStrategy] || "—" },
+        { label: "Project", value: projectName || "-" },
+        { label: "Address", value: address || "-" },
+        { label: "Total Investment", value: tdc > 0 ? formatCompact(tdc) : "-" },
+        { label: "After Repair Value", value: hasARV ? formatCompact(arv) : "-" },
+        { label: "Net Profit", value: hasARV ? formatCompact(netProfit) : "-", highlight: hasARV && netProfit > 0 },
+        { label: "ROI", value: hasARV ? (roi === null ? CASH_NOT_INVESTED : formatPercent(roi)) : "-", highlight: hasARV && roi !== null && roi > 0 },
+        { label: "Profit Margin", value: hasARV ? formatPercent(profitMargin) : "-" },
+        { label: "Exit Strategy", value: EXIT_LABELS[exitStrategy] || "-" },
       ];
 
   return (
@@ -115,7 +115,7 @@ export const ExecutiveSummarySection = (props: ExecutiveSummarySectionProps) => 
         ))}
       </View>
 
-      {/* The Ask — prominent */}
+      {/* The Ask; prominent */}
       <View style={{
         backgroundColor: "#FFF8E1",
         borderLeftWidth: 4,

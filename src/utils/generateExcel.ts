@@ -3,7 +3,7 @@ import { fetchProjectExportData } from "./fetchProjectData";
 import { computeProjectFinancials, computeRentalProjection, NO_ARV_LABEL, CASH_NOT_INVESTED, ruleCheckLabel, type RuleCheckStatus } from "./calculations";
 import type { ComparableSale, CustomCostItem, RiskEntry, ScheduleMilestone } from "@/types/sectionData";
 
-/** Rows for the Excel "Pro Forma" sheet — exported for tests. */
+/** Rows for the Excel "Pro Forma" sheet; exported for tests. */
 export const buildExcelRentalProjection = (data: { scope: unknown; budget: unknown; feasibility: unknown }) =>
   computeRentalProjection(computeProjectFinancials({ scope: data.scope, budget: data.budget, feasibility: data.feasibility }));
 
@@ -42,7 +42,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
   const cap = data.budget.capitalStack || {};
   const opReserves = data.budget.operatingReserves || 0;
 
-  // All totals come from the shared engine via fetchProjectExportData — no local arithmetic.
+  // All totals come from the shared engine via fetchProjectExportData; no local arithmetic.
   const t = data.budgetTotals!;
   const acqCont = t.acqContingency, acqTotal = t.acqTotal;
   const hardBase = t.hardBase, hardCont = t.hardContingency, hardTotal = t.hardTotal;
@@ -74,7 +74,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       setCell(ws, r, 0, { v: indent ? `   ${label}` : label, t: "s" });
       if (amount !== 0) {
         setCell(ws, r, 1, curr(amount));
-        setCell(ws, r, 2, tdc > 0 ? pctRaw(amount / tdc) : { v: "—", t: "s" });
+        setCell(ws, r, 2, tdc > 0 ? pctRaw(amount / tdc) : { v: "-", t: "s" });
       }
       r++;
     };
@@ -82,7 +82,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     const subtotalRow = (label: string, amount: number) => {
       setCell(ws, r, 0, bold(label));
       setCell(ws, r, 1, curr(amount));
-      setCell(ws, r, 2, tdc > 0 ? pctRaw(amount / tdc) : { v: "—", t: "s" });
+      setCell(ws, r, 2, tdc > 0 ? pctRaw(amount / tdc) : { v: "-", t: "s" });
       r++;
     };
 
@@ -159,7 +159,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       if (amount <= 0) return;
       setCell(ws, r, 0, { v: `   ${label}`, t: "s" });
       setCell(ws, r, 1, curr(amount));
-      setCell(ws, r, 2, totalSources > 0 ? pctRaw(amount / totalSources) : { v: "—", t: "s" });
+      setCell(ws, r, 2, totalSources > 0 ? pctRaw(amount / totalSources) : { v: "-", t: "s" });
       r++;
     };
 
@@ -290,7 +290,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
     let r = 0;
 
-    setCell(ws, r, 0, bold(`${data.projectName} — 3-Year Rental Pro Forma`)); r++;
+    setCell(ws, r, 0, bold(`${data.projectName}. 3-Year Rental Pro Forma`)); r++;
     setCell(ws, r, 0, { v: `${data.address}`, t: "s" }); r++;
     setCell(ws, r, 0, { v: `Units: ${rentalFin.units}  |  Prepared: ${today}  |  Years 2–3: rent +3%/yr, fixed costs and debt service flat`, t: "s" }); r++;
     r++;
@@ -334,7 +334,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       setCell(ws, row++, col, curr(y.reservesExpense));
       setCell(ws, row++, col, curr(y.otherExpense));
       setCell(ws, row++, col, curr(y.opex));
-      setCell(ws, row++, col, y.egi > 0 ? pctRaw(y.opexRatio / 100) : { v: "—", t: "s" });
+      setCell(ws, row++, col, y.egi > 0 ? pctRaw(y.opexRatio / 100) : { v: "-", t: "s" });
       row++; // blank
       setCell(ws, row++, col, curr(y.noi));
       row++; // blank
@@ -451,10 +451,10 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     const rows: unknown[][] = [headers];
     milestones.forEach((m: ScheduleMilestone) => {
       rows.push([
-        m.name || "—",
+        m.name || "-",
         m.duration || m.durationWeeks || 0,
-        m.startDate || "—",
-        m.endDate || "—",
+        m.startDate || "-",
+        m.endDate || "-",
         m.status || "Not Started",
         (m.progress || 0) / 100,
       ]);
@@ -484,14 +484,14 @@ export const generateExcel = async (projectId: string): Promise<void> => {
     setCell(ws, r, 0, bold("Neighborhood Demographics")); r++;
     const neighborhood = (vm.neighborhoodName || "").replace(/^Neighborhood:\s*/i, "");
     const demoItems: [string, unknown][] = [
-      ["Neighborhood", { v: neighborhood || "—", t: "s" }],
-      ["Population", vm.population ? num(Number(vm.population)) : { v: "—", t: "s" }],
-      ["Median Income", vm.medianIncome ? curr(Number(vm.medianIncome)) : { v: "—", t: "s" }],
-      ["Median Home Value", vm.medianHomePrice ? curr(vm.medianHomePrice) : { v: "—", t: "s" }],
-      ["Average Rent", vm.averageRent ? curr(vm.averageRent) : { v: "—", t: "s" }],
-      ["Vacancy Rate", vm.vacancyRate ? pct(vm.vacancyRate) : { v: "—", t: "s" }],
-      ["Ownership Rate", vm.ownershipRate ? pct(Number(vm.ownershipRate)) : { v: "—", t: "s" }],
-      ["Market Trend", { v: vm.marketTrend || "—", t: "s" }],
+      ["Neighborhood", { v: neighborhood || "-", t: "s" }],
+      ["Population", vm.population ? num(Number(vm.population)) : { v: "-", t: "s" }],
+      ["Median Income", vm.medianIncome ? curr(Number(vm.medianIncome)) : { v: "-", t: "s" }],
+      ["Median Home Value", vm.medianHomePrice ? curr(vm.medianHomePrice) : { v: "-", t: "s" }],
+      ["Average Rent", vm.averageRent ? curr(vm.averageRent) : { v: "-", t: "s" }],
+      ["Vacancy Rate", vm.vacancyRate ? pct(vm.vacancyRate) : { v: "-", t: "s" }],
+      ["Ownership Rate", vm.ownershipRate ? pct(Number(vm.ownershipRate)) : { v: "-", t: "s" }],
+      ["Market Trend", { v: vm.marketTrend || "-", t: "s" }],
     ];
     demoItems.forEach(([label, cell]) => {
       setCell(ws, r, 0, { v: label, t: "s" });
@@ -510,14 +510,14 @@ export const generateExcel = async (projectId: string): Promise<void> => {
       let totalPSF = 0;
       let psfCount = 0;
       comps.forEach((c: ComparableSale) => {
-        setCell(ws, r, 0, { v: c.address || "—", t: "s" });
-        setCell(ws, r, 1, c.salePrice ? curr(c.salePrice) : { v: "—", t: "s" });
-        setCell(ws, r, 2, c.sqft ? num(c.sqft) : { v: "—", t: "s" });
+        setCell(ws, r, 0, { v: c.address || "-", t: "s" });
+        setCell(ws, r, 1, c.salePrice ? curr(c.salePrice) : { v: "-", t: "s" });
+        setCell(ws, r, 2, c.sqft ? num(c.sqft) : { v: "-", t: "s" });
         const psf = c.sqft && c.salePrice ? Math.round(c.salePrice / c.sqft) : 0;
-        setCell(ws, r, 3, psf > 0 ? curr(psf) : { v: "—", t: "s" });
-        setCell(ws, r, 4, c.bedrooms ? num(c.bedrooms) : { v: "—", t: "s" });
-        setCell(ws, r, 5, c.bathrooms ? num(c.bathrooms) : { v: "—", t: "s" });
-        setCell(ws, r, 6, { v: c.condition || "—", t: "s" });
+        setCell(ws, r, 3, psf > 0 ? curr(psf) : { v: "-", t: "s" });
+        setCell(ws, r, 4, c.bedrooms ? num(c.bedrooms) : { v: "-", t: "s" });
+        setCell(ws, r, 5, c.bathrooms ? num(c.bathrooms) : { v: "-", t: "s" });
+        setCell(ws, r, 6, { v: c.condition || "-", t: "s" });
         if (psf > 0) { totalPSF += psf; psfCount++; }
         r++;
       });
@@ -548,12 +548,12 @@ export const generateExcel = async (projectId: string): Promise<void> => {
 
     const risks = data.riskAssessment.risks || [];
     risks.forEach((risk: RiskEntry) => {
-      setCell(ws, r, 0, { v: risk.category || "—", t: "s" });
-      setCell(ws, r, 1, { v: risk.description || "—", t: "s" });
-      setCell(ws, r, 2, { v: risk.likelihood || "—", t: "s" });
-      setCell(ws, r, 3, { v: risk.impact || "—", t: "s" });
-      setCell(ws, r, 4, { v: risk.mitigation || "—", t: "s" });
-      setCell(ws, r, 5, { v: risk.status || "—", t: "s" });
+      setCell(ws, r, 0, { v: risk.category || "-", t: "s" });
+      setCell(ws, r, 1, { v: risk.description || "-", t: "s" });
+      setCell(ws, r, 2, { v: risk.likelihood || "-", t: "s" });
+      setCell(ws, r, 3, { v: risk.impact || "-", t: "s" });
+      setCell(ws, r, 4, { v: risk.mitigation || "-", t: "s" });
+      setCell(ws, r, 5, { v: risk.status || "-", t: "s" });
       r++;
     });
     if (risks.length === 0) {
@@ -596,7 +596,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
         if (checked) totalChecked++;
         totalItems++;
         setCell(ws, r, 0, { v: `   ${label}`, t: "s" });
-        setCell(ws, r, 1, { v: checked ? "✓ Yes" : "— No", t: "s" });
+        setCell(ws, r, 1, { v: checked ? "✓ Yes" : ". No", t: "s" });
         r++;
       });
       r++;

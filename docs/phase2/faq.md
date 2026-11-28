@@ -97,7 +97,7 @@ Uses are larger than sources. Add a funding source (cash, loan, grant, subsidy) 
 
 ## Square footage fields
 
-- **Square Footage — Existing** is the existing building's square footage (for renovations or additions).
+- **Square Footage: Existing** is the existing building's square footage (for renovations or additions).
 - **Total Square Footage (all units)** is the total for the whole project, across all units. It is not the size of one unit.
 
 Example: a 4-unit project with 1,200 SF per unit has a total of **4,800**.

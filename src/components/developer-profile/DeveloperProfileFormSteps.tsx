@@ -64,7 +64,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
     }
   };
 
-  // STEP 1 — Basic Info
+  // STEP 1: Basic Info
   if (step === 1) {
     return (
       <div className="space-y-5">
@@ -96,7 +96,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
     );
   }
 
-  // STEP 2 — Experience
+  // STEP 2: Experience
   if (step === 2) {
     const addLicense = () => update("licenses", [...profile.licenses, { type: "", number: "", state: "" }]);
     const updateLicense = (i: number, field: keyof DeveloperLicense, val: string) => {
@@ -210,7 +210,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
     );
   }
 
-  // STEP 3 — Headshot
+  // STEP 3: Headshot
   if (step === 3) {
     return (
       <div className="space-y-4">
@@ -246,7 +246,7 @@ export const DeveloperProfileFormSteps = ({ step, profile, onChange }: Props) =>
     );
   }
 
-  // STEP 4 — Portfolio
+  // STEP 4: Portfolio
   const addProject = () => {
     if (profile.portfolio.length >= 3) return;
     update("portfolio", [...profile.portfolio, { address: "", year: "", type: "", disposition: "", role: "" }]);

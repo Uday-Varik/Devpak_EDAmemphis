@@ -43,7 +43,7 @@ export const CapitalStackSection = ({
   if (cap.grant1Name && cap.grant1Amount > 0) sources.push({ label: cap.grant1Name, value: cap.grant1Amount, terms: "Grant program", status: cap.grant1Status || "Applied" });
   if (cap.grant2Name && cap.grant2Amount > 0) sources.push({ label: cap.grant2Name, value: cap.grant2Amount, terms: "Grant program", status: cap.grant2Status || "Applied" });
   if (cap.grant3Name && cap.grant3Amount > 0) sources.push({ label: cap.grant3Name, value: cap.grant3Amount, terms: "Grant program", status: cap.grant3Status || "Applied" });
-  if ((cap.otherSources || 0) > 0) sources.push({ label: "Other Sources", value: cap.otherSources, terms: cap.otherSourcesNotes || "—", status: "—" });
+  if ((cap.otherSources || 0) > 0) sources.push({ label: "Other Sources", value: cap.otherSources, terms: cap.otherSourcesNotes || "-", status: "-" });
 
   return (
     <View>
@@ -63,7 +63,7 @@ export const CapitalStackSection = ({
               {s.label}{s.isAsk ? askLabel : ""}
             </Text>
             <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>{formatCurrency(s.value)}</Text>
-            <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{tdc > 0 ? `${((s.value / tdc) * 100).toFixed(0)}%` : "—"}</Text>
+            <Text style={[styles.tableCell, { flex: 0.6, textAlign: "right" }]}>{tdc > 0 ? `${((s.value / tdc) * 100).toFixed(0)}%` : "-"}</Text>
             <Text style={[styles.tableCell, { flex: 1.4, fontSize: 8, color: colors.muted }]}>{s.terms}</Text>
             <Text style={[styles.tableCell, { flex: 0.9, textAlign: "right", fontSize: 8 }]}>{s.status}</Text>
           </View>
@@ -71,7 +71,7 @@ export const CapitalStackSection = ({
         <View style={styles.tableTotalRow}>
           <Text style={[styles.tableTotalText, { flex: 2 }]}>Total Sources</Text>
           <Text style={[styles.tableTotalText, { flex: 1, textAlign: "right" }]}>{formatCurrency(totalSources)}</Text>
-          <Text style={[styles.tableTotalText, { flex: 0.6, textAlign: "right" }]}>{tdc > 0 ? `${((totalSources / tdc) * 100).toFixed(0)}%` : "—"}</Text>
+          <Text style={[styles.tableTotalText, { flex: 0.6, textAlign: "right" }]}>{tdc > 0 ? `${((totalSources / tdc) * 100).toFixed(0)}%` : "-"}</Text>
           <Text style={[styles.tableTotalText, { flex: 1.4 }]}></Text>
           <Text style={[styles.tableTotalText, { flex: 0.9 }]}></Text>
         </View>

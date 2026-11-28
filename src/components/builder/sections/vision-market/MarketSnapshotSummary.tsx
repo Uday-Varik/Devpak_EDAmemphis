@@ -8,7 +8,7 @@ interface MarketSnapshotSummaryProps {
 }
 
 const formatCurrency = (num: number) =>
-  num ? `$${num.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—";
+  num ? `$${num.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "-";
 
 const getVacancyColor = (rate: number) => {
   if (rate === 0) return "text-muted-foreground";
@@ -70,7 +70,7 @@ export const MarketSnapshotSummary = ({ formData, avgPricePerSqFt }: MarketSnaps
           <div className="bg-muted/40 rounded-lg p-3">
             <span className="text-xs text-muted-foreground">Average Rent</span>
             <p className="text-sm font-bold text-foreground mt-0.5">
-              {formData.averageRent ? `${formatCurrency(formData.averageRent)}/mo` : "—"}
+              {formData.averageRent ? `${formatCurrency(formData.averageRent)}/mo` : "-"}
             </p>
           </div>
         </div>
@@ -79,7 +79,7 @@ export const MarketSnapshotSummary = ({ formData, avgPricePerSqFt }: MarketSnaps
         <div className={`flex items-center justify-between rounded-lg p-3 ${getVacancyBg(formData.vacancyRate)}`}>
           <span className="text-xs font-medium text-muted-foreground">Vacancy Rate</span>
           <span className={`text-sm font-bold ${getVacancyColor(formData.vacancyRate)}`}>
-            {formData.vacancyRate > 0 ? `${formData.vacancyRate}%` : "—"}
+            {formData.vacancyRate > 0 ? `${formData.vacancyRate}%` : "-"}
           </span>
         </div>
 

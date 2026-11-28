@@ -113,9 +113,9 @@ Tables:
 
 | Feature | Phase 1 | Phase 2 | Status |
 |---------|---------|---------|--------|
-| **Create Development Package** | ✅ Full 10-section builder | — | DONE |
-| **Generate PDFs/Excel** | ✅ Development package, lender summary, investor one-pager | — | DONE |
-| **Auto-save Project Data** | ✅ 1.5s debounce with Supabase | — | DONE |
+| **Create Development Package** | ✅ Full 10-section builder | - | DONE |
+| **Generate PDFs/Excel** | ✅ Development package, lender summary, investor one-pager | - | DONE |
+| **Auto-save Project Data** | ✅ 1.5s debounce with Supabase | - | DONE |
 | | | | |
 | **Budget Tracking** | ❌ | 📍 Planned | NOT STARTED |
 | **Actual vs. Projected Costs** | ❌ | 📍 Planned | NOT STARTED |

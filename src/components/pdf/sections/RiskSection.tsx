@@ -40,15 +40,15 @@ export const RiskSection = ({ riskAssessment }: RiskSectionProps) => {
             </View>
             {risks.map((r: RiskEntry, i: number) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}, { minHeight: 28 }]}>
-                <Text style={[styles.tableCellBold, { flex: 1 }]}>{r.category || "—"}</Text>
-                <Text style={[styles.tableCell, { flex: 2 }]}>{r.description || "—"}</Text>
+                <Text style={[styles.tableCellBold, { flex: 1 }]}>{r.category || "-"}</Text>
+                <Text style={[styles.tableCell, { flex: 2 }]}>{r.description || "-"}</Text>
                 <Text style={[styles.tableCell, { flex: 0.7, textAlign: "center", color: getLikelihoodColor(r.likelihood) }]}>
-                  {r.likelihood || "—"}
+                  {r.likelihood || "-"}
                 </Text>
                 <Text style={[styles.tableCell, { flex: 0.7, textAlign: "center", color: getLikelihoodColor(r.impact) }]}>
-                  {r.impact || "—"}
+                  {r.impact || "-"}
                 </Text>
-                <Text style={[styles.tableCell, { flex: 0.7, textAlign: "center" }]}>{r.status || "—"}</Text>
+                <Text style={[styles.tableCell, { flex: 0.7, textAlign: "center" }]}>{r.status || "-"}</Text>
               </View>
             ))}
           </View>
