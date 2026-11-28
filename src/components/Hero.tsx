@@ -14,8 +14,8 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
         style={{ backgroundImage: "url(/images/memphis-skyline.jpg)" }}
         aria-hidden="true"
       />
-      {/* Light overlay so the text stays readable */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background/95" aria-hidden="true" />
+      {/* Dark navy overlay so the white text stays readable over the photo */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/65 to-primary/85" aria-hidden="true" />
       {/* Dot pattern overlay */}
       <div className="absolute inset-0 dot-pattern pointer-events-none" />
       
@@ -27,14 +27,14 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight mb-6 animate-slide-up">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight mb-6 animate-slide-up">
           Build Lender-Ready
           <br />
-          <span className="text-primary">Development Packages</span>
+          <span className="text-[#8FB3C7]">Development Packages</span>
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
           The guided platform for emerging real estate developers to create professional financing documents for 1-4 unit residential projects
         </p>
 
@@ -43,10 +43,12 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
           <Button variant="accent" size="xl" onClick={onGetStartedClick}>
             Get Started
           </Button>
-          <Button variant="outline" size="xl" className="border-2 border-primary text-primary hover:bg-primary hover:text-white">
+          <Button variant="outline" size="xl" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary">
             See How It Works
           </Button>
         </div>
+
+        <p className="mt-6 text-xs text-white/70">Downtown Memphis &amp; the Mississippi Riverfront</p>
 
         {/* Trust indicators */}
         <div className="mt-16 animate-slide-up" style={{ animationDelay: '0.3s' }}>
