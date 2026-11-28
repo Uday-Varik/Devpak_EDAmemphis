@@ -9,7 +9,7 @@ import { BuilderContent } from "@/components/builder/BuilderContent";
 import { TeachingPanel } from "@/components/builder/TeachingPanel";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useTeachingMode } from "@/hooks/useTeachingMode";
 import { countCompletedSections, PACKAGE_SECTIONS } from "@/utils/narrativeStaleness";
@@ -264,6 +264,8 @@ const ProjectBuilder = () => {
 
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent side="left" className="p-0 w-[280px] max-w-[85vw]">
+          <SheetTitle className="sr-only">Project sections</SheetTitle>
+          <SheetDescription className="sr-only">Choose a section of the development package to work on.</SheetDescription>
           <BuilderSidebarContent
             projectName={project.name}
             activeSection={activeSection}

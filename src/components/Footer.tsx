@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Hexagon } from "lucide-react";
 
 const Footer = () => {
@@ -13,10 +14,20 @@ const Footer = () => {
             <span className="text-lg font-bold text-foreground">DevPack</span>
           </div>
 
-          {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} DevPack. Built for Emerging Developer Academy.
-          </p>
+          {/* Copyright and legal links */}
+          <div className="flex flex-col items-center gap-2 md:items-end">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} DevPack. Built for Emerging Developer Academy.
+            </p>
+            <nav aria-label="Legal" className="flex gap-4 text-sm">
+              <Link to="/privacy" className="text-muted-foreground hover:text-foreground">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="text-muted-foreground hover:text-foreground">
+                Terms of Service
+              </Link>
+            </nav>
+          </div>
         </div>
       </div>
     </footer>
