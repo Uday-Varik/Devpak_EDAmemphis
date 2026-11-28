@@ -218,7 +218,7 @@ const Dashboard = () => {
   const displayName = profile?.full_name || user?.email?.split("@")[0] || "Developer";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#FAFBFC]">
       {/* Header */}
       <header className="border-b border-border bg-white shadow-sm">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">

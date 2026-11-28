@@ -45,21 +45,21 @@ export const CoverPage = ({
       <View style={styles.coverLine} />
       <Text style={styles.coverSubtitle}>Development Package</Text>
       {!!packagePurpose && PURPOSE_LABELS[packagePurpose] && (
-        <Text style={{ fontSize: 11, color: "#2E6B8A", marginTop: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1 }}>
+        <Text style={{ fontSize: 11, color: "#F39C12", marginTop: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1 }}>
           {PURPOSE_LABELS[packagePurpose]}
         </Text>
       )}
       {!!preparedBy && (
         <View style={{ marginTop: 20, alignItems: "center" as const }}>
           <Text style={styles.coverMeta}>Prepared by</Text>
-          <Text style={{ fontSize: 14, fontFamily: "Helvetica-Bold", color: "#162E4A", marginTop: 4 }}>
+          <Text style={{ fontSize: 14, fontFamily: "Helvetica-Bold", color: "#1B4F72", marginTop: 4 }}>
             {preparedBy}
           </Text>
           {!!developerTitle && (
             <Text style={{ fontSize: 10, color: "#4A5568", marginTop: 2 }}>{developerTitle}</Text>
           )}
           {!!companyName && (
-            <Text style={{ fontSize: 11, color: "#2E6B8A", marginTop: 2 }}>{companyName}</Text>
+            <Text style={{ fontSize: 11, color: "#2E86AB", marginTop: 2 }}>{companyName}</Text>
           )}
           {(developerPhone || developerEmail) && (
             <Text style={{ fontSize: 9, color: "#718096", marginTop: 4 }}>

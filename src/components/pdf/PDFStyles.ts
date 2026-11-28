@@ -1,8 +1,8 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
 export const colors = {
-  navy: "#162E4A",
-  blue: "#2E6B8A",
+  navy: "#1B4F72",
+  blue: "#2E86AB",
   body: "#333333",
   muted: "#666666",
   light: "#999999",
@@ -10,7 +10,7 @@ export const colors = {
   border: "#E2E8F0",
   green: "#059669",
   red: "#E74C3C",
-  gold: "#2E6B8A",
+  gold: "#F39C12",
   white: "#FFFFFF",
   lightBlue: "#EFF6FF",
   lightGreen: "#ECFDF5",

@@ -45,7 +45,7 @@ interface GanttChartProps {
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string; badgeClass: string }> = {
   "Not Started": { color: "#cbd5e1", bg: "bg-slate-300", label: "Not Started", badgeClass: "bg-slate-200 text-slate-700 border-slate-300" },
-  "In Progress": { color: "#2E6B8A", bg: "bg-secondary", label: "In Progress", badgeClass: "bg-blue-100 text-blue-800 border-blue-300" },
+  "In Progress": { color: "#2E86AB", bg: "bg-secondary", label: "In Progress", badgeClass: "bg-blue-100 text-blue-800 border-blue-300" },
   "Complete": { color: "#27AE60", bg: "bg-success", label: "Complete", badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300" },
   "Delayed": { color: "#E74C3C", bg: "bg-destructive", label: "Delayed", badgeClass: "bg-red-100 text-red-800 border-red-300" },
 };
@@ -192,7 +192,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
         <div className="rounded-xl border border-border shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#162E4A] hover:bg-[#162E4A]">
+              <TableRow className="bg-[#1B4F72] hover:bg-[#1B4F72]">
                 <TableHead className="text-white font-semibold text-xs">Milestone</TableHead>
                 <TableHead className="text-white font-semibold text-xs">Planned Start</TableHead>
                 <TableHead className="text-white font-semibold text-xs">Planned End</TableHead>

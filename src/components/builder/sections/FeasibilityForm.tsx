@@ -1502,14 +1502,14 @@ export const FeasibilityForm = ({
               variant="outline"
               onClick={handleSaveDraft}
               disabled={saving}
-              className="border-[#162E4A] text-[#162E4A]"
+              className="border-[#1B4F72] text-[#1B4F72]"
             >
               Save Draft
             </Button>
             <Button
               onClick={handleSaveAndContinue}
               disabled={saving}
-              className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
+              className="bg-[#F39C12] hover:bg-[#E67E22] text-white"
             >
               {saving ? "Saving..." : "Save & Continue"}
             </Button>
