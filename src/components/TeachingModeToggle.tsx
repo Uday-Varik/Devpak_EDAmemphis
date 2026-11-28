@@ -15,11 +15,11 @@ export const TeachingModeToggle = ({ className, showIcon = true }: TeachingModeT
       {showIcon && <GraduationCap className="w-4 h-4 text-muted-foreground" />}
       <label
         htmlFor="teaching-mode"
-        className="text-sm font-medium text-foreground cursor-pointer select-none"
+        className="hidden sm:inline text-sm font-medium text-foreground cursor-pointer select-none whitespace-nowrap"
       >
         Teaching Mode
       </label>
-      <Switch id="teaching-mode" checked={enabled} onCheckedChange={toggle} />
+      <Switch id="teaching-mode" aria-label="Teaching Mode" checked={enabled} onCheckedChange={toggle} />
     </div>
   );
 };
