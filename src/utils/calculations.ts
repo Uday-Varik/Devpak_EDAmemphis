@@ -103,7 +103,7 @@ export interface ProjectFinancials extends BudgetTotals {
 }
 
 export type RuleCheckStatus = "pass" | "fail" | "na";
-export const NO_ARV_LABEL = "N/A; no ARV entered";
+export const NO_ARV_LABEL = "N/A, no ARV entered";
 
 /** 85% rule: TDC ≤ 85% of ARV. N/A when ARV is missing. */
 export const allInBasisRule = (arv: number, allInBasis: number): RuleCheckStatus =>

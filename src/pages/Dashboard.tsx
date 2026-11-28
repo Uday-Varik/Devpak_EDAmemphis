@@ -1,4 +1,5 @@
 import { errorMessage } from "@/lib/errorMessage";
+import { truncateLabel } from "@/utils/fileName";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, MapPin, Calendar, Plus, User, LogOut, LayoutDashboard, Trash2 } from "lucide-react";
@@ -325,7 +326,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Project Name */}
-                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors break-words">
                   {project.name}
                 </h3>
 
@@ -397,9 +398,9 @@ const Dashboard = () => {
       </Dialog>
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="break-words">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteTarget?.name}?</AlertDialogTitle>
+            <AlertDialogTitle>Delete {truncateLabel(deleteTarget?.name)}?</AlertDialogTitle>
             <AlertDialogDescription>
               This permanently deletes the project and all its data. This action cannot be undone.
             </AlertDialogDescription>

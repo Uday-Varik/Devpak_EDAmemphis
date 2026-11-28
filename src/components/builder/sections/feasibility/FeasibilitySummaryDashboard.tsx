@@ -129,7 +129,7 @@ export const FeasibilitySummaryDashboard = ({
     if (showDash) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-500 border border-gray-200">
-          {label}: N/A; no ARV entered
+          {label}: N/A, no ARV entered
         </span>
       );
     }

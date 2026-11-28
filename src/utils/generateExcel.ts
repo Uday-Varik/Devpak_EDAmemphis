@@ -1,3 +1,4 @@
+import { exportFileBase } from "./fileName";
 import * as XLSX from "xlsx";
 import { fetchProjectExportData } from "./fetchProjectData";
 import { computeProjectFinancials, computeRentalProjection, NO_ARV_LABEL, CASH_NOT_INVESTED, ruleCheckLabel, type RuleCheckStatus } from "./calculations";
@@ -621,7 +622,7 @@ export const generateExcel = async (projectId: string): Promise<void> => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${data.projectName.replace(/[^a-zA-Z0-9]/g, "_")}_Development_Package.xlsx`;
+  link.download = `${exportFileBase(data.projectName)}_Development_Package.xlsx`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
