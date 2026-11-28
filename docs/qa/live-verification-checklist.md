@@ -49,6 +49,10 @@ Before any live test on this project:
 | 59 | `/dashboard`, profile check | 1. Sign in. 2. Go Offline. 3. Reload. | Error toast: "Couldn't load your dashboard. Refresh the page to try again." Not a redirect to onboarding. | DevTools Offline before reload |
 | 60 | Executive Summary, Lender Summary PDF | 1. Snapshot any field that feeds the stress-test line. 2. Generate the lender summary. | Lender-facing text uses the exact label "Cash not invested" (not lowercase). | Set Developer Equity to 0 |
 
+## Results
+
+- **#21 (export rationale fallback): PASS on the local build (`localhost:8081`, PR #77 code), 2026-11-27.** Cleared `decision.rationale` on the test project, exported the Full Development Package, and the Go/No-Go section showed the generated fallback ("Projected ROI of -309.2% … margin of safety"). No blank text or `undefined`. Rationale restored to the snapshot (430 characters, exact match). Live site not yet re-tested: it needs a redeploy from `main`.
+
 ## After testing
 
 - Restore every snapshotted field, reload each page, and confirm the values match the snapshot.
