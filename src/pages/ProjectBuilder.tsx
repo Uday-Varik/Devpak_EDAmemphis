@@ -68,7 +68,8 @@ const ProjectBuilder = () => {
     ...DEFAULT_SECTION_DATA,
   });
   const [activeSection, setActiveSection] = useState<Section>("project-scope");
-  const [showTeachingPanel, setShowTeachingPanel] = useState(true);
+  // Open the Learning Guide by default only on wide screens, so forms keep room on laptops.
+  const [showTeachingPanel, setShowTeachingPanel] = useState(() => typeof window === "undefined" || window.innerWidth >= 1440);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
