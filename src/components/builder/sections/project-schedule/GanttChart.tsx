@@ -45,9 +45,9 @@ interface GanttChartProps {
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string; badgeClass: string }> = {
   "Not Started": { color: "#cbd5e1", bg: "bg-slate-300", label: "Not Started", badgeClass: "bg-slate-200 text-slate-700 border-slate-300" },
-  "In Progress": { color: "hsl(var(--secondary))", bg: "bg-secondary", label: "In Progress", badgeClass: "bg-blue-100 text-blue-800 border-blue-300" },
-  "Complete": { color: "hsl(var(--success))", bg: "bg-success", label: "Complete", badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300" },
-  "Delayed": { color: "hsl(var(--destructive))", bg: "bg-destructive", label: "Delayed", badgeClass: "bg-red-100 text-red-800 border-red-300" },
+  "In Progress": { color: "#2E86AB", bg: "bg-secondary", label: "In Progress", badgeClass: "bg-blue-100 text-blue-800 border-blue-300" },
+  "Complete": { color: "#27AE60", bg: "bg-success", label: "Complete", badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300" },
+  "Delayed": { color: "#E74C3C", bg: "bg-destructive", label: "Delayed", badgeClass: "bg-red-100 text-red-800 border-red-300" },
 };
 
 type ViewMode = "timeline" | "summary";
@@ -192,7 +192,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
         <div className="rounded-xl border border-border shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-primary hover:bg-primary">
+              <TableRow className="bg-[#1B4F72] hover:bg-[#1B4F72]">
                 <TableHead className="text-white font-semibold text-xs">Milestone</TableHead>
                 <TableHead className="text-white font-semibold text-xs">Planned Start</TableHead>
                 <TableHead className="text-white font-semibold text-xs">Planned End</TableHead>
@@ -211,7 +211,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
                 const config = STATUS_CONFIG[m.status] || STATUS_CONFIG["Not Started"];
 
                 return (
-                  <TableRow key={m.id} className={i % 2 === 0 ? "bg-white" : "bg-background"}>
+                  <TableRow key={m.id} className={i % 2 === 0 ? "bg-white" : "bg-[#FAFBFC]"}>
                     <TableCell className="font-medium text-sm">{m.name || "Unnamed"}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {baseline ? format(parseISO(baseline.startDate), "MMM d, yyyy") : "-"}
@@ -349,7 +349,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
                       backgroundColor: isHovered
                         ? "rgba(46, 134, 171, 0.05)"
                         : i % 2 === 1
-                        ? "hsl(var(--background))"
+                        ? "#FAFBFC"
                         : "white",
                     }}
                   >
@@ -453,7 +453,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
                         backgroundColor: isHovered
                           ? "rgba(46, 134, 171, 0.05)"
                           : i % 2 === 1
-                          ? "hsl(var(--background))"
+                          ? "#FAFBFC"
                           : "transparent",
                       }}
                       onMouseEnter={() => setHoveredRow(m.id)}

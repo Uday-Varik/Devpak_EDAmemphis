@@ -64,14 +64,14 @@ export const BudgetSummaryDashboard = ({ data, scope }: BudgetSummaryDashboardPr
       detail: `incl. ${calculations.acqContingencyPct}% contingency`,
       value: calculations.acquisitionTotal,
       percent: (calculations.acquisitionTotal / total) * 100,
-      color: "bg-secondary",
+      color: "bg-[#2E86AB]",
     },
     {
       label: "Construction",
       detail: `incl. ${calculations.hardContingencyPct}% contingency`,
       value: calculations.hardCostsTotal,
       percent: (calculations.hardCostsTotal / total) * 100,
-      color: "bg-primary",
+      color: "bg-[#1B4F72]",
     },
     {
       label: "Pre-Development",

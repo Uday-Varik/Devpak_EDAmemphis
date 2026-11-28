@@ -322,7 +322,7 @@ export const FeasibilitySummaryDashboard = ({
               <span className="text-xs w-16">Base</span>
               <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
+                  className="h-full bg-[#1B4F72] rounded-full transition-all duration-500"
                   style={{ width: `${baseReturn === null ? 0 : (baseReturn / maxBar) * 100}%` }}
                 />
               </div>
@@ -334,7 +334,7 @@ export const FeasibilitySummaryDashboard = ({
               <span className="text-xs w-16">Worst</span>
               <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-secondary rounded-full transition-all duration-500"
+                  className="h-full bg-[#2E86AB] rounded-full transition-all duration-500"
                   style={{ width: `${worstCaseReturn === null ? 0 : (worstCaseReturn / maxBar) * 100}%` }}
                 />
               </div>

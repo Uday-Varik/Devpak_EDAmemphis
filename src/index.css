@@ -7,7 +7,7 @@
 @layer base {
   :root {
     /* DevPack Light Theme - Premium Warm Colors */
-    --background: 207 24% 93%; /* #E8EDF1 Mist Grey */
+    --background: 210 20% 98%; /* #FAFBFC warm white */
     --background-subtle: 210 25% 96%; /* #F0F4F8 subtle blue tint */
     --foreground: 220 20% 10%; /* #1A202C warm dark */
 
@@ -17,20 +17,20 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 10%;
 
-    /* Primary Deep Navy #162E4A */
-    --primary: 212 54% 19%; /* #162E4A Deep Navy */
+    /* Primary Navy #1B4F72 */
+    --primary: 205 61% 28%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary Steel Blue #2E6B8A */
-    --secondary: 200 50% 36%; /* #2E6B8A Steel Blue (buttons, links) */
+    /* Secondary Blue #2E86AB */
+    --secondary: 197 58% 43%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted */
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%; /* #4A5568 */
 
-    /* Accent: Steel Blue #2E6B8A, the call-to-action color */
-    --accent: 200 50% 36%; /* #2E6B8A Steel Blue (call-to-action buttons) */
+    /* Accent Gold #F39C12 - use sparingly */
+    --accent: 37 90% 51%;
     --accent-foreground: 0 0% 100%;
 
     /* Success #27AE60 */
@@ -48,19 +48,19 @@
     /* Border #E2E8F0 */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 200 50% 36%;
+    --ring: 205 61% 28%;
 
     --radius: 0.75rem;
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 20% 10%;
-    --sidebar-primary: 212 54% 19%;
+    --sidebar-primary: 205 61% 28%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 14% 96%;
     --sidebar-accent-foreground: 220 20% 10%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 200 50% 36%;
+    --sidebar-ring: 205 61% 28%;
   }
 
   .dark {
@@ -99,7 +99,7 @@
   }
 
   .hero-gradient {
-    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(207 24% 90%) 100%);
+    background: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 25% 96%) 100%);
   }
 
   .dot-pattern {
