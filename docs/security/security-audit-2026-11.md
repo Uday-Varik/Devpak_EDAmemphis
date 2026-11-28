@@ -8,17 +8,18 @@ Status of each finding as of this update. The findings below are the original 20
 
 - SEC-01 (private buckets): Fix in PR #67
 - SEC-02 (attom-comps rate limit): Fix in PR #66
-- SEC-03 (npm audit): Open: SEC-03 npm audit, planned as a separate PR
-- SEC-04: Open
-- SEC-05: Open
-- SEC-06: Open
-- SEC-07: Open
-- SEC-08: Open
-- SEC-09: Open
-- SEC-10: Open
-- SEC-11: Open
-- SEC-12: Open
-- SEC-13: Open
+- SEC-03 (npm audit): Partly fixed. Non-breaking `npm audit fix` applied to `package-lock.json`, which cut production advisories from 14 to 7. Still open: `xlsx` (high, no fix published), `zod` (high, needs the v4 major, code changes), `react-router-dom` (moderate, needs the v7 major). These need a decision before upgrading.
+- SEC-04 (AI cost caps): Fixed. Per-minute (10) and per-day (200) limits in Postgres, prompt cap 4,000 characters, context cap 20,000 characters (413 above). Deployed.
+- SEC-05 (upload MIME and size): Fixed. Bucket MIME allow-lists and size limits applied on production (migration 20261126120100). Headshot upload checks type and size, and the extension comes from the MIME type.
+- SEC-06 (public bucket listing): Fixed. Anonymous listing removed on production (migration 20261126120200).
+- SEC-07 (error detail leakage): Fixed. Clients get generic 503s, and auth-path throws return 401. Deployed.
+- SEC-08 (CORS wildcard): Fixed. Both functions allow only the production and preview origins. Deployed.
+- SEC-09 (attom cache key): Fixed. Cache key includes the rounded coordinates and their source. Deployed.
+- SEC-10 (developer_profiles FK): Fixed. FK with `ON DELETE CASCADE` is on production; no orphan rows.
+- SEC-11 (photo URL host): Fixed. Only this project's storage URLs are rendered in the Navbar, team summary, and PDF export.
+- SEC-12 (password minimum): Client minimum raised to 8 characters. **Owner action:** set the Supabase Auth minimum password length to 8 in the dashboard; the repo does not control that setting.
+- SEC-13 (session storage): Not changed. `src/integrations/supabase/client.ts` is generated, and the Lovable broker regex needs review with the platform owner.
+- #16 (ErrorBoundary recovery): Already fixed. "Try again" resets the error state, covered by `src/components/__tests__/ErrorBoundary.test.tsx`.
 
 ## Summary
 

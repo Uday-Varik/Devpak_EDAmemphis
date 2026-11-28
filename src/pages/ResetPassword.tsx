@@ -35,8 +35,8 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: "Password too short", description: "Use at least 6 characters.", variant: "destructive" });
+    if (password.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
       return;
     }
     if (password !== confirm) {
@@ -62,11 +62,11 @@ const ResetPassword = () => {
           <form onSubmit={handleSubmit} className="space-y-4 mt-6">
             <div className="space-y-2">
               <Label htmlFor="newPassword">New password</Label>
-              <Input id="newPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <Input id="newPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm new password</Label>
-              <Input id="confirmPassword" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required minLength={6} />
+              <Input id="confirmPassword" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required minLength={8} />
             </div>
             <Button type="submit" variant="accent" size="lg" className="w-full" disabled={loading}>
               {loading ? "Saving..." : "Save New Password"}
