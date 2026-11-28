@@ -90,7 +90,7 @@ const Profile = () => {
         </Button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1B4F72] mb-2">My Developer Profile</h1>
+          <h1 className="text-3xl font-bold text-[#162E4A] mb-2">My Developer Profile</h1>
           <p className="text-muted-foreground">
             This information auto-populates every package you build. Changes save when you click Save Profile.
           </p>
@@ -104,10 +104,10 @@ const Profile = () => {
             { value: "portfolio", title: "Portfolio", icon: FolderOpen, step: 4 as const },
           ].map(({ value, title, icon: Icon, step }) => (
             <AccordionItem key={value} value={value} className="bg-white rounded-xl shadow-sm border border-border overflow-hidden data-[state=open]:bg-slate-50/50">
-              <AccordionTrigger className="hover:no-underline px-6 border-l-[3px] border-l-[#2E86AB]">
+              <AccordionTrigger className="hover:no-underline px-6 border-l-[3px] border-l-[#2E6B8A]">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#1B4F72]/5 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#1B4F72]" />
+                  <div className="w-8 h-8 rounded-lg bg-[#162E4A]/5 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[#162E4A]" />
                   </div>
                   <span className="font-semibold text-foreground">{title}</span>
                 </div>
