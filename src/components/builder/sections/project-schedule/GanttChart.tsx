@@ -1,3 +1,4 @@
+import { Check as CheckIcon } from "lucide-react";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { format, parseISO, differenceInDays, isAfter, isBefore, addMonths, startOfMonth } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -551,7 +552,7 @@ export const GanttChart = ({ milestones, projectStart, projectEnd, baselineDates
             </span>
           </div>
           {(tooltipData.milestone.complete || tooltipData.milestone.status === "Complete") && (
-            <p className="text-xs mt-1 text-success font-medium">✓ Complete</p>
+            <p className="text-xs mt-1 text-success font-medium"><CheckIcon className="inline mr-1 h-3 w-3" aria-hidden="true" />Complete</p>
           )}
           {tooltipData.milestone.notes && (
             <p className="text-xs mt-2 text-muted-foreground border-t border-border pt-2">{tooltipData.milestone.notes}</p>
