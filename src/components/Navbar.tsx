@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseStorageUrl } from "@/lib/storageUrl";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +36,8 @@ const Navbar = ({ onLoginClick, onSignupClick }: NavbarProps) => {
         console.error("Error loading profile photo:", error);
         return;
       }
-      setPhotoUrl(data?.photo_url || null);
+      // SEC-11: only this project's storage URLs are rendered; other hosts would receive the viewer's IP.
+      setPhotoUrl(isSupabaseStorageUrl(data?.photo_url) ? data!.photo_url : null);
     };
     loadPhoto().catch((error) => console.error("Error loading profile photo:", error));
   }, [user]);
