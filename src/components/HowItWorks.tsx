@@ -12,7 +12,7 @@ const HowItWorks = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How It Works</h2>
         </div>
-        <ol className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step) => (
             <li key={step.number} className="rounded-xl border border-gray-200 bg-white p-8 shadow-md">
               <p className="text-sm font-bold text-secondary mb-4">{step.number}</p>
