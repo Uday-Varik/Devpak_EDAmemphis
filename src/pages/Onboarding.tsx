@@ -165,7 +165,7 @@ const Onboarding = () => {
             type="button"
             onClick={handleSaveAndExit}
             disabled={saving}
-            className="text-sm text-muted-foreground hover:text-[#162E4A] underline-offset-4 hover:underline transition-colors disabled:opacity-50"
+            className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save & Exit"}
           </button>
@@ -174,10 +174,10 @@ const Onboarding = () => {
 
       <main className="mx-auto max-w-4xl px-6 py-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[#162E4A] mb-2">Welcome to DevPack</h1>
+          <h1 className="text-3xl font-bold text-primary mb-2">Welcome to DevPack</h1>
           <p className="text-muted-foreground">Let's set up your developer profile. This information will auto-populate every package you build.</p>
           {exists && (
-            <p className="mt-3 inline-block text-xs bg-[#2E6B8A]/10 text-[#162E4A] px-3 py-1 rounded-full">
+            <p className="mt-3 inline-block text-xs bg-secondary/10 text-primary px-3 py-1 rounded-full">
               Picking up where you left off. Step {step} of 4
             </p>
           )}
@@ -196,19 +196,19 @@ const Onboarding = () => {
                   key={s.id}
                   onClick={() => setStep(s.id as StepId)}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-lg transition-all duration-300 ${
-                    isActive ? "bg-[#162E4A]/5 border-2 border-[#162E4A]" :
-                    isComplete ? "bg-[#27AE60]/5 border-2 border-[#27AE60]/30" :
+                    isActive ? "bg-primary/5 border-2 border-primary" :
+                    isComplete ? "bg-success/5 border-2 border-success/30" :
                     "bg-white border-2 border-border"
                   }`}
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    isActive ? "bg-[#162E4A] text-white" :
-                    isComplete ? "bg-[#27AE60] text-white" :
+                    isActive ? "bg-primary text-white" :
+                    isComplete ? "bg-success text-white" :
                     "bg-muted text-muted-foreground"
                   }`}>
                     {isComplete ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                   </div>
-                  <span className={`text-xs font-medium ${isActive ? "text-[#162E4A]" : "text-muted-foreground"}`}>
+                  <span className={`text-xs font-medium ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                     Step {s.id}
                   </span>
                   <span className="text-xs text-muted-foreground hidden sm:block">{s.title}</span>
@@ -221,7 +221,7 @@ const Onboarding = () => {
         {/* Form card */}
         <div className="bg-white rounded-xl shadow-sm border border-border p-8">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-            <div className="w-10 h-10 rounded-lg bg-[#162E4A] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary text-white flex items-center justify-center">
               <ActiveIcon className="w-5 h-5" />
             </div>
             <div>
@@ -246,11 +246,11 @@ const Onboarding = () => {
                   type="button"
                   onClick={handleSaveAndExit}
                   disabled={saving}
-                  className="text-sm text-muted-foreground hover:text-[#162E4A] underline-offset-4 hover:underline transition-colors disabled:opacity-50"
+                  className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors disabled:opacity-50"
                 >
                   Save & Exit
                 </button>
-                <Button onClick={handleNext} className="bg-[#162E4A] hover:bg-[#2E6B8A] text-white">
+                <Button onClick={handleNext} className="bg-primary hover:bg-secondary text-white">
                   Next <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
@@ -259,12 +259,12 @@ const Onboarding = () => {
                 <Button
                   onClick={handleFinish}
                   disabled={saving || !form.full_name.trim() || !form.email.trim()}
-                  className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
+                  className="bg-secondary hover:bg-secondary/90 text-white"
                 >
                   {saving ? "Saving..." : "Save & Continue to Dashboard"}
                 </Button>
                 {(!form.full_name.trim() || !form.email.trim()) && (
-                  <p className="text-xs text-[#E74C3C]">
+                  <p className="text-xs text-destructive">
                     Please complete your Full Name and Email in Step 1 to continue.
                   </p>
                 )}
