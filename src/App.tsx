@@ -14,6 +14,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ProjectBuilder = lazy(() => import("./pages/ProjectBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -44,6 +46,8 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/project/:id" element={<ErrorBoundary><ProjectBuilder /></ErrorBoundary>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
