@@ -317,21 +317,18 @@ export const fetchProjectExportData = async (projectId: string): Promise<Project
     cashOnCash,
     tdc,
   });
-  // Stored text that still matches the live figures is used as-is. Stale text is
-  // regenerated from the live figures. With no stored text there is nothing to show.
+  // Stored text that still matches the live figures is used as-is. Blank or stale text
+  // is generated from the live figures, so the export never shows an empty rationale box.
   const storedIsCurrent =
     !!storedRationale &&
     !isNarrativeStale(storedRationale, decisionData.rationaleFingerprint, liveRationaleFingerprint);
-  let finalRationale = "";
-  if (storedIsCurrent) {
-    finalRationale = storedRationale;
-  } else if (storedRationale) {
-    finalRationale = generateRationaleText({
-      includesSale: exitStrategy !== "rent",
-      roi, tdc, netProfit, marginOfSafety, marginOfSafetyPercent,
-      noi, dscr, capRate, cashOnCash,
-    });
-  }
+  const finalRationale = storedIsCurrent
+    ? storedRationale
+    : generateRationaleText({
+        includesSale: exitStrategy !== "rent",
+        roi, tdc, netProfit, marginOfSafety, marginOfSafetyPercent,
+        noi, dscr, capRate, cashOnCash,
+      });
 
   // Private buckets: sign and embed photos and drawings now, so the PDF gets data URLs.
   // Images that cannot be signed or downloaded are dropped instead of failing the export.
