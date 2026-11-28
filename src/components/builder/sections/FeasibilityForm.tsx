@@ -1508,7 +1508,7 @@ export const FeasibilityForm = ({
             <Button
               onClick={handleSaveAndContinue}
               disabled={saving}
-              className="bg-[#F39C12] hover:bg-[#E67E22] text-white"
+              className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
             >
               {saving ? "Saving..." : "Save & Continue"}
             </Button>

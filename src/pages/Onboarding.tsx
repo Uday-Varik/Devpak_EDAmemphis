@@ -145,14 +145,14 @@ const Onboarding = () => {
   };
 
   if (authLoading || loading) {
-    return <div className="min-h-screen bg-[#FAFBFC] flex items-center justify-center text-muted-foreground">Loading...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
   }
 
   const progress = (step / 4) * 100;
   const ActiveIcon = STEPS[step - 1].icon;
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC]">
+    <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-white shadow-sm">
         <div className="mx-auto max-w-4xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -177,7 +177,7 @@ const Onboarding = () => {
           <h1 className="text-3xl font-bold text-[#162E4A] mb-2">Welcome to DevPack</h1>
           <p className="text-muted-foreground">Let's set up your developer profile. This information will auto-populate every package you build.</p>
           {exists && (
-            <p className="mt-3 inline-block text-xs bg-[#F39C12]/10 text-[#162E4A] px-3 py-1 rounded-full">
+            <p className="mt-3 inline-block text-xs bg-[#2E6B8A]/10 text-[#162E4A] px-3 py-1 rounded-full">
               Picking up where you left off. Step {step} of 4
             </p>
           )}
@@ -259,7 +259,7 @@ const Onboarding = () => {
                 <Button
                   onClick={handleFinish}
                   disabled={saving || !form.full_name.trim() || !form.email.trim()}
-                  className="bg-[#F39C12] hover:bg-[#F39C12]/90 text-white"
+                  className="bg-[#2E6B8A] hover:bg-[#255A74] text-white"
                 >
                   {saving ? "Saving..." : "Save & Continue to Dashboard"}
                 </Button>
