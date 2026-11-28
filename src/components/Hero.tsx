@@ -52,7 +52,7 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
 
         {/* Trust indicators */}
         <div className="mt-16 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-          <div className="inline-block bg-white/50 backdrop-blur-sm rounded-xl border border-gray-100 px-8 py-6 shadow-sm">
+          <div className="inline-block bg-white rounded-xl border border-gray-100 px-8 py-6 shadow-sm">
             <p className="text-sm text-muted-foreground mb-4">Trusted by developers across Memphis</p>
             <div className="flex items-center justify-center gap-8 text-muted-foreground">
               <div className="text-center flex items-center gap-3">
