@@ -57,6 +57,9 @@ const ValueProps = () => {
               <p className="text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
+              <a href="#how-it-works" className="mt-6 inline-flex items-center text-sm font-semibold text-secondary hover:underline">
+                Learn more
+              </a>
             </div>
           ))}
         </div>

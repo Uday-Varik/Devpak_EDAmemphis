@@ -3,6 +3,8 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ValueProps from "@/components/ValueProps";
 import Footer from "@/components/Footer";
+import MemphisHighlights from "@/components/MemphisHighlights";
+import HowItWorks from "@/components/HowItWorks";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +48,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar onLoginClick={openLogin} onSignupClick={openSignup} />
       <Hero onGetStartedClick={openSignup} />
+      <MemphisHighlights />
+      <HowItWorks />
       <ValueProps />
       <Footer />
       <AuthModal
