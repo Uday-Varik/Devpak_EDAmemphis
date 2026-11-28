@@ -1,7 +1,7 @@
 const highlights = [
   { value: "10", label: "package sections" },
   { value: "4", label: "export formats" },
-  { value: "Memphis-specific", label: "data and subsidies" },
+  { value: "Memphis", label: "specific data and subsidies" },
 ];
 
 const MemphisHighlights = () => {
