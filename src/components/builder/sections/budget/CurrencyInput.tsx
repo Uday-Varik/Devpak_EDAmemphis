@@ -30,6 +30,7 @@ export const CurrencyInput = ({
 }: CurrencyInputProps) => {
   const [displayValue, setDisplayValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [negativeHint, setNegativeHint] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Format number with commas, whole dollars only
@@ -59,6 +60,7 @@ export const CurrencyInput = ({
 
   const handleBlur = () => {
     setIsFocused(false);
+    setNegativeHint(false);
     const parsed = parseCurrency(displayValue);
     onChange(parsed);
     setDisplayValue(formatCurrency(parsed));
@@ -66,6 +68,7 @@ export const CurrencyInput = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
+    setNegativeHint(raw.includes("-"));
     // Allow only numbers, decimals, and commas during typing
     const cleaned = raw.replace(/[^0-9.,]/g, "");
     setDisplayValue(cleaned);
@@ -104,6 +107,11 @@ export const CurrencyInput = ({
           </span>
         )}
       </div>
+      {negativeHint && (
+        <p role="alert" className="text-xs text-amber-700 mt-1">
+          Amounts cannot be negative. Enter a positive value.
+        </p>
+      )}
       {helpText && (
         <TooltipProvider>
           <Tooltip>
@@ -142,7 +150,7 @@ export const PercentageInput = ({
 }: PercentageInputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const parsed = parseFloat(e.target.value);
-    onChange(isNaN(parsed) ? 0 : parsed);
+    onChange(isNaN(parsed) ? 0 : Math.min(100, Math.max(0, parsed)));
   };
 
   return (
