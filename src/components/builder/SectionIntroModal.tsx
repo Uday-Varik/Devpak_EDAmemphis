@@ -145,10 +145,10 @@ export const SectionIntroModal = ({ activeSection, isEmpty }: SectionIntroModalP
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-[#2E6B8A]/15 flex items-center justify-center">
-              <Lightbulb className="h-4 w-4 text-[#2E6B8A]" />
+            <div className="h-8 w-8 rounded-full bg-secondary/15 flex items-center justify-center">
+              <Lightbulb className="h-4 w-4 text-secondary" />
             </div>
-            <DialogTitle className="text-xl text-[#162E4A]">{intro.title}</DialogTitle>
+            <DialogTitle className="text-xl text-primary">{intro.title}</DialogTitle>
           </div>
           <DialogDescription className="text-base leading-relaxed text-foreground/80 pt-2">
             {intro.body}
@@ -170,7 +170,7 @@ export const SectionIntroModal = ({ activeSection, isEmpty }: SectionIntroModalP
         <DialogFooter>
           <Button
             onClick={handleClose}
-            className="bg-gradient-to-r from-[#162E4A] to-[#2E6B8A] hover:opacity-90 transition-all"
+            className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-all"
           >
             Got it, let's go
           </Button>
