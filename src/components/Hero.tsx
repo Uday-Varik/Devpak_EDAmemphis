@@ -51,10 +51,10 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
         <p className="mt-6 text-xs text-white/70">Downtown Memphis &amp; the Mississippi Riverfront</p>
 
         {/* Trust indicators */}
-        <div className="mt-16 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-          <div className="inline-block bg-white rounded-xl border border-gray-100 px-8 py-6 shadow-sm">
+        <div className="mt-16 w-full max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="block w-full bg-white rounded-xl border border-gray-100 px-6 md:px-8 py-6 shadow-sm">
             <p className="text-sm text-muted-foreground mb-4">Trusted by developers across Memphis</p>
-            <div className="flex items-center justify-center gap-8 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 text-muted-foreground">
               <div className="text-center flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-success" />
@@ -64,7 +64,7 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
                   <div className="text-sm">Projects Created</div>
                 </div>
               </div>
-              <div className="w-px h-12 bg-border"></div>
+              <div className="hidden sm:block w-px h-12 bg-border"></div>
               <div className="text-center flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
                   <DollarSign className="w-5 h-5 text-accent" />
@@ -74,7 +74,7 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
                   <div className="text-sm">Financing Secured</div>
                 </div>
               </div>
-              <div className="w-px h-12 bg-border"></div>
+              <div className="hidden sm:block w-px h-12 bg-border"></div>
               <div className="text-center flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-primary" />
