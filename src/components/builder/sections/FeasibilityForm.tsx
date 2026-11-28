@@ -1501,7 +1501,7 @@ export const FeasibilityForm = ({
               variant="outline"
               onClick={handleSaveDraft}
               disabled={saving}
-              className="border-[#1B4F72] text-[#1B4F72]"
+              className="border-[#162E4A] text-[#162E4A]"
             >
               Save Draft
             </Button>

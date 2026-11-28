@@ -35,7 +35,7 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
           <Button variant="accent" size="xl" onClick={onGetStartedClick}>
             Get Started
           </Button>
-          <Button variant="outline" size="xl" className="border-2 border-[#1B4F72] text-[#1B4F72] hover:bg-[#1B4F72] hover:text-white">
+          <Button variant="outline" size="xl" className="border-2 border-[#162E4A] text-[#162E4A] hover:bg-[#162E4A] hover:text-white">
             See How It Works
           </Button>
         </div>
