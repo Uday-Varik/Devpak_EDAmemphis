@@ -43,7 +43,7 @@ const Hero = ({ onGetStartedClick }: HeroProps) => {
           <Button variant="accent" size="xl" onClick={onGetStartedClick}>
             Get Started
           </Button>
-          <Button variant="outline" size="xl" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary">
+          <Button variant="outline" size="xl" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>
             See How It Works
           </Button>
         </div>
